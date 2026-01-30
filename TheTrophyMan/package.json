@@ -1,0 +1,42 @@
+{
+  "name": "trophy-man",
+  "version": "1.0.0",
+  "description": "The Trophy Man - Custom Trophies & Awards in Oromocto, NB",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": ["trophies", "awards", "engraving", "oromocto"],
+  "author": "Stein Digital",
+  "license": "ISC",
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@sanity/client": "^7.14.1",
+    "@sanity/image-url": "^2.0.3",
+    "@types/node": "^25.1.0",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "@uploadthing/react": "^7.3.3",
+    "framer-motion": "^12.29.2",
+    "groq": "^5.7.0",
+    "lucide-react": "^0.563.0",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-hook-form": "^7.71.1",
+    "resend": "^6.9.1",
+    "swiper": "^12.1.0",
+    "typescript": "^5.9.3",
+    "uploadthing": "^7.7.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.24",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18"
+  }
+}

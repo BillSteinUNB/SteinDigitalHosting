@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/* Custom CSS Variables */
+:root {
+  /* Primary - Championship Gold */
+  --gold: #D4AF37;
+  --gold-light: #E5C76B;
+  --gold-dark: #B8960C;
+  --gold-muted: #A89050;
+  
+  /* Foundation - Velvet Black */
+  --black-pure: #000000;
+  --black-rich: #0A0A0A;
+  --black-elevated: #141414;
+  --black-soft: #1A1A1A;
+  --black-border: #2A2A2A;
+  
+  /* Light Surfaces */
+  --white-pure: #FFFFFF;
+  --white-warm: #FAFAF8;
+  --gray-light: #F5F5F3;
+  --gray-mid: #E5E5E3;
+  
+  /* Text */
+  --text-white: #FFFFFF;
+  --text-gray: #A0A0A0;
+  --text-dark: #1A1A1A;
+  --text-muted: #666666;
+  
+  /* Functional */
+  --success: #10B981;
+  --error: #EF4444;
+  --info: #3B82F6;
+  
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  
+  /* Easing Functions */
+  --ease-elegant: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--black-rich);
+  color: var(--text-white);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Gold Gradient */
+.gradient-gold {
+  background: linear-gradient(
+    135deg,
+    #D4AF37 0%,
+    #F5E6A3 25%,
+    #D4AF37 50%,
+    #B8960C 75%,
+    #D4AF37 100%
+  );
+}
+
+/* Gold Shimmer Effect */
+.gold-shimmer {
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(212, 175, 55, 0.1) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Trophy Gleam Effect */
+.trophy-gleam {
+  position: relative;
+  overflow: hidden;
+}
+
+.trophy-gleam::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.trophy-gleam:hover::after {
+  left: 100%;
+}
+
+/* Golden Reveal Animation */
+.golden-reveal {
+  position: relative;
+  opacity: 0;
+}
+
+.golden-reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--gold);
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  transition: clip-path 0.6s var(--ease-reveal);
+  pointer-events: none;
+}
+
+.golden-reveal.in-view::before {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.golden-reveal.in-view {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.3s;
+}
+
+/* Card Hover Effects */
+.product-card {
+  transition: transform 0.3s var(--ease-reveal),
+              box-shadow 0.3s var(--ease-reveal);
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px var(--gold);
+}
+
+/* Button Styles */
+.btn-primary {
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  transition: all 0.3s var(--ease-elegant);
+}
+
+.btn-primary:hover {
+  background: var(--gold);
+  color: var(--black-pure);
+}
+
+/* Gallery Item Hover */
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-item img {
+  transition: transform 0.5s var(--ease-reveal);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+.gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(212, 175, 55, 0.8) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover::after {
+  opacity: 1;
+}
+
+/* Swiper Customization */
+.swiper-pagination-bullet {
+  background: var(--text-gray) !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--gold) !important;
+  opacity: 1;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  color: var(--gold) !important;
+}
+
+/* Form Styles */
+input,
+textarea,
+select {
+  background-color: var(--black-elevated);
+  border: 1px solid var(--black-border);
+  color: var(--text-white);
+  transition: border-color 0.3s var(--ease-elegant);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black-rich);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--black-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-muted);
+}
+
+/* Selection */
+::selection {
+  background: var(--gold);
+  color: var(--black-pure);
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--black-pure);
+  padding: 0.5rem 1rem;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Focus States */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
