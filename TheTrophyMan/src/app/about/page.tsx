@@ -4,43 +4,25 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Award, Users, Clock, MapPin } from 'lucide-react';
-import { client } from '@/lib/sanity';
-import { aboutQuery, siteSettingsQuery } from '@/lib/queries';
-import { urlFor } from '@/lib/sanity';
-import type { About, SiteSettings } from '@/types';
+import { mockAbout, mockSiteSettings } from '@/lib/mockData';
 
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'Learn about The Trophy Man - Oromocto\'s trusted source for custom trophies, awards, and engraving since 1998.',
+    "Learn about The Trophy Man - Oromocto's trusted source for custom trophies, awards, and engraving since 1998.",
 };
 
-export const revalidate = 3600;
-
-export default async function AboutPage() {
-  let about: About | null = null;
-  let settings: SiteSettings | null = null;
-
-  try {
-    [about, settings] = await Promise.all([
-      client.fetch(aboutQuery),
-      client.fetch(siteSettingsQuery),
-    ]);
-  } catch (error) {
-    console.error('Error fetching about page data:', error);
-  }
+export default function AboutPage() {
+  const about = mockAbout;
+  const settings = mockSiteSettings;
 
   return (
     <>
       {/* Hero Section */}
       <section className="relative py-24 bg-black-rich">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <div
             className="text-center max-w-3xl mx-auto"
           >
             <span className="text-gold font-mono text-sm uppercase tracking-ultra mb-4 block">
@@ -53,7 +35,7 @@ export default async function AboutPage() {
               {about?.mission ||
                 'Celebrating achievement and craftsmanship in Oromocto since 1998.'}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -62,35 +44,23 @@ export default async function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Image */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            <div
+             
+             
+             
+             
             >
-              <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl">
-                {about?.teamImage ? (
-                  <Image
-                    src={urlFor(about.teamImage).width(800).height(600).url()}
-                    alt={about.teamImage.alt || 'The Trophy Man Team'}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-light flex items-center justify-center">
-                    <Users className="w-24 h-24 text-gold-muted" />
-                  </div>
-                )}
+              <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl bg-gray-light flex items-center justify-center">
+                <Users className="w-24 h-24 text-gold-muted" />
               </div>
-            </motion.div>
+            </div>
 
             {/* Content */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            <div
+             
+             
+             
+             
             >
               <h2 className="font-display text-h1 font-bold text-text-dark mb-6">
                 Our Story
@@ -137,7 +107,7 @@ export default async function AboutPage() {
                   <p className="text-text-muted text-sm">Turnaround</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -145,11 +115,11 @@ export default async function AboutPage() {
       {/* Mission Section */}
       <section className="py-24 bg-black-soft">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <div
+           
+           
+           
+           
           >
             <span className="text-gold font-mono text-sm uppercase tracking-ultra mb-4 block">
               Our Mission
@@ -159,7 +129,7 @@ export default async function AboutPage() {
               "{about?.mission ||
                 'To provide quality awards and recognition products that celebrate achievement and create lasting memories for our community.'}"
             </blockquote>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -168,52 +138,28 @@ export default async function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Images */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            <div
+             
+             
+             
+             
               className="grid grid-cols-2 gap-4"
             >
-              <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
-                {about?.exteriorImage ? (
-                  <Image
-                    src={urlFor(about.exteriorImage).width(400).height(400).url()}
-                    alt={about.exteriorImage.alt || 'Store Exterior'}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-light flex items-center justify-center">
-                    <MapPin className="w-12 h-12 text-gold-muted" />
-                  </div>
-                )}
+              <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-light flex items-center justify-center">
+                <MapPin className="w-12 h-12 text-gold-muted" />
               </div>
 
-              <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
-                {about?.workshopImage ? (
-                  <Image
-                    src={urlFor(about.workshopImage).width(400).height(400).url()}
-                    alt={about.workshopImage.alt || 'Workshop'}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-light flex items-center justify-center">
-                    <Award className="w-12 h-12 text-gold-muted" />
-                  </div>
-                )}
+              <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-light flex items-center justify-center">
+                <Award className="w-12 h-12 text-gold-muted" />
               </div>
-            </motion.div>
+            </div>
 
             {/* Location Info */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            <div
+             
+             
+             
+             
             >
               <h2 className="font-display text-h1 font-bold text-text-dark mb-6">
                 Visit Us
@@ -272,7 +218,7 @@ export default async function AboutPage() {
               >
                 Visit Us Today →
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

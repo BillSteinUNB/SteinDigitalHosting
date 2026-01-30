@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import type { Testimonial } from '@/types';
-import { urlFor } from '@/lib/sanity';
+
 
 // Import Swiper styles
 import 'swiper/css';
@@ -113,23 +113,11 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
 
                   {/* Author */}
                   <div className="flex items-center gap-4">
-                    {testimonial.image ? (
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                        <Image
-                          src={urlFor(testimonial.image).width(100).height(100).url()}
-                          alt={testimonial.author}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center">
-                        <span className="font-display text-xl font-bold text-gold">
-                          {testimonial.author.charAt(0)}
-                        </span>
-                      </div>
-                    )}
+                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center">
+                      <span className="font-display text-xl font-bold text-gold">
+                        {testimonial.author.charAt(0)}
+                      </span>
+                    </div>
 
                     <div>
                       <p className="font-semibold text-white">

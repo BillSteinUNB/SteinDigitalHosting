@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import type { GalleryItem } from '@/types';
-import { urlFor } from '@/lib/sanity';
+
 import { categoryLabels } from '@/types';
 
 // Import Swiper styles
@@ -91,7 +91,7 @@ export default function RecentWork({ items }: RecentWorkProps) {
                 <Link href="/gallery" className="group block">
                   <div className="relative aspect-[4/5] overflow-hidden rounded-lg gallery-item">
                     <Image
-                      src={urlFor(item.image).width(400).height(500).url()}
+                      src={`https://placehold.co/400x500/0A0A0A/D4AF37?text=${encodeURIComponent(item.title)}`}
                       alt={item.image.alt || item.title}
                       fill
                       className="object-cover"

@@ -3,7 +3,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,9 +19,7 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
-import { UploadButton } from '@/lib/uploadthing';
-import { client } from '@/lib/sanity';
-import { servicesQuery, siteSettingsQuery } from '@/lib/queries';
+import { mockServices, mockSiteSettings } from '@/lib/mockData';
 import type { Service, SiteSettings } from '@/types';
 
 // Form validation schema
@@ -35,13 +33,12 @@ const quoteSchema = z.object({
 
 type QuoteFormData = z.infer<typeof quoteSchema>;
 
-export default function GetQuotePage() {
+function QuoteForm() {
   const searchParams = useSearchParams();
   const preselectedService = searchParams.get('service');
 
-  const [services, setServices] = useState<Service[]>([]);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [files, setFiles] = useState<string[]>([]);
+  const [services] = useState<Service[]>(mockServices);
+  const [settings] = useState<SiteSettings | null>(mockSiteSettings);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'success' | 'error'
@@ -61,45 +58,20 @@ export default function GetQuotePage() {
   });
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
-    try {
-      const [servicesData, settingsData] = await Promise.all([
-        client.fetch(servicesQuery),
-        client.fetch(siteSettingsQuery),
-      ]);
-      setServices(servicesData || []);
-      setSettings(settingsData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    if (preselectedService) {
+      setValue('service', preselectedService);
     }
-  }
+  }, [preselectedService, setValue]);
 
   const onSubmit = async (data: QuoteFormData) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/api/quote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          attachments: files,
-        }),
-      });
-
-      if (response.ok) {
-        setSubmitStatus('success');
-        reset();
-        setFiles([]);
-      } else {
-        setSubmitStatus('error');
-      }
+      // Simulate form submission for demo
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setSubmitStatus('success');
+      reset();
     } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
@@ -259,46 +231,16 @@ export default function GetQuotePage() {
                       )}
                     </div>
 
-                    {/* File Upload */}
+                    {/* File Upload - Disabled for Demo */}
                     <div>
                       <label className="block text-sm font-medium text-text-dark mb-2">
                         Upload Logo/Artwork (Optional)
                       </label>
-                      <div className="border-2 border-dashed border-gray-mid rounded-lg p-6 text-center hover:border-gold transition-colors">
+                      <div className="border-2 border-dashed border-gray-mid rounded-lg p-6 text-center">
                         <Upload className="w-8 h-8 text-text-muted mx-auto mb-2" />
-                        <UploadButton
-                          endpoint="quoteAttachment"
-                          onClientUploadComplete={(res) => {
-                            if (res) {
-                              setFiles(res.map((file) => file.url));
-                            }
-                          }}
-                          onUploadError={(error: Error) => {
-                            console.error('Upload error:', error);
-                          }}
-                          appearance={{
-                            button:
-                              'bg-gold text-black-pure px-4 py-2 rounded font-medium hover:bg-gold-light transition-colors',
-                            allowedContent: 'text-text-muted text-sm mt-2',
-                          }}
-                        />
-                        {files.length > 0 && (
-                          <div className="mt-4 text-left">
-                            <p className="text-sm text-text-dark mb-2">
-                              Uploaded files:
-                            </p>
-                            <ul className="space-y-1">
-                              {files.map((file, index) => (
-                                <li
-                                  key={index}
-                                  className="text-sm text-gold truncate"
-                                >
-                                  {file.split('/').pop()}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        <p className="text-text-muted text-sm">
+                          File upload coming soon
+                        </p>
                       </div>
                     </div>
 
@@ -460,5 +402,14 @@ export default function GetQuotePage() {
         </div>
       </section>
     </>
+  );
+}
+
+// Wrap the form in Suspense for static generation
+export default function GetQuotePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black-rich flex items-center justify-center"><div className="text-gold">Loading...</div></div>}>
+      <QuoteForm />
+    </Suspense>
   );
 }

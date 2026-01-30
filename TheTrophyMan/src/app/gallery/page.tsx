@@ -7,13 +7,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { client } from '@/lib/sanity';
-import {
-  allGalleryQuery,
-  galleryByCategoryQuery,
-  galleryCategoriesQuery,
-} from '@/lib/queries';
-import { urlFor } from '@/lib/sanity';
+import { mockGalleryItems } from '@/lib/mockData';
 import type { GalleryItem, GalleryCategory } from '@/types';
 import { categoryLabels } from '@/types';
 
@@ -35,24 +29,19 @@ export default function GalleryPage() {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
   useEffect(() => {
-    fetchItems();
-  }, [activeCategory]);
-
-  async function fetchItems() {
+    // Simulate loading and filter items
     setLoading(true);
-    try {
-      const query =
+    const timer = setTimeout(() => {
+      const filteredItems =
         activeCategory === 'all'
-          ? allGalleryQuery
-          : galleryByCategoryQuery(activeCategory);
-      const data = await client.fetch(query);
-      setItems(data || []);
-    } catch (error) {
-      console.error('Error fetching gallery items:', error);
-    } finally {
+          ? mockGalleryItems
+          : mockGalleryItems.filter((item) => item.category === activeCategory);
+      setItems(filteredItems);
       setLoading(false);
-    }
-  }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [activeCategory]);
 
   // Masonry breakpoints
   const breakpointColumns = {
@@ -145,12 +134,17 @@ export default function GalleryPage() {
                     >
                       <div className="relative overflow-hidden rounded-lg gallery-item">
                         <Image
-                          src={urlFor(item.image).width(600).url()}
+                          src={`/images/gallery/${item._id}.jpg`}
                           alt={item.image.alt || item.title}
                           width={600}
                           height={400}
                           className="w-full h-auto object-cover"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          onError={(e) => {
+                            // Fallback to placeholder if image doesn't exist
+                            const target = e.target as HTMLImageElement;
+                            target.src = `https://placehold.co/600x400/D4AF37/0A0A0A?text=${encodeURIComponent(item.title)}`;
+                          }}
                         />
 
                         {/* Hover Overlay */}
@@ -200,14 +194,19 @@ export default function GalleryPage() {
               className="max-w-5xl w-full max-h-[90vh] overflow-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-black-elevated rounded-lg overflow-hidden">
+                <div className="bg-black-elevated rounded-lg overflow-hidden">
                 <div className="relative aspect-[4/3]">
                   <Image
-                    src={urlFor(selectedItem.image).width(1200).url()}
+                    src={`/images/gallery/${selectedItem._id}.jpg`}
                     alt={selectedItem.image.alt || selectedItem.title}
                     fill
                     className="object-contain"
                     sizes="(max-width: 1280px) 100vw, 1200px"
+                    onError={(e) => {
+                            // Fallback to placeholder if image doesn't exist
+                            const target = e.target as HTMLImageElement;
+                            target.src = `https://placehold.co/1200x900/D4AF37/0A0A0A?text=${encodeURIComponent(selectedItem.title)}`;
+                          }}
                   />
                 </div>
 

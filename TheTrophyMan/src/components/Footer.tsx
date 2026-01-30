@@ -3,18 +3,11 @@
 
 import Link from 'next/link';
 import { Trophy, MapPin, Phone, Mail, Clock, Facebook, Instagram } from 'lucide-react';
-import { client } from '@/lib/sanity';
-import { siteSettingsQuery } from '@/lib/queries';
-import type { SiteSettings } from '@/types';
+import { mockSiteSettings } from '@/lib/mockData';
 
-export default async function Footer() {
-  // Fetch site settings from Sanity
-  let settings: SiteSettings | null = null;
-  try {
-    settings = await client.fetch(siteSettingsQuery);
-  } catch (error) {
-    console.error('Error fetching site settings:', error);
-  }
+export default function Footer() {
+  // Use mock data for demo
+  const settings = mockSiteSettings;
 
   const currentYear = new Date().getFullYear();
 

@@ -16,7 +16,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import type { Service } from '@/types';
-import { urlFor } from '@/lib/sanity';
+
 
 interface ServicesGridProps {
   services: Service[];
@@ -83,21 +83,9 @@ export default function ServicesGrid({ services }: ServicesGridProps) {
                   className="group block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 product-card"
                 >
                   {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    {service.featuredImage ? (
-                      <Image
-                        src={urlFor(service.featuredImage).width(400).height(300).url()}
-                        alt={service.featuredImage.alt || service.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-light flex items-center justify-center">
-                        {IconComponent && (
-                          <IconComponent className="w-16 h-16 text-gold-muted" />
-                        )}
-                      </div>
+                  <div className="relative h-48 overflow-hidden bg-gray-light flex items-center justify-center">
+                    {IconComponent && (
+                      <IconComponent className="w-16 h-16 text-gold-muted" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black-rich/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>

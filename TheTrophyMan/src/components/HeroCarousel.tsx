@@ -9,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { HeroSlide } from '@/types';
-import { urlFor } from '@/lib/sanity';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -73,13 +72,13 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={slide._id} className="relative">
-            {/* Background Image */}
-            <div className="absolute inset-0">
+            {/* Background Image - Using placeholder */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black-rich via-black-elevated to-black-soft">
               <Image
-                src={urlFor(slide.image).url()}
+                src={`https://placehold.co/1920x1080/0A0A0A/D4AF37?text=${encodeURIComponent(slide.title)}`}
                 alt={slide.image.alt || slide.title}
                 fill
-                className="object-cover"
+                className="object-cover opacity-60"
                 priority={index === 0}
                 sizes="100vw"
               />

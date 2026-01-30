@@ -4,7 +4,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+
 import {
   Trophy,
   Award,
@@ -13,10 +13,10 @@ import {
   PenTool,
   Gift,
   ArrowRight,
+  Building2,
+  Medal,
 } from 'lucide-react';
-import { client } from '@/lib/sanity';
-import { servicesQuery } from '@/lib/queries';
-import { urlFor } from '@/lib/sanity';
+import { mockServices } from '@/lib/mockData';
 import type { Service } from '@/types';
 
 export const metadata: Metadata = {
@@ -25,8 +25,6 @@ export const metadata: Metadata = {
     'Custom trophies, awards, plaques, engraving, apparel, signs, and promotional products in Oromocto, NB. Quality craftsmanship for every occasion.',
 };
 
-export const revalidate = 3600;
-
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Trophy,
   Award,
@@ -34,26 +32,22 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Signpost,
   PenTool,
   Gift,
+  Building2,
+  Medal,
 };
 
-export default async function ServicesPage() {
-  let services: Service[] = [];
-
-  try {
-    services = await client.fetch(servicesQuery);
-  } catch (error) {
-    console.error('Error fetching services:', error);
-  }
+export default function ServicesPage() {
+  const services = mockServices;
 
   return (
     <>
       {/* Hero Section */}
       <section className="relative py-24 bg-black-rich">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <div
+           
+           
+           
             className="text-center max-w-3xl mx-auto"
           >
             <span className="text-gold font-mono text-sm uppercase tracking-ultra mb-4 block">
@@ -66,7 +60,7 @@ export default async function ServicesPage() {
               Quality craftsmanship for every occasion. From sports championships
               to corporate recognition, we create lasting memories.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -81,36 +75,21 @@ export default async function ServicesPage() {
               const isEven = index % 2 === 0;
 
               return (
-                <motion.div
+                <div
                   key={service._id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-100px' }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                 
+                 
+                 
+                 
                   className={`flex flex-col ${
                     isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
                   } gap-12 items-center`}
                 >
                   {/* Image */}
                   <div className="w-full lg:w-1/2">
-                    <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl">
-                      {service.featuredImage ? (
-                        <Image
-                          src={urlFor(service.featuredImage)
-                            .width(800)
-                            .height(600)
-                            .url()}
-                          alt={service.featuredImage.alt || service.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-light flex items-center justify-center">
-                          {IconComponent && (
-                            <IconComponent className="w-24 h-24 text-gold-muted" />
-                          )}
-                        </div>
+                    <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-xl bg-gray-light flex items-center justify-center">
+                      {IconComponent && (
+                        <IconComponent className="w-24 h-24 text-gold-muted" />
                       )}
                     </div>
                   </div>
@@ -132,19 +111,19 @@ export default async function ServicesPage() {
 
                     {service.startingPrice && (
                       <p className="font-mono text-gold text-xl mb-6">
-                        {service.startingPrice}
+                        Starting at {service.startingPrice}
                       </p>
                     )}
 
                     <Link
-                      href={`/services/${service.slug.current}`}
+                      href={`/get-quote?service=${service.slug.current}`}
                       className="inline-flex items-center gap-2 text-text-dark font-semibold hover:text-gold transition-colors"
                     >
-                      View Options
+                      Get a Quote
                       <ArrowRight className="w-5 h-5" />
                     </Link>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -154,11 +133,11 @@ export default async function ServicesPage() {
       {/* CTA Section */}
       <section className="py-24 bg-black-soft">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <div
+           
+           
+           
+           
           >
             <h2 className="font-display text-display font-bold text-white mb-6">
               Not Sure What You Need?
@@ -175,7 +154,7 @@ export default async function ServicesPage() {
             >
               Get a Free Quote →
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
     </>
