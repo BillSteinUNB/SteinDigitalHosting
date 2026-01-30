@@ -3,7 +3,7 @@
 
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display, Space_Mono } from 'next/font/google';
-import './globals.css';
+import '../styles/globals.css';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 

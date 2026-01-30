@@ -8,13 +8,19 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "keywords": ["trophies", "awards", "engraving", "oromocto"],
+  "keywords": [
+    "trophies",
+    "awards",
+    "engraving",
+    "oromocto"
+  ],
   "author": "Stein Digital",
   "license": "ISC",
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@sanity/client": "^7.14.1",
     "@sanity/image-url": "^2.0.3",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
