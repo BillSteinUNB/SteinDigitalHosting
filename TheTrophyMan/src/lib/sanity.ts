@@ -3,7 +3,27 @@
 
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+// Define SanityImageSource type locally since the import path is problematic
+type SanityImageSource = {
+  asset?: {
+    _ref?: string;
+    _type?: string;
+  };
+  crop?: {
+    _type?: string;
+    bottom?: number;
+    left?: number;
+    right?: number;
+    top?: number;
+  };
+  hotspot?: {
+    _type?: string;
+    height?: number;
+    width?: number;
+    x?: number;
+    y?: number;
+  };
+};
 
 export const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',

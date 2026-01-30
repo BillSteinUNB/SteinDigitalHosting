@@ -101,7 +101,7 @@ export default function RecentWork({ items }: RecentWorkProps) {
                     {/* Overlay Content */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black-rich/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                       <span className="text-gold font-mono text-xs uppercase tracking-ultra mb-2">
-                        {categoryLabels[item.category] || item.category}
+                        {item.category === 'all' ? 'All Categories' : categoryLabels[item.category]}
                       </span>
                       <h3 className="font-display text-xl font-bold text-white mb-1">
                         {item.title}

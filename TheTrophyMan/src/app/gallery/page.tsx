@@ -156,7 +156,7 @@ export default function GalleryPage() {
                         {/* Hover Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black-rich/90 via-black-rich/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
                           <span className="text-gold font-mono text-xs uppercase tracking-ultra mb-1">
-                            {categoryLabels[item.category]}
+                            {item.category === 'all' ? 'All Categories' : categoryLabels[item.category]}
                           </span>
                           <h3 className="font-display text-lg font-bold text-white">
                             {item.title}
@@ -213,7 +213,7 @@ export default function GalleryPage() {
 
                 <div className="p-6">
                   <span className="text-gold font-mono text-sm uppercase tracking-ultra mb-2 block">
-                    {categoryLabels[selectedItem.category]}
+                    {selectedItem.category === 'all' ? 'All Categories' : categoryLabels[selectedItem.category]}
                   </span>
                   <h2 className="font-display text-2xl font-bold text-white mb-2">
                     {selectedItem.title}

@@ -19,8 +19,7 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
-import { UploadButton } from '@uploadthing/react';
-import type { OurFileRouter } from '@/app/api/uploadthing/core';
+import { UploadButton } from '@/lib/uploadthing';
 import { client } from '@/lib/sanity';
 import { servicesQuery, siteSettingsQuery } from '@/lib/queries';
 import type { Service, SiteSettings } from '@/types';
@@ -267,7 +266,7 @@ export default function GetQuotePage() {
                       </label>
                       <div className="border-2 border-dashed border-gray-mid rounded-lg p-6 text-center hover:border-gold transition-colors">
                         <Upload className="w-8 h-8 text-text-muted mx-auto mb-2" />
-                        <UploadButton<OurFileRouter>
+                        <UploadButton
                           endpoint="quoteAttachment"
                           onClientUploadComplete={(res) => {
                             if (res) {

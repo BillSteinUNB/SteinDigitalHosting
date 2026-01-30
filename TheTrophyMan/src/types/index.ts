@@ -1,8 +1,6 @@
 // TypeScript Type Definitions for Sanity Documents
 // These types match the Sanity schemas
 
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
-
 // Base Sanity Document
 interface SanityDocument {
   _id: string;
@@ -11,8 +9,26 @@ interface SanityDocument {
   _updatedAt?: string;
 }
 
-// Image with alt text
-export interface SanityImage extends SanityImageSource {
+// Image with alt text - matches Sanity image structure
+export interface SanityImage {
+  asset?: {
+    _ref?: string;
+    _type?: string;
+  };
+  crop?: {
+    _type?: string;
+    bottom?: number;
+    left?: number;
+    right?: number;
+    top?: number;
+  };
+  hotspot?: {
+    _type?: string;
+    height?: number;
+    width?: number;
+    x?: number;
+    y?: number;
+  };
   alt?: string;
   caption?: string;
 }
@@ -61,6 +77,7 @@ export interface GalleryItem extends SanityDocument {
 }
 
 export type GalleryCategory =
+  | 'all'
   | 'sports'
   | 'corporate'
   | 'apparel'
@@ -69,7 +86,7 @@ export type GalleryCategory =
   | 'promo'
   | 'other';
 
-export const categoryLabels: Record<GalleryCategory, string> = {
+export const categoryLabels: Record<Exclude<GalleryCategory, 'all'>, string> = {
   sports: 'Sports Awards',
   corporate: 'Corporate Awards',
   apparel: 'Apparel',
