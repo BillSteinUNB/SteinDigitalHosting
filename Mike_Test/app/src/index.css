@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Mode - Athletic Theme with Red */
+    --bg-primary: #FAFAFA;
+    --bg-secondary: #F5F5F5;
+    --bg-card: #FFFFFF;
+    --red-primary: #C41E3A;
+    --red-light: #E63950;
+    --red-dark: #9B1B30;
+    --text-primary: #1A1A1A;
+    --text-secondary: #4A4A4A;
+    --text-muted: #6B6B6B;
+    --border-light: #E5E5E5;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+.font-mono-label {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Text Sizes */
+.text-hero {
+  font-size: clamp(56px, 9vw, 140px);
+}
+
+.text-display {
+  font-size: clamp(42px, 6vw, 72px);
+}
+
+.text-section {
+  font-size: clamp(32px, 4vw, 56px);
+}
+
+/* Very subtle background */
+.bg-subtle {
+  background: linear-gradient(180deg, #FAFAFA 0%, #F8F8F8 100%);
+}
+
+/* Image Cards - Clean, no decorative elements */
+.image-card {
+  @apply rounded-2xl overflow-hidden;
+  box-shadow: 0 8px 30px -10px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.image-card img {
+  @apply w-full h-full object-cover;
+}
+
+/* Accent Rule - Red */
+.accent-rule {
+  height: 3px;
+  background: var(--red-primary);
+  border-radius: 2px;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply px-8 py-3.5 rounded-full font-mono-label text-xs tracking-widest transition-all duration-300;
+  background: var(--red-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -8px rgba(196, 30, 58, 0.35);
+}
+
+.btn-outline {
+  @apply px-8 py-3.5 border-2 rounded-full font-mono-label text-xs tracking-widest transition-all duration-300;
+  border-color: var(--red-primary);
+  color: var(--red-primary);
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: var(--red-primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Cards */
+.card-light {
+  @apply rounded-2xl p-6;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* Navigation */
+.nav-link {
+  @apply font-mono-label text-[11px] text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors relative;
+}
+
+.nav-link::after {
+  content: '';
+  @apply absolute -bottom-1 left-0 w-full h-px transform scale-x-0 origin-left transition-transform duration-300;
+  background: var(--red-primary);
+}
+
+.nav-link:hover::after {
+  @apply scale-x-100;
+}
+
+/* Form Styles */
+.form-input {
+  @apply w-full px-4 py-3.5 rounded-xl transition-all duration-300;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--red-primary);
+  box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+}
+
+/* Feature Tags */
+.feature-tag {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium;
+  background: rgba(196, 30, 58, 0.08);
+  color: var(--red-primary);
+}
+
+/* Stat Number */
+.stat-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 1;
+  color: var(--red-primary);
+}
+
+/* Section Spacing */
+.section-spacing {
+  @apply py-20 lg:py-28;
+}
+
+/* Quote Styling */
+.quote-mark {
+  font-family: 'Georgia', serif;
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(196, 30, 58, 0.15);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D1D1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B1B1B1;
+}
+
+/* Selection */
+::selection {
+  background: rgba(196, 30, 58, 0.2);
+  color: #1A1A1A;
+}
