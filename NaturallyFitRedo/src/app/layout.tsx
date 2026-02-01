@@ -3,6 +3,7 @@ import { Oswald, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { AuthProvider } from "@/components/auth";
+import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 
 // === FONT CONFIGURATION ===
 // Oswald: Headings, navigation, buttons (ALWAYS UPPERCASE)
@@ -87,11 +88,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${oswald.variable} ${openSans.variable}`}>
       <body className="font-body antialiased min-h-screen flex flex-col">
-        <AuthProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </AuthProvider>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
