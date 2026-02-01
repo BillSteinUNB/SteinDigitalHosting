@@ -468,3 +468,105 @@ export async function getBestSellers(limit: number = 8): Promise<ProductCardData
     return bestSellers.slice(0, limit);
   }
 }
+
+// Import types for paginated function
+import type { ProductFilters, ProductSortOption, PaginatedProducts } from '@/types/product';
+
+// Fetch paginated products with filters and sorting (for shop page)
+export async function getPaginatedProductsGraphQL(
+  filters: ProductFilters = {},
+  sortBy: ProductSortOption = 'default',
+  page: number = 1,
+  perPage: number = 12
+): Promise<PaginatedProducts> {
+  if (shouldUseMockData()) {
+    const { getPaginatedProducts } = await import('@/lib/mock');
+    return getPaginatedProducts({ filters, sortBy, page, perPage });
+  }
+
+  // Build where clause based on filters
+  const whereConditions: string[] = [];
+  
+  if (filters.category) {
+    whereConditions.push(`category: "${filters.category}"`);
+  }
+  
+  if (filters.onSale) {
+    whereConditions.push('onSale: true');
+  }
+  
+  if (filters.search) {
+    whereConditions.push(`search: "${filters.search}"`);
+  }
+
+  const whereClause = whereConditions.length > 0 
+    ? `, where: { ${whereConditions.join(', ')} }` 
+    : '';
+
+  // Calculate pagination
+  const first = perPage;
+  const skip = (page - 1) * perPage;
+
+  // Build orderby clause
+  let orderbyClause = '';
+  switch (sortBy) {
+    case 'price-asc':
+      orderbyClause = ', orderby: { field: PRICE, order: ASC }';
+      break;
+    case 'price-desc':
+      orderbyClause = ', orderby: { field: PRICE, order: DESC }';
+      break;
+    case 'name-asc':
+      orderbyClause = ', orderby: { field: TITLE, order: ASC }';
+      break;
+    case 'name-desc':
+      orderbyClause = ', orderby: { field: TITLE, order: DESC }';
+      break;
+    case 'date-desc':
+      orderbyClause = ', orderby: { field: DATE, order: DESC }';
+      break;
+    default:
+      // Default sorting (no specific order)
+      break;
+  }
+
+  const query = `
+    query GetPaginatedProducts($first: Int!, $skip: Int) {
+      products(first: $first, skip: $skip${whereClause}${orderbyClause}) {
+        nodes {
+          ${PRODUCT_CARD_FIELDS}
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          endCursor
+          startCursor
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await fetchGraphQL<ProductsResponse>(query, { first, skip });
+    
+    const products = data.products.nodes.map(transformToCardData);
+    const total = products.length; // Note: WooGraphQL doesn't return total count easily
+    const totalPages = data.products.pageInfo.hasNextPage ? page + 1 : page;
+
+    return {
+      products,
+      pageInfo: {
+        total,
+        totalPages,
+        currentPage: page,
+        hasNextPage: data.products.pageInfo.hasNextPage,
+        hasPreviousPage: data.products.pageInfo.hasPreviousPage,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching paginated products:', error);
+    // Fallback to mock data
+    const { getPaginatedProducts } = await import('@/lib/mock');
+    return getPaginatedProducts({ filters, sortBy, page, perPage });
+  }
+}

@@ -1,6 +1,13 @@
-"use client";
+// Homepage - Server Component with GraphQL data fetching
 
 import { Truck, Shield, Award, Clock } from "lucide-react";
+
+// GraphQL data fetching
+import { getFeaturedProducts, getSaleProducts, getBestSellers } from "@/lib/graphql/products";
+import { getFeaturedCategories } from "@/lib/graphql/categories";
+
+// Mock data (brands not available in WooCommerce GraphQL by default)
+import { featuredBrands } from "@/lib/mock/brands";
 
 // Home components
 import {
@@ -17,16 +24,24 @@ import {
 // Product components
 import { ProductCarousel } from "@/components/product";
 
-// Mock data
-import { featuredProducts, saleProducts, bestSellers } from "@/lib/mock/products";
-import { featuredCategories } from "@/lib/mock/categories";
-import { featuredBrands } from "@/lib/mock/brands";
-
 // ============================================
-// HOMEPAGE
+// HOMEPAGE - Server Component
 // ============================================
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch data from WooCommerce GraphQL
+  const [
+    featuredProducts,
+    saleProducts,
+    bestSellers,
+    featuredCategories,
+  ] = await Promise.all([
+    getFeaturedProducts(8),
+    getSaleProducts(8),
+    getBestSellers(8),
+    getFeaturedCategories(6),
+  ]);
+
   return (
     <>
       {/* Hero Carousel */}
@@ -63,9 +78,6 @@ export default function HomePage() {
         title="Featured Products"
         products={featuredProducts}
         viewAllLink="/shop?featured=true"
-        onQuickView={(id) => console.log("Quick view:", id)}
-        onAddToWishlist={(id) => console.log("Add to wishlist:", id)}
-        onAddToCart={(id) => console.log("Add to cart:", id)}
       />
 
       {/* Shop by Category */}
@@ -89,9 +101,6 @@ export default function HomePage() {
         title="On Sale Now"
         products={saleProducts}
         viewAllLink="/shop?on_sale=true"
-        onQuickView={(id) => console.log("Quick view:", id)}
-        onAddToWishlist={(id) => console.log("Add to wishlist:", id)}
-        onAddToCart={(id) => console.log("Add to cart:", id)}
       />
 
       {/* Split Promo Banners */}
@@ -117,9 +126,6 @@ export default function HomePage() {
         title="Best Sellers"
         products={bestSellers}
         viewAllLink="/shop?sort=popularity"
-        onQuickView={(id) => console.log("Quick view:", id)}
-        onAddToWishlist={(id) => console.log("Add to wishlist:", id)}
-        onAddToCart={(id) => console.log("Add to cart:", id)}
       />
 
       {/* Shop by Brand */}

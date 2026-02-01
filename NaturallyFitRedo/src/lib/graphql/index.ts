@@ -5,7 +5,8 @@ export {
   getProductBySlugGraphQL, 
   getFeaturedProducts, 
   getSaleProducts, 
-  getBestSellers 
+  getBestSellers,
+  getPaginatedProductsGraphQL
 } from './products';
 export { 
   getCategories, 

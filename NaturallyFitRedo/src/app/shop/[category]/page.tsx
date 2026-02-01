@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useState, useCallback, useEffect } from "react";
+import { useParams, useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { Container, SectionHeading, Button, EmptyState } from "@/components/ui";
 import { ProductGrid } from "@/components/product";
@@ -17,8 +18,8 @@ import {
   PerPageSelect,
   Pagination,
 } from "@/components/shop";
-import { getPaginatedProducts } from "@/lib/mock";
-import { getCategoryBySlug, getSubcategories, type CategoryWithCount } from "@/lib/mock/categories";
+import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
+import { getCategoryBySlug, getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -111,31 +112,102 @@ function Subcategories({ subcategories, currentSlug }: SubcategoriesProps) {
 
 export default function CategoryPage() {
   const params = useParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const categorySlug = params.category as string;
 
-  // Get category data
-  const category = getCategoryBySlug(categorySlug);
-  const subcategories = getSubcategories(categorySlug);
-
-  // State
-  const [filters, setFilters] = useState<ProductFilters>({
-    category: categorySlug,
+  // Fetch category data
+  const { data: category, isLoading: isLoadingCategory, error: categoryError } = useQuery({
+    queryKey: ["category", categorySlug],
+    queryFn: () => getCategoryBySlug(categorySlug),
   });
-  const [sortBy, setSortBy] = useState<ProductSortOption>("default");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(12);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Fetch all categories to find subcategories
+  const { data: allCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
+
+  // Derive subcategories from all categories
+  const subcategories = allCategories?.filter(
+    (cat) => cat.parent?.slug === categorySlug
+  ) || [];
+
+  // Initialize state from URL params
+  const [filters, setFilters] = useState<ProductFilters>(() => {
+    const initialFilters: ProductFilters = { category: categorySlug };
+    const brand = searchParams.get("brand");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const onSale = searchParams.get("on_sale");
+    const inStock = searchParams.get("in_stock");
+
+    if (brand) initialFilters.brand = brand;
+    if (minPrice) initialFilters.minPrice = parseFloat(minPrice);
+    if (maxPrice) initialFilters.maxPrice = parseFloat(maxPrice);
+    if (onSale === "true") initialFilters.onSale = true;
+    if (inStock === "true") initialFilters.inStock = true;
+
+    return initialFilters;
+  });
+
+  const [sortBy, setSortBy] = useState<ProductSortOption>(
+    (searchParams.get("sort") as ProductSortOption) || "default"
+  );
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page") || "1", 10)
+  );
+  const [perPage, setPerPage] = useState(
+    parseInt(searchParams.get("perPage") || "12", 10)
+  );
+  const [viewMode, setViewMode] = useState<"grid" | "list">(
+    (searchParams.get("view") as "grid" | "list") || "grid"
+  );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
-  // Get paginated products
-  const { products, pageInfo } = useMemo(() => {
-    return getPaginatedProducts({
-      filters,
-      sortBy,
-      page: currentPage,
-      perPage,
-    });
-  }, [filters, sortBy, currentPage, perPage]);
+  // Fetch products from GraphQL using React Query
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["category-products", filters, sortBy, currentPage, perPage],
+    queryFn: () =>
+      getPaginatedProductsGraphQL(filters, sortBy, currentPage, perPage),
+  });
+
+  const products = data?.products || [];
+  const pageInfo = data?.pageInfo || {
+    total: 0,
+    totalPages: 0,
+    currentPage: 1,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  };
+
+  // Update URL when state changes
+  const updateURL = useCallback(() => {
+    const params = new URLSearchParams();
+
+    if (filters.brand) params.set("brand", filters.brand);
+    if (filters.minPrice !== undefined)
+      params.set("minPrice", filters.minPrice.toString());
+    if (filters.maxPrice !== undefined)
+      params.set("maxPrice", filters.maxPrice.toString());
+    if (filters.onSale) params.set("on_sale", "true");
+    if (filters.inStock) params.set("in_stock", "true");
+    if (sortBy !== "default") params.set("sort", sortBy);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    if (perPage !== 12) params.set("perPage", perPage.toString());
+    if (viewMode !== "grid") params.set("view", viewMode);
+
+    const newURL = params.toString()
+      ? `${pathname}?${params.toString()}`
+      : pathname;
+    router.replace(newURL, { scroll: false });
+  }, [filters, sortBy, currentPage, perPage, viewMode, pathname, router]);
+
+  // Update URL when state changes
+  useEffect(() => {
+    updateURL();
+  }, [updateURL]);
 
   // Handler: Update filters
   const handleFilterChange = useCallback(
@@ -198,8 +270,33 @@ export default function CategoryPage() {
     filters.onSale ||
     filters.inStock;
 
+  // Loading state for category
+  if (isLoadingCategory) {
+    return (
+      <main className="min-h-screen bg-white">
+        <section className="bg-gray-light py-8 md:py-12">
+          <Container>
+            <div className="animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+              <div className="h-8 bg-gray-200 rounded w-64 mx-auto"></div>
+            </div>
+          </Container>
+        </section>
+        <Container className="py-8 md:py-12">
+          <div className="animate-pulse">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-64 bg-gray-100 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </main>
+    );
+  }
+
   // 404 for unknown category
-  if (!category) {
+  if (!category || categoryError) {
     return (
       <main className="min-h-screen bg-white">
         <Container className="py-16">
@@ -311,37 +408,71 @@ export default function CategoryPage() {
               </div>
             )}
 
-            {/* Products Grid */}
-            {products.length > 0 ? (
-              <>
-                <ProductGrid
-                  products={products}
-                  columns={viewMode === "list" ? 2 : 4}
-                  className="py-0"
-                />
-
-                {pageInfo.totalPages > 1 && (
-                  <div className="mt-8 pt-8 border-t border-gray-border">
-                    <Pagination
-                      currentPage={pageInfo.currentPage}
-                      totalPages={pageInfo.totalPages}
-                      onPageChange={handlePageChange}
-                    />
+            {/* Loading State */}
+            {isLoading && (
+              <div className="py-12 text-center">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-1/4 mx-auto mb-4"></div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="h-64 bg-gray-100 rounded"></div>
+                    ))}
                   </div>
-                )}
-              </>
-            ) : (
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
               <EmptyState
-                title="No Products Found"
-                description="No products match your current filters. Try adjusting your criteria."
+                title="Error Loading Products"
+                description="There was a problem loading the products. Please try again."
                 action={
-                  hasActiveFilters ? (
-                    <Button variant="primary" onClick={handleClearFilters}>
-                      CLEAR FILTERS
-                    </Button>
-                  ) : undefined
+                  <Button
+                    variant="primary"
+                    onClick={() => window.location.reload()}
+                  >
+                    RETRY
+                  </Button>
                 }
               />
+            )}
+
+            {/* Products Grid */}
+            {!isLoading && !error && (
+              <>
+                {products.length > 0 ? (
+                  <>
+                    <ProductGrid
+                      products={products}
+                      columns={viewMode === "list" ? 2 : 4}
+                      className="py-0"
+                    />
+
+                    {pageInfo.totalPages > 1 && (
+                      <div className="mt-8 pt-8 border-t border-gray-border">
+                        <Pagination
+                          currentPage={pageInfo.currentPage}
+                          totalPages={pageInfo.totalPages}
+                          onPageChange={handlePageChange}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <EmptyState
+                    title="No Products Found"
+                    description="No products match your current filters. Try adjusting your criteria."
+                    action={
+                      hasActiveFilters ? (
+                        <Button variant="primary" onClick={handleClearFilters}>
+                          CLEAR FILTERS
+                        </Button>
+                      ) : undefined
+                    }
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
