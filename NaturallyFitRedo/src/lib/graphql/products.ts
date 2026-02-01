@@ -503,10 +503,6 @@ export async function getPaginatedProductsGraphQL(
     ? `, where: { ${whereConditions.join(', ')} }` 
     : '';
 
-  // Calculate pagination
-  const first = perPage;
-  const skip = (page - 1) * perPage;
-
   // Build orderby clause
   let orderbyClause = '';
   switch (sortBy) {
@@ -530,9 +526,13 @@ export async function getPaginatedProductsGraphQL(
       break;
   }
 
+  // WooGraphQL doesn't support "skip" - we need to fetch more products to cover the page
+  // For small catalogs, fetch all; for larger ones, we'll need cursor-based pagination
+  const first = page * perPage; // Fetch enough to cover up to current page
+
   const query = `
-    query GetPaginatedProducts($first: Int!, $skip: Int) {
-      products(first: $first, skip: $skip${whereClause}${orderbyClause}) {
+    query GetPaginatedProducts($first: Int!) {
+      products(first: $first${whereClause}${orderbyClause}) {
         nodes {
           ${PRODUCT_CARD_FIELDS}
         }
@@ -547,20 +547,26 @@ export async function getPaginatedProductsGraphQL(
   `;
 
   try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first, skip });
+    const data = await fetchGraphQL<ProductsResponse>(query, { first });
     
-    const products = data.products.nodes.map(transformToCardData);
-    const total = products.length; // Note: WooGraphQL doesn't return total count easily
-    const totalPages = data.products.pageInfo.hasNextPage ? page + 1 : page;
+    const allProducts = data.products.nodes.map(transformToCardData);
+    
+    // Apply client-side pagination since WooGraphQL doesn't support skip
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedProducts = allProducts.slice(startIndex, endIndex);
+    
+    const total = allProducts.length;
+    const totalPages = Math.ceil(total / perPage);
 
     return {
-      products,
+      products: paginatedProducts,
       pageInfo: {
         total,
         totalPages,
         currentPage: page,
-        hasNextPage: data.products.pageInfo.hasNextPage,
-        hasPreviousPage: data.products.pageInfo.hasPreviousPage,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
       },
     };
   } catch (error) {
