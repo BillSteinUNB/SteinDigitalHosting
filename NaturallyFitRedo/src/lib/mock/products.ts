@@ -11,7 +11,7 @@ import type {
 
 // Placeholder image URLs (using placeholder service)
 const placeholderImage = (id: number, name: string) => ({
-  sourceUrl: `/images/products/placeholder-${id}.jpg`,
+  sourceUrl: `https://placehold.co/600x600/1a1a2e/eee?text=${encodeURIComponent(name.slice(0, 20))}`,
   altText: name,
   id: `img-${id}`,
 });
