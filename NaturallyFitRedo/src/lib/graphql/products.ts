@@ -1,5 +1,6 @@
 // WooCommerce GraphQL Queries
 import { fetchGraphQL, shouldUseMockData } from './client';
+import { getFallbackImage, isWordPressImage } from '@/lib/fallback-images';
 import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockStatus } from '@/types/product';
 
 // GraphQL response types
@@ -208,15 +209,23 @@ function convertStockStatus(status: string): StockStatus {
 
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
+  // Check if WordPress image needs fallback
+  const originalImageUrl = wooProduct.image?.sourceUrl || '';
+  const needsFallback = !originalImageUrl || isWordPressImage(originalImageUrl);
+  const fallbackUrl = needsFallback ? getFallbackImage(wooProduct.name) : originalImageUrl;
+  
   return {
     id: wooProduct.id,
     databaseId: wooProduct.databaseId,
     slug: wooProduct.slug,
     name: wooProduct.name,
     image: wooProduct.image ? {
-      sourceUrl: wooProduct.image.sourceUrl,
+      sourceUrl: fallbackUrl,
       altText: wooProduct.image.altText || wooProduct.name,
-    } : undefined,
+    } : {
+      sourceUrl: fallbackUrl,
+      altText: wooProduct.name,
+    },
     price: wooProduct.price || '$0.00',
     regularPrice: wooProduct.regularPrice || '$0.00',
     salePrice: wooProduct.salePrice || undefined,
@@ -234,19 +243,36 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
 
 // Convert WooCommerce product to full Product type
 function transformToProduct(wooProduct: WooProduct): Product {
+  // Check if WordPress image needs fallback
+  const originalImageUrl = wooProduct.image?.sourceUrl || '';
+  const needsFallback = !originalImageUrl || isWordPressImage(originalImageUrl);
+  const fallbackUrl = needsFallback ? getFallbackImage(wooProduct.name) : originalImageUrl;
+  
+  // Process gallery images with fallbacks
+  const galleryImages = wooProduct.galleryImages?.nodes.map(img => {
+    const imgNeedsFallback = !img.sourceUrl || isWordPressImage(img.sourceUrl);
+    return {
+      sourceUrl: imgNeedsFallback ? fallbackUrl : img.sourceUrl,
+      altText: img.altText || wooProduct.name,
+    };
+  }) || [];
+  
   const baseProduct = {
     id: wooProduct.id,
     databaseId: wooProduct.databaseId,
     slug: wooProduct.slug,
     name: wooProduct.name,
     image: wooProduct.image ? {
-      sourceUrl: wooProduct.image.sourceUrl,
+      sourceUrl: fallbackUrl,
       altText: wooProduct.image.altText || wooProduct.name,
-    } : undefined,
-    galleryImages: wooProduct.galleryImages?.nodes.map(img => ({
-      sourceUrl: img.sourceUrl,
-      altText: img.altText || wooProduct.name,
-    })) || [],
+    } : {
+      sourceUrl: fallbackUrl,
+      altText: wooProduct.name,
+    },
+    galleryImages: galleryImages.length > 0 ? galleryImages : [{
+      sourceUrl: fallbackUrl,
+      altText: wooProduct.name,
+    }],
     description: wooProduct.description || '',
     shortDescription: wooProduct.shortDescription || '',
     sku: wooProduct.sku || '',
