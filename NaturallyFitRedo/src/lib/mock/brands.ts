@@ -44,19 +44,6 @@ export const brands: BrandWithDetails[] = [
   },
   {
     id: "brand-3",
-    name: "Mammoth",
-    slug: "mammoth",
-    logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-1.png",
-      altText: "Mammoth Logo",
-    },
-    description: "Canadian supplement brand with premium quality products.",
-    productCount: 18,
-    featured: true,
-    website: "https://www.mammothsupplements.com",
-  },
-  {
-    id: "brand-4",
     name: "Believe Supplements",
     slug: "believe-supplements",
     logo: {
