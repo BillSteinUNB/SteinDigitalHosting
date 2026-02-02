@@ -13,8 +13,7 @@ import MegaMenu from "./MegaMenu";
  *
  * Row 2 of Header (Height: 50px):
  * - Navigation items with dropdowns
- * - Red bottom border (3px)
- * - Red skewed accent after dropdown items
+ * - Light gray background
  * - 24 Hour Gym button in yellow
  * - Auth status (Login/Register or User dropdown)
  */
@@ -35,23 +34,17 @@ export default function MainNav() {
     await signOut({ callbackUrl: "/" });
   };
 
-  // Check if nav item should have red skewed accent
-  const hasRedAccent = (label: string) => {
-    return label === "Shop" || label === "Brands" || label === "Wholesale";
-  };
-
   return (
     <nav
-      className="hidden lg:block border-b-[3px] border-red-primary bg-white"
+      className="hidden lg:block bg-[#e6e6e6] border-b border-gray-border"
       aria-label="Main navigation"
     >
       <div className="container">
-        <ul className="flex items-center h-[50px] gap-1">
+        <ul className="flex items-center h-[46px] gap-1">
           {mainNavItems.map((item) => {
             const isShop = item.label === "Shop";
             const hasDropdown = isShop || (item.children && item.children.length > 0);
             const isActive = activeDropdown === item.label;
-            const showRedAccent = hasRedAccent(item.label);
 
             return (
               <li
@@ -65,26 +58,18 @@ export default function MainNav() {
                   href={item.href}
                   className={cn(
                     "flex items-center gap-1 h-full px-3",
-                    "font-heading font-semibold text-small uppercase tracking-heading",
+                    "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
                     "transition-colors",
                     // Highlight style (24 Hour Gym)
                     item.highlight
-                      ? "bg-yellow-highlight text-black hover:brightness-95 font-bold"
-                      : "text-black hover:text-red-primary",
+                      ? "bg-yellow-highlight text-[#151515] hover:brightness-95"
+                      : "text-[#151515] hover:text-red-primary",
                     // Active state
                     isActive && !item.highlight && "text-red-primary"
                   )}
                 >
                   {item.label}
-                  {showRedAccent && (
-                    /* Red skewed rectangular accent */
-                    <span 
-                      className="inline-block w-2 h-3 bg-red-primary ml-1"
-                      style={{ transform: "skewX(-15deg)" }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  {hasDropdown && !showRedAccent && (
+                  {hasDropdown && (
                     <ChevronDown
                       size={14}
                       strokeWidth={2}
@@ -157,8 +142,8 @@ export default function MainNav() {
                 <button
                   className={cn(
                     "flex items-center gap-2 h-full px-3",
-                    "font-heading font-semibold text-small uppercase tracking-heading",
-                    "text-black hover:text-red-primary transition-colors",
+                    "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
+                    "text-[#151515] hover:text-red-primary transition-colors",
                     showUserMenu && "text-red-primary"
                   )}
                 >
@@ -257,8 +242,8 @@ export default function MainNav() {
                 href="/login"
                 className={cn(
                   "flex items-center h-full px-3",
-                  "font-heading font-semibold text-small uppercase tracking-heading",
-                  "text-black hover:text-red-primary transition-colors"
+                  "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
+                  "text-[#151515] hover:text-red-primary transition-colors"
                 )}
               >
                 Login / Register

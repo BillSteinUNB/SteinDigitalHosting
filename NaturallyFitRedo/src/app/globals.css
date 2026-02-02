@@ -28,8 +28,8 @@
   --color-star-empty: #D3D3D3;
   
   /* === TYPOGRAPHY === */
-  --font-heading: 'Oswald', 'Impact', sans-serif;
-  --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-heading: var(--font-plus-jakarta), 'Helvetica Neue', Arial, sans-serif;
+  --font-body: var(--font-plus-jakarta), 'Helvetica Neue', Arial, sans-serif;
   
   /* Size scale (desktop) */
   --text-hero: 48px;

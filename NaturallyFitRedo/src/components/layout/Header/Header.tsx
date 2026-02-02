@@ -16,7 +16,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-sticky bg-white">
+    <header className="sticky top-0 z-sticky bg-white font-body text-[14px] text-[#464646]">
       {/* Row 1: Top Bar */}
       <TopBar onMobileMenuToggle={() => setIsMobileMenuOpen(true)} />
 

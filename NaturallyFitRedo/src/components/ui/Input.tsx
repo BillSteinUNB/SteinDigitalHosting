@@ -252,7 +252,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div className="relative">
         {/* Search icon */}
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-medium pointer-events-none">
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9a9a9a] pointer-events-none">
           <svg
             width="20"
             height="20"
@@ -274,10 +274,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           onKeyDown={handleKeyDown}
           className={cn(
             // Base styles
-            "w-full pl-10 pr-4 py-2.5 min-h-[40px]",
-            "text-small font-body text-black",
-            "bg-white border border-gray-border rounded-full",
-            "placeholder:text-gray-medium",
+            "w-full pl-4 pr-10 py-2.5 min-h-[40px]",
+            "text-small font-body text-[#464646]",
+            "bg-white border border-[#cfcfcf] rounded-full",
+            "placeholder:text-[#9a9a9a]",
             "transition-colors duration-200",
             // Focus state
             "focus:outline-none focus:border-black",

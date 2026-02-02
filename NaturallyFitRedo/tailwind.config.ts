@@ -37,8 +37,8 @@ const config: Config = {
       
       // === TYPOGRAPHY ===
       fontFamily: {
-        heading: ["var(--font-oswald)", "Impact", "sans-serif"],
-        body: ["var(--font-open-sans)", "Helvetica Neue", "sans-serif"],
+        heading: ["var(--font-plus-jakarta)", "Helvetica Neue", "Arial", "sans-serif"],
+        body: ["var(--font-plus-jakarta)", "Helvetica Neue", "Arial", "sans-serif"],
       },
       fontSize: {
         hero: ["48px", { lineHeight: "1.1" }],

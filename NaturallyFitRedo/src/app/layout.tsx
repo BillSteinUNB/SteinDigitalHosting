@@ -1,24 +1,16 @@
 import type { Metadata } from "next";
-import { Oswald, Open_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { AuthProvider } from "@/components/auth";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 
 // === FONT CONFIGURATION ===
-// Oswald: Headings, navigation, buttons (ALWAYS UPPERCASE)
-const oswald = Oswald({
+// Plus Jakarta Sans: Primary font for header + body to match live site
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--font-oswald",
-  display: "swap",
-});
-
-// Open Sans: Body text, descriptions, form labels
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-open-sans",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-plus-jakarta",
   display: "swap",
 });
 
@@ -86,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${oswald.variable} ${openSans.variable}`}>
+    <html lang="en" className={`${plusJakartaSans.variable}`}>
       <body className="font-body antialiased min-h-screen flex flex-col">
         <ReactQueryProvider>
           <AuthProvider>
