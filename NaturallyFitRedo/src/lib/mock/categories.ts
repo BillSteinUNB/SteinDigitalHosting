@@ -22,7 +22,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 245,
     description: "Shop by your favorite supplement brands.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Brands",
+      sourceUrl: "/images/categories/protein.png",
       altText: "Supplement Brands",
     },
     children: [
@@ -131,7 +131,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 156,
     description: "High-quality protein powders, bars, and drinks to fuel your gains.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Protein",
+      sourceUrl: "/images/categories/protein.png",
       altText: "Protein Supplements",
     },
     children: [
@@ -176,7 +176,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 89,
     description: "Boost your energy and performance before training.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Pre-Workout",
+      sourceUrl: "/images/categories/pre-workout.png",
       altText: "Pre-Workout Supplements",
     },
     children: [
@@ -205,7 +205,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 67,
     description: "Thermogenic and metabolic support for weight management.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Fat+Burners",
+      sourceUrl: "/images/categories/fat-burners.png",
       altText: "Fat Burner Supplements",
     },
     children: [
@@ -242,7 +242,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 94,
     description: "Optimize your recovery and reduce muscle soreness.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Recovery",
+      sourceUrl: "/images/categories/recovery.png",
       altText: "Recovery Supplements",
     },
     children: [
@@ -271,7 +271,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 52,
     description: "High-calorie formulas for building mass and muscle.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Weight+Gainer",
+      sourceUrl: "/images/categories/weight-gainers.png",
       altText: "Weight Gainer Supplements",
     },
     children: [
@@ -308,7 +308,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 128,
     description: "Healthy snacks, drinks, and on-the-go nutrition.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Snacks+%26+Drinks",
+      sourceUrl: "/images/categories/health-wellness.png",
       altText: "Healthy Snacks and Drinks",
     },
     children: [
@@ -345,7 +345,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 76,
     description: "Specialized dietary supplements for health and performance.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Dietary+Supplement",
+      sourceUrl: "/images/categories/recovery.png",
       altText: "Dietary Supplements",
     },
     children: [
@@ -374,7 +374,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 112,
     description: "Vitamins, minerals, and wellness supplements for overall health.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Health+%26+Balance",
+      sourceUrl: "/images/categories/health-wellness.png",
       altText: "Health and Balance Supplements",
     },
     children: [
@@ -419,7 +419,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 24,
     description: "Special featured products and exclusive bundles.",
     image: {
-      sourceUrl: "https://placehold.co/400x300/1a1a2e/eee?text=Featured+Products",
+      sourceUrl: "/images/categories/protein.png",
       altText: "Featured Products",
     },
     children: [

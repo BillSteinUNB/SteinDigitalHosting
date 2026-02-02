@@ -48,7 +48,7 @@ const defaultSlides: HeroSlide[] = [
     secondaryCtaText: "View Sale Items",
     secondaryCtaLink: "/shop?on_sale=true",
     image: {
-      src: "/images/hero/hero-1.jpg",
+      src: "/images/hero/hero-1.png",
       alt: "Athlete training with supplements",
     },
     textPosition: "left",
@@ -62,7 +62,7 @@ const defaultSlides: HeroSlide[] = [
     ctaText: "Shop Sale",
     ctaLink: "/shop?on_sale=true",
     image: {
-      src: "/images/hero/hero-2.jpg",
+      src: "/images/hero/hero-2.png",
       alt: "Supplement sale promotion",
     },
     textPosition: "left",
@@ -76,7 +76,7 @@ const defaultSlides: HeroSlide[] = [
     ctaText: "Shop GHOST",
     ctaLink: "/brands/ghost",
     image: {
-      src: "/images/hero/hero-3.jpg",
+      src: "/images/hero/hero-3.png",
       alt: "GHOST supplements",
     },
     textPosition: "left",
@@ -92,7 +92,7 @@ const defaultSlides: HeroSlide[] = [
     secondaryCtaText: "Apply Now",
     secondaryCtaLink: "/wholesale/apply",
     image: {
-      src: "/images/hero/hero-4.jpg",
+      src: "/images/hero/hero-4.png",
       alt: "Wholesale supplements",
     },
     textPosition: "left",

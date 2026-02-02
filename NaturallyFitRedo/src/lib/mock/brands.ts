@@ -21,7 +21,7 @@ export const brands: BrandWithDetails[] = [
     name: "Optimum Nutrition",
     slug: "optimum-nutrition",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Optimum+Nutrition",
+      sourceUrl: "/images/brands/brand-1.svg",
       altText: "Optimum Nutrition Logo",
     },
     description:
@@ -35,7 +35,7 @@ export const brands: BrandWithDetails[] = [
     name: "MuscleTech",
     slug: "muscletech",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=MuscleTech",
+      sourceUrl: "/images/brands/brand-2.svg",
       altText: "MuscleTech Logo",
     },
     description:
@@ -49,7 +49,7 @@ export const brands: BrandWithDetails[] = [
     name: "Cellucor",
     slug: "cellucor",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Cellucor",
+      sourceUrl: "/images/brands/brand-3.svg",
       altText: "Cellucor Logo",
     },
     description:
@@ -63,7 +63,7 @@ export const brands: BrandWithDetails[] = [
     name: "Ghost",
     slug: "ghost",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Ghost",
+      sourceUrl: "/images/brands/brand-4.svg",
       altText: "GHOST Logo",
     },
     description:
@@ -77,7 +77,7 @@ export const brands: BrandWithDetails[] = [
     name: "BSN",
     slug: "bsn",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=BSN",
+      sourceUrl: "/images/brands/brand-5.svg",
       altText: "BSN Logo",
     },
     description:
@@ -91,7 +91,7 @@ export const brands: BrandWithDetails[] = [
     name: "EVL Nutrition",
     slug: "evl-nutrition",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=EVL",
+      sourceUrl: "/images/brands/brand-6.svg",
       altText: "EVL Nutrition Logo",
     },
     description:
@@ -105,7 +105,7 @@ export const brands: BrandWithDetails[] = [
     name: "Dymatize",
     slug: "dymatize",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Dymatize",
+      sourceUrl: "/images/brands/brand-7.svg",
       altText: "Dymatize Logo",
     },
     description:
@@ -119,7 +119,7 @@ export const brands: BrandWithDetails[] = [
     name: "JYM Supplement Science",
     slug: "jym",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=JYM",
+      sourceUrl: "/images/brands/brand-8.svg",
       altText: "JYM Supplement Science Logo",
     },
     description:
@@ -133,7 +133,7 @@ export const brands: BrandWithDetails[] = [
     name: "Rule One Proteins",
     slug: "rule-one",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Rule+One",
+      sourceUrl: "/images/brands/brand-1.svg",
       altText: "Rule One Proteins Logo",
     },
     description:
@@ -147,7 +147,7 @@ export const brands: BrandWithDetails[] = [
     name: "PEScience",
     slug: "pescience",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=PEScience",
+      sourceUrl: "/images/brands/brand-2.svg",
       altText: "PEScience Logo",
     },
     description:
@@ -160,7 +160,7 @@ export const brands: BrandWithDetails[] = [
     name: "Nutrex Research",
     slug: "nutrex",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Nutrex",
+      sourceUrl: "/images/brands/brand-3.svg",
       altText: "Nutrex Research Logo",
     },
     description:
@@ -173,7 +173,7 @@ export const brands: BrandWithDetails[] = [
     name: "Redcon1",
     slug: "redcon1",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Redcon1",
+      sourceUrl: "/images/brands/brand-4.svg",
       altText: "Redcon1 Logo",
     },
     description:
@@ -187,7 +187,7 @@ export const brands: BrandWithDetails[] = [
     name: "Allmax Nutrition",
     slug: "allmax",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Allmax",
+      sourceUrl: "/images/brands/brand-5.svg",
       altText: "Allmax Nutrition Logo",
     },
     description:
@@ -200,7 +200,7 @@ export const brands: BrandWithDetails[] = [
     name: "GAT Sport",
     slug: "gat-sport",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=GAT+Sport",
+      sourceUrl: "/images/brands/brand-6.svg",
       altText: "GAT Sport Logo",
     },
     description:
@@ -213,7 +213,7 @@ export const brands: BrandWithDetails[] = [
     name: "Quest Nutrition",
     slug: "quest",
     logo: {
-      sourceUrl: "https://placehold.co/200x100/1a1a2e/eee?text=Quest",
+      sourceUrl: "/images/brands/brand-7.svg",
       altText: "Quest Nutrition Logo",
     },
     description:
