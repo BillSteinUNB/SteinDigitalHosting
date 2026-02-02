@@ -40,12 +40,12 @@ export interface HeroSlide {
 // WORDPRESS IMAGE REFERENCES - RevSlider Homepage
 // ============================================
 const WP_HERO_IMAGES = {
-  alaniSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Alani-Slider-1.png",
-  mammothSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Mammoth-Slider-1.png",
-  believeSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Believe-Slider-1.png",
-  vndlSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/VNDL-Slider-1.png",
-  batchSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Batch-27-Slider-2.png",
-  energyPouches: "https://naturallyfit.ca/wp-content/uploads/2025/12/Energy-Pouches-1.jpg",
+  alaniSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Alani-Slider-1.png",
+  mammothSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-Slider-1.png",
+  believeSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Believe-Slider-1.png",
+  vndlSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/VNDL-Slider-1.png",
+  batchSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Batch-27-Slider-2.png",
+  energyPouches: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Energy-Pouches-1.jpg",
   communityImage: "https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg",
   promoSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Add-a-heading-1350-x-510-px-1.png",
 };

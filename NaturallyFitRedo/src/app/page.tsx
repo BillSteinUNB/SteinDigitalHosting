@@ -29,8 +29,8 @@ import { ProductCarousel } from "@/components/product";
 // ============================================
 const WP_IMAGES = {
   // Promo banners
-  promo3for99: "https://naturallyfit.ca/wp-content/uploads/2026/01/NF_3_for_99-2026.png",
-  bestCreatine: "https://naturallyfit.ca/wp-content/uploads/2025/12/BEST-CREATINE-PRICES-1.png",
+  promo3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
+  bestCreatine: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
   // Shipping icons
   shipping1: "https://naturallyfit.ca/wp-content/uploads/2025/04/shipping.png",
   shipping2: "https://naturallyfit.ca/wp-content/uploads/2025/02/shipping-2.png",
