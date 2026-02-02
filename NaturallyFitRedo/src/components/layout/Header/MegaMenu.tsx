@@ -19,8 +19,8 @@ export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
   return (
     <div
       className={cn(
-        "absolute left-1/2 -translate-x-1/2 top-full",
-        "w-screen max-w-container bg-white",
+        "fixed left-1/2 -translate-x-1/2 top-[130px]",
+        "w-full max-w-[1400px] px-4 bg-white",
         "border border-gray-border shadow-dropdown",
         "animate-slide-down",
         "z-dropdown"
