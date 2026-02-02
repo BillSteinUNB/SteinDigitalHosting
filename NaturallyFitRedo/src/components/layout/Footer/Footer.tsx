@@ -24,7 +24,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#2b2b2b] text-[#d0d0d0]">
       {/* Top Footer */}
-      <div className="container mx-auto px-4 py-10">
+      <div className="container py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto] gap-8 items-start">
           {/* Logo + Tagline - 240px × 102px */}
           <div className="space-y-4">
@@ -64,17 +64,8 @@ export default function Footer() {
             ]}
           />
 
-          <FooterColumn
-            title="Catalogs"
-            links={[
-              { label: "Supplement Guide", href: "/guides/supplements" },
-              { label: "Protein Catalog", href: "/catalogs/protein" },
-              { label: "Pre-Workout Guide", href: "/guides/pre-workout" },
-            ]}
-          />
-
-          {/* Veteran Badge - 98px × 98px & Google Reviews - 225px × 92px */}
-          <div className="flex flex-col items-center lg:items-end gap-4">
+          {/* Veteran Badge - 98px × 98px */}
+          <div className="flex flex-col items-center lg:items-end">
             <Image
               src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/veteran-owned-badge.png"
               alt="Veteran Owned Business"
@@ -82,22 +73,15 @@ export default function Footer() {
               height={98}
               className="w-[98px] h-[98px] object-contain"
             />
-            <Image
-              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/google-reviews_logo.jpg"
-              alt="Google Reviews"
-              width={225}
-              height={92}
-              className="w-[225px] h-[92px] object-contain"
-            />
           </div>
         </div>
       </div>
 
       {/* Mid Bar */}
       <div className="border-t border-[#3a3a3a]">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-            <div className="flex flex-col items-center md:items-start gap-1">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:divide-x md:divide-[#3a3a3a] text-center">
+            <div className="flex flex-col items-center justify-center gap-1 py-6">
               <span className="text-sm font-semibold text-white">Need Help?</span>
               <a
                 href={`mailto:${contactInfo.email}`}
@@ -107,7 +91,7 @@ export default function Footer() {
               </a>
             </div>
 
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center justify-center gap-2 py-6">
               <span className="text-sm font-semibold text-white">Follow Us</span>
               <div className="flex items-center gap-3">
                 <SocialLink
@@ -123,7 +107,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="flex flex-col items-center md:items-end gap-2">
+            <div className="flex flex-col items-center justify-center gap-2 py-6">
               <span className="text-sm font-semibold text-white">We Accept</span>
               {/* Payment Icons - 183px × 28px */}
               <Image
@@ -140,7 +124,7 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-[#3a3a3a]">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container py-4">
           <p className="text-xs text-[#9a9a9a] text-center">
             Copyright © {currentYear} Naturally Fit. All rights reserved.
           </p>
@@ -201,8 +185,7 @@ function SocialLink({ href, icon, label }: SocialLinkProps) {
       className={cn(
         "flex items-center justify-center",
         "w-10 h-10 min-w-[44px] min-h-[44px]",
-        "bg-[#3a3a3a] text-[#bdbdbd]",
-        "hover:bg-[#4a4a4a] hover:text-white",
+        "text-[#bdbdbd] hover:text-white",
         "transition-colors"
       )}
     >

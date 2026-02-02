@@ -133,6 +133,71 @@ export const brands: BrandWithDetails[] = [
     featured: true,
     website: "https://www.advancedgenetics.com",
   },
+  {
+    id: "brand-10",
+    name: "Quest Nutrition",
+    slug: "quest",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Quest.png",
+      altText: "Quest Nutrition Logo",
+    },
+    description: "High-protein snacks and supplements for fitness enthusiasts.",
+    productCount: 28,
+    featured: true,
+    website: "https://www.questnutrition.com",
+  },
+  {
+    id: "brand-11",
+    name: "TC Nutrition",
+    slug: "tc-nutrition",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/TC-Nutrition.png",
+      altText: "TC Nutrition Logo",
+    },
+    description: "Premium Canadian sports nutrition supplements.",
+    productCount: 16,
+    featured: true,
+    website: "https://www.tcnutrition.ca",
+  },
+  {
+    id: "brand-12",
+    name: "Work Water",
+    slug: "work-water",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Work-Water.png",
+      altText: "Work Water Logo",
+    },
+    description: "Hydration products for active lifestyles.",
+    productCount: 6,
+    featured: true,
+    website: "https://www.workwater.com",
+  },
+  {
+    id: "brand-13",
+    name: "Yummy Sports",
+    slug: "yummy-sports",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/YummySports.png",
+      altText: "Yummy Sports Logo",
+    },
+    description: "Delicious tasting sports nutrition supplements.",
+    productCount: 12,
+    featured: true,
+    website: "https://www.yummysports.com",
+  },
+  {
+    id: "brand-14",
+    name: "VNDL Project",
+    slug: "vndl",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/VNDL.png",
+      altText: "VNDL Project Logo",
+    },
+    description: "Performance driven supplements for serious athletes.",
+    productCount: 19,
+    featured: true,
+    website: "https://www.vndlproject.com",
+  },
 ];
 
 // ============================================
