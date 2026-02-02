@@ -159,19 +159,19 @@ function BrandLogo({ brand }: BrandLogoProps) {
       className={cn(
         "group",
         "flex items-center justify-center",
-        "w-full h-[110px]",
+        "w-full h-[159px]",
         "transition-all duration-300",
         "focus-ring"
       )}
       title={brand.name}
     >
       {brand.logo ? (
-        <div className="relative w-full max-w-[170px] h-[60px]">
+        <div className="relative w-[159px] h-[159px]">
           <Image
             src={brand.logo.sourceUrl}
             alt={brand.logo.altText || brand.name}
             fill
-            sizes="(min-width: 1280px) 170px, (min-width: 1024px) 160px, (min-width: 768px) 140px, 120px"
+            sizes="159px"
             className={cn(
               "object-contain",
               "grayscale opacity-60",
