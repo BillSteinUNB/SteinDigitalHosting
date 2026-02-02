@@ -1,18 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react";
-import { footerNavigation, contactInfo } from "@/lib/navigation";
-
-// ============================================
-// WORDPRESS IMAGE REFERENCES
-// ============================================
-const WP_IMAGES = {
-  logo: "https://naturallyfit.ca/wp-content/uploads/2018/02/cropped-web_logo.png",
-  beatAnyPrice: "https://naturallyfit.ca/wp-content/uploads/2023/02/beatanyprice-1.png",
-  canadasSupplementStore: "https://naturallyfit.ca/wp-content/uploads/2023/02/canadassupplementstore.png",
-  googleReviews: "https://naturallyfit.ca/wp-content/uploads/2026/01/google-reviews_logo.jpg",
-};
+import { Facebook, Instagram } from "lucide-react";
+import { contactInfo } from "@/lib/navigation";
 
 // ============================================
 // FOOTER COMPONENT
@@ -32,202 +22,111 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-black text-white">
-      {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand Column */}
-          <div className="lg:col-span-1">
-            {/* Logo from WordPress */}
-            <Link href="/" className="inline-block mb-4">
+    <footer className="bg-[#2b2b2b] text-[#d0d0d0]">
+      {/* Top Footer */}
+      <div className="container mx-auto px-4 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto] gap-8 items-start">
+          {/* Logo + Tagline */}
+          <div className="space-y-4">
+            <Link href="/" className="inline-flex items-center">
               <Image
-                src={WP_IMAGES.logo}
-                alt="Naturally Fit"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
+                src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore_footer.png"
+                alt="Naturally Fit - Canada's Supplement Store"
+                width={260}
+                height={90}
+                className="object-contain"
+                priority
               />
             </Link>
-            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-              Canada&apos;s premier supplement retailer since 1999. Veteran-owned with
-              a price-match guarantee.
-            </p>
-
-            {/* Trust Badges */}
-            <div className="flex gap-3 mb-4">
-              <div className="relative w-20 h-12">
-                <Image
-                  src={WP_IMAGES.beatAnyPrice}
-                  alt="We Beat Any Price"
-                  fill
-                  className="object-contain"
-                  sizes="80px"
-                />
-              </div>
-              <div className="relative w-20 h-12">
-                <Image
-                  src={WP_IMAGES.canadasSupplementStore}
-                  alt="Canada's Supplement Store"
-                  fill
-                  className="object-contain"
-                  sizes="80px"
-                />
-              </div>
-            </div>
-
-            {/* Google Reviews Badge */}
-            <div className="relative w-24 h-12 mb-4">
-              <Image
-                src={WP_IMAGES.googleReviews}
-                alt="Google Reviews"
-                fill
-                className="object-contain"
-                sizes="96px"
-              />
-            </div>
-
-            {/* Social Links */}
-            <div className="flex gap-3">
-              <SocialLink
-                href={contactInfo.social.facebook}
-                icon={<Facebook size={20} strokeWidth={1.5} />}
-                label="Facebook"
-              />
-              <SocialLink
-                href={contactInfo.social.instagram}
-                icon={<Instagram size={20} strokeWidth={1.5} />}
-                label="Instagram"
-              />
-              <SocialLink
-                href={contactInfo.social.twitter}
-                icon={<Twitter size={20} strokeWidth={1.5} />}
-                label="Twitter"
-              />
-            </div>
           </div>
 
-          {/* Shop Column */}
-          <FooterNavColumn
-            title={footerNavigation.shop.title}
-            links={footerNavigation.shop.links}
+          <FooterColumn
+            title="Customer Service"
+            links={[
+              { label: "Help Center", href: "/help-center" },
+              { label: "My Account", href: "/account" },
+              { label: "Price Match", href: "/price-match" },
+              { label: "Gift Cards", href: "/gift-cards" },
+            ]}
           />
 
-          {/* Company Column */}
-          <FooterNavColumn
-            title={footerNavigation.company.title}
-            links={footerNavigation.company.links}
+          <FooterColumn
+            title="About Us"
+            links={[{ label: "24 Hour Gym", href: "/gym" }]}
           />
 
-          {/* Support Column */}
-          <FooterNavColumn
-            title={footerNavigation.support.title}
-            links={footerNavigation.support.links}
+          <FooterColumn
+            title="Quick Links"
+            links={[
+              { label: "Search", href: "/search" },
+              { label: "Sale Items", href: "/shop?on_sale=true" },
+              { label: "Contact Us", href: "/contact" },
+            ]}
           />
 
-          {/* Contact Column */}
-          <div>
-            <h3 className="font-heading text-sm uppercase tracking-wide mb-4 text-white">
-              Contact Us
-            </h3>
-            <ul className="space-y-3">
-              {/* Phone */}
-              <li>
-                <a
-                  href={`tel:${contactInfo.phone.replace(/[^0-9]/g, "")}`}
-                  className="flex items-start gap-2 text-sm text-gray-400 hover:text-red-primary transition-colors"
-                >
-                  <Phone size={16} strokeWidth={1.5} className="mt-0.5 shrink-0" />
-                  <span>{contactInfo.phone}</span>
-                </a>
-              </li>
+          {/* Veteran Badge */}
+          <div className="flex lg:justify-end">
+            <Image
+              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/veteran-owned-badge.png"
+              alt="Veteran Owned Business"
+              width={90}
+              height={90}
+              className="object-contain"
+            />
+          </div>
+        </div>
+      </div>
 
-              {/* Email */}
-              <li>
-                <a
-                  href={`mailto:${contactInfo.email}`}
-                  className="flex items-start gap-2 text-sm text-gray-400 hover:text-red-primary transition-colors break-all"
-                >
-                  <Mail size={16} strokeWidth={1.5} className="mt-0.5 shrink-0" />
-                  <span>{contactInfo.email}</span>
-                </a>
-              </li>
+      {/* Mid Bar */}
+      <div className="border-t border-[#3a3a3a]">
+        <div className="container mx-auto px-4 py-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+            <div className="flex flex-col items-center md:items-start gap-1">
+              <span className="text-sm font-semibold text-white">Need Help?</span>
+              <a
+                href={`mailto:${contactInfo.email}`}
+                className="text-sm text-[#bdbdbd] hover:text-white transition-colors"
+              >
+                {contactInfo.email}
+              </a>
+            </div>
 
-              {/* Address */}
-              <li>
-                <div className="flex items-start gap-2 text-sm text-gray-400">
-                  <MapPin size={16} strokeWidth={1.5} className="mt-0.5 shrink-0" />
-                  <address className="not-italic">
-                    {contactInfo.address.street}
-                    <br />
-                    {contactInfo.address.city}, {contactInfo.address.province}
-                    <br />
-                    {contactInfo.address.postalCode}
-                  </address>
-                </div>
-              </li>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-sm font-semibold text-white">Follow Us</span>
+              <div className="flex items-center gap-3">
+                <SocialLink
+                  href={contactInfo.social.facebook}
+                  icon={<Facebook size={20} strokeWidth={1.5} />}
+                  label="Facebook"
+                />
+                <SocialLink
+                  href={contactInfo.social.instagram}
+                  icon={<Instagram size={20} strokeWidth={1.5} />}
+                  label="Instagram"
+                />
+              </div>
+            </div>
 
-              {/* Hours */}
-              <li className="pt-2">
-                <p className="text-xs text-gray-500">{contactInfo.hours.weekdays}</p>
-                <p className="text-xs text-gray-500">{contactInfo.hours.saturday}</p>
-                <p className="text-xs text-gray-500">{contactInfo.hours.sunday}</p>
-              </li>
-            </ul>
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <span className="text-sm font-semibold text-white">We Accept</span>
+              <Image
+                src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/footer1_2026.png"
+                alt="Accepted payment methods"
+                width={180}
+                height={40}
+                className="object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t border-[#3a3a3a]">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Copyright */}
-            <p className="text-xs text-gray-500 text-center sm:text-left">
-              &copy; {currentYear} Naturally Fit. All rights reserved.
-            </p>
-
-            {/* Legal Links */}
-            <nav aria-label="Legal links">
-              <ul className="flex flex-wrap items-center justify-center gap-4 text-xs">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-gray-500 hover:text-white transition-colors"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-gray-500 hover:text-white transition-colors"
-                  >
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/accessibility"
-                    className="text-gray-500 hover:text-white transition-colors"
-                  >
-                    Accessibility
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Payment Methods Placeholder */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">We accept:</span>
-              {/* Payment icons will be added as images */}
-              <div className="flex gap-1">
-                <PaymentIcon label="Visa" />
-                <PaymentIcon label="MC" />
-                <PaymentIcon label="Amex" />
-                <PaymentIcon label="PayPal" />
-              </div>
-            </div>
-          </div>
+          <p className="text-xs text-[#9a9a9a] text-center">
+            Copyright © {currentYear} Naturally Fit. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
@@ -238,15 +137,15 @@ export default function Footer() {
 // FOOTER NAV COLUMN
 // ============================================
 
-interface FooterNavColumnProps {
+interface FooterColumnProps {
   title: string;
   links: { label: string; href: string }[];
 }
 
-function FooterNavColumn({ title, links }: FooterNavColumnProps) {
+function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3 className="font-heading text-sm uppercase tracking-wide mb-4 text-white">
+      <h3 className="text-sm font-semibold text-white mb-3">
         {title}
       </h3>
       <ul className="space-y-2">
@@ -254,7 +153,7 @@ function FooterNavColumn({ title, links }: FooterNavColumnProps) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-sm text-gray-400 hover:text-red-primary transition-colors"
+              className="text-sm text-[#bdbdbd] hover:text-white transition-colors"
             >
               {link.label}
             </Link>
@@ -285,31 +184,12 @@ function SocialLink({ href, icon, label }: SocialLinkProps) {
       className={cn(
         "flex items-center justify-center",
         "w-10 h-10 min-w-[44px] min-h-[44px]",
-        "bg-gray-800 text-gray-400",
-        "hover:bg-red-primary hover:text-white",
+        "bg-[#3a3a3a] text-[#bdbdbd]",
+        "hover:bg-[#4a4a4a] hover:text-white",
         "transition-colors"
       )}
     >
       {icon}
     </a>
-  );
-}
-
-// ============================================
-// PAYMENT ICON PLACEHOLDER
-// ============================================
-
-interface PaymentIconProps {
-  label: string;
-}
-
-function PaymentIcon({ label }: PaymentIconProps) {
-  return (
-    <span
-      className="inline-flex items-center justify-center w-8 h-5 bg-gray-800 text-[10px] text-gray-400"
-      aria-label={label}
-    >
-      {label}
-    </span>
   );
 }
