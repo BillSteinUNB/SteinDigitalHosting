@@ -70,7 +70,7 @@ export default function GiftServicePage() {
                 Perfect for Any Occasion
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Whether it's a birthday, holiday, or just because - a gift from Naturally Fit
+                Whether it&apos;s a birthday, holiday, or just because - a gift from Naturally Fit
                 shows you care about their health and fitness goals.
               </p>
               <p className="text-gray-600 leading-relaxed">
@@ -167,7 +167,7 @@ export default function GiftServicePage() {
             Questions About Gifting?
           </h2>
           <p className="text-white/90 mb-8 max-w-2xl mx-auto">
-            Contact us for custom gift orders or bulk purchases. We're happy to help
+            Contact us for custom gift orders or bulk purchases. We&apos;re happy to help
             make your gift extra special.
           </p>
           <Link

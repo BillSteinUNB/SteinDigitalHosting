@@ -101,8 +101,8 @@ export default function GymPage() {
                 Serving the Community
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                We're proud to be part of our local community. Our gym is more than just
-                a place to work out - it's a place to connect with like-minded individuals.
+                We&apos;re proud to be part of our local community. Our gym is more than just
+                a place to work out - it&apos;s a place to connect with like-minded individuals.
               </p>
             </div>
             <div className="relative aspect-video order-1 md:order-2">

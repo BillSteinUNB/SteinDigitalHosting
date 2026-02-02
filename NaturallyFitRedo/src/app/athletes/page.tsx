@@ -41,7 +41,7 @@ export default function AthletesPage() {
             </h1>
             <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
               Meet the dedicated athletes who represent Naturally Fit. These competitors
-              trust us for their supplement needs and we're proud to support their journeys.
+              trust us for their supplement needs and we&apos;re proud to support their journeys.
             </p>
           </div>
         </div>
@@ -103,9 +103,9 @@ export default function AthletesPage() {
             Want to Join the Team?
           </h2>
           <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
-            We're always looking for dedicated athletes to represent Naturally Fit.
-            If you're a competitive athlete interested in sponsorship opportunities,
-            we'd love to hear from you.
+            We&apos;re always looking for dedicated athletes to represent Naturally Fit.
+            If you&apos;re a competitive athlete interested in sponsorship opportunities,
+            we&apos;d love to hear from you.
           </p>
           <Link
             href="/contact"
