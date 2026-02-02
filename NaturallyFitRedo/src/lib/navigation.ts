@@ -56,8 +56,8 @@ export const mainNavItems: NavItem[] = [
     href: "/wholesale",
     children: [
       { label: "Wholesale Program", href: "/wholesale" },
-      { label: "Apply Now", href: "/wholesale/apply" },
-      { label: "Wholesale Login", href: "/account/wholesale" },
+      { label: "Apply Now", href: "/wholesale#apply" },
+      { label: "Wholesale Login", href: "/login?callbackUrl=%2Fshop" },
     ],
   },
   {

@@ -2,6 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Variables
+
+Create a local env file based on `env.example`:
+
+- Copy `env.example` → `.env.local`
+- Fill in the values (especially `NEXT_PUBLIC_GRAPHQL_ENDPOINT`)
+
+To enable the **Wholesale Inquiry** form to write into your WooCommerce backend, you must also set:
+
+- `WOOCOMMERCE_REST_URL`
+- `WOOCOMMERCE_CONSUMER_KEY`
+- `WOOCOMMERCE_CONSUMER_SECRET`
+
 First, run the development server:
 
 ```bash

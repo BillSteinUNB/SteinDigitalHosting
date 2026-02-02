@@ -51,6 +51,12 @@ This document tracks all items requiring manual implementation before launching 
 NEXT_PUBLIC_WORDPRESS_URL=https://naturallyfit.ca
 NEXT_PUBLIC_GRAPHQL_ENDPOINT=https://naturallyfit.ca/graphql
 
+# Wholesale Inquiry Form (WooCommerce REST - server-side)
+# Create keys in WooCommerce Admin → Settings → Advanced → REST API (Read/Write)
+WOOCOMMERCE_REST_URL=https://naturallyfit.ca
+WOOCOMMERCE_CONSUMER_KEY=ck_live_...
+WOOCOMMERCE_CONSUMER_SECRET=cs_live_...
+
 # Authentication - CHANGE THIS!
 NEXTAUTH_SECRET=<generate with: openssl rand -base64 32>
 NEXTAUTH_URL=https://naturallyfit.ca
@@ -193,10 +199,9 @@ File: `src/app/contact/page.tsx`
 
 ### Wholesale Application Form
 File: `src/app/wholesale/page.tsx`
-- Form submits but has no backend
-- [ ] Create API route `src/app/api/wholesale/route.ts`
-- [ ] Send application notification email
-- [ ] Store application in database (optional)
+- Form submits to `POST /api/wholesale-inquiry` and stores the inquiry in WooCommerce (Customer meta)
+- [ ] Configure `WOOCOMMERCE_CONSUMER_KEY` / `WOOCOMMERCE_CONSUMER_SECRET` in production
+- [ ] (Optional) Send notification email to staff on submission
 
 ### Order Confirmation Emails
 - [ ] Configure WooCommerce to send order confirmation emails
@@ -254,8 +259,8 @@ These pages are referenced in navigation but don't exist:
 | Franchise Info | `/franchise` | Franchise opportunities |
 | 24 Hour Gym | `/gym` | Gym information/hours |
 | Payment Methods | `/account/payment` | Saved payment methods |
-| Wholesale Application | `/wholesale/apply` | Dedicated application page |
-| Wholesale Account | `/account/wholesale` | Wholesale customer dashboard |
+| Wholesale Application | `/wholesale/apply` | ✅ Redirects to `/wholesale#apply` (no 404) |
+| Wholesale Account | `/account/wholesale` | ✅ Redirects to `/login?callbackUrl=/shop` (no 404) |
 
 ### Navigation Files to Update
 If pages won't be created, remove links from:

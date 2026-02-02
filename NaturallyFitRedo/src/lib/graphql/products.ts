@@ -209,10 +209,22 @@ function convertStockStatus(status: string): StockStatus {
 // Default placeholder for products without images
 const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x600/1a1a2e/ffffff?text=No+Image';
 
+// Transform image URL from old domain to new domain
+function transformImageUrl(url: string | null | undefined): string {
+  if (!url) return DEFAULT_PLACEHOLDER;
+  
+  // Replace old domain with new domain
+  if (url.includes('naturallyfit.ca')) {
+    return url.replace('https://naturallyfit.ca', 'https://nftest.dreamhosters.com');
+  }
+  
+  return url;
+}
+
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
-  // Use WordPress image if available, otherwise use placeholder
-  const imageUrl = wooProduct.image?.sourceUrl || DEFAULT_PLACEHOLDER;
+  // Use WordPress image if available, transform URL, otherwise use placeholder
+  const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
   
   return {
     id: wooProduct.id,
@@ -240,8 +252,8 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
 
 // Convert WooCommerce product to full Product type
 function transformToProduct(wooProduct: WooProduct): Product {
-  // Use WordPress image if available, otherwise use placeholder
-  const imageUrl = wooProduct.image?.sourceUrl || DEFAULT_PLACEHOLDER;
+  // Use WordPress image if available, transform URL, otherwise use placeholder
+  const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
   
   // Process gallery images
   const galleryImages = wooProduct.galleryImages?.nodes.map(img => ({

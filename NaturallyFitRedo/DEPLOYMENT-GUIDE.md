@@ -229,6 +229,12 @@ In Vercel Project Settings → Environment Variables, add:
 NEXT_PUBLIC_WORDPRESS_URL=https://api.naturallyfit.ca
 NEXT_PUBLIC_GRAPHQL_ENDPOINT=https://api.naturallyfit.ca/graphql
 
+# Wholesale Inquiry Form (WooCommerce REST - server-side)
+# Create keys in WooCommerce Admin → Settings → Advanced → REST API (Read/Write)
+WOOCOMMERCE_REST_URL=https://api.naturallyfit.ca
+WOOCOMMERCE_CONSUMER_KEY=ck_live_...
+WOOCOMMERCE_CONSUMER_SECRET=cs_live_...
+
 # Authentication
 NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
 NEXTAUTH_URL=https://naturallyfit.ca
