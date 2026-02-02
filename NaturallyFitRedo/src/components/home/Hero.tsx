@@ -298,7 +298,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
           src={slide.image.src}
           alt={slide.image.alt}
           fill
-          className="object-cover"
+          className="object-contain"
           priority
           sizes="100vw"
         />
