@@ -47,7 +47,7 @@ export const brands: BrandWithDetails[] = [
     name: "Believe Supplements",
     slug: "believe-supplements",
     logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Believe.png",
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Believe-1.png",
       altText: "Believe Supplements Logo",
     },
     description: "High-quality Canadian supplements for athletes.",
