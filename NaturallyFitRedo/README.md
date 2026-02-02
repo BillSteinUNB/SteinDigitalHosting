@@ -15,6 +15,11 @@ To enable the **Wholesale Inquiry** form to write into your WooCommerce backend,
 - `WOOCOMMERCE_CONSUMER_KEY`
 - `WOOCOMMERCE_CONSUMER_SECRET`
 
+If you’re using **WholesaleX** for wholesale ordering/login, set:
+
+- `NEXT_PUBLIC_WHOLESALE_LOGIN_URL`
+- `NEXT_PUBLIC_WHOLESALE_ORDER_URL`
+
 First, run the development server:
 
 ```bash

@@ -99,7 +99,7 @@ export default async function HomePage() {
 
       {/* Shop by Category */}
       <CategoryGrid
-        title="Shop by Category"
+        title="Popular Categories"
         categories={featuredCategories}
         columns={6}
       />

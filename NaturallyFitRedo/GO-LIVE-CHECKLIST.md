@@ -64,6 +64,11 @@ NEXTAUTH_URL=https://naturallyfit.ca
 # Site URL
 NEXT_PUBLIC_SITE_URL=https://naturallyfit.ca
 
+# Wholesale Portal Links (WholesaleX)
+# Point these at the WordPress pages created by WholesaleX (login + bulk order / wholesale ordering).
+NEXT_PUBLIC_WHOLESALE_LOGIN_URL=https://api.naturallyfit.ca/my-account/
+NEXT_PUBLIC_WHOLESALE_ORDER_URL=https://api.naturallyfit.ca/your-wholesale-order-page/
+
 # DISABLE mock data
 NEXT_PUBLIC_USE_MOCK_DATA=false
 

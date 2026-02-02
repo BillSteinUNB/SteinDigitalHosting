@@ -146,7 +146,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 156,
     description: "High-quality protein powders, bars, and drinks to fuel your gains.",
     image: {
-      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct1,
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/perfect-sports-perfect-whey-4-4lb-triple-rich-dark-chocolate-mixed-source-whey-protein-11978618470479.png",
       altText: "Protein Supplements",
     },
     children: [
@@ -220,7 +220,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 67,
     description: "Thermogenic and metabolic support for weight management.",
     image: {
-      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct3,
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/cherryslushy1_900x.webp",
       altText: "Fat Burner Supplements",
     },
     children: [
@@ -257,7 +257,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 94,
     description: "Optimize your recovery and reduce muscle soreness.",
     image: {
-      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct4,
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/mammoth-bcaa-40-servings-white-grape-Naturally-Fit.webp",
       altText: "Recovery Supplements",
     },
     children: [
@@ -313,6 +313,10 @@ export const categories: CategoryWithCount[] = [
         productCount: 12,
         description: "Creatine and muscle building supplements.",
         parent: { id: "cat-weightgainer", name: "Weight Gainer", slug: "weight-gainer" },
+        image: {
+          sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp",
+          altText: "Muscle Builder Supplements",
+        },
       },
     ],
   },
@@ -389,7 +393,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 112,
     description: "Vitamins, minerals, and wellness supplements for overall health.",
     image: {
-      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct8,
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/CAN-Multivitamin-scaled.png",
       altText: "Health and Balance Supplements",
     },
     children: [
@@ -496,11 +500,23 @@ export function getSubcategories(parentSlug: string): CategoryWithCount[] {
 // HOMEPAGE FEATURED CATEGORIES
 // ============================================
 
+// Muscle Builders category (main level)
+export const muscleBuildersCategory: CategoryWithCount = {
+  id: "cat-musclebuilders",
+  name: "Muscle Builders",
+  slug: "muscle-builders",
+  productCount: 45,
+  description: "Creatine and muscle building supplements.",
+  image: {
+    sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp",
+    altText: "Muscle Builder Supplements",
+  },
+};
+
 export const featuredCategories: CategoryWithCount[] = [
   categories[1], // Protein
-  categories[2], // Pre-Workout
-  categories[4], // Recovery
   categories[3], // Fat Burners
-  categories[5], // Weight Gainer
+  muscleBuildersCategory, // Muscle Builders
+  categories[4], // Recovery
   categories[8], // Health & Balance
 ];
