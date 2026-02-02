@@ -229,7 +229,7 @@ export function CheckoutReview() {
                     src={item.image.sourceUrl}
                     alt={item.image.altText || item.name}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     sizes="64px"
                   />
                 ) : (

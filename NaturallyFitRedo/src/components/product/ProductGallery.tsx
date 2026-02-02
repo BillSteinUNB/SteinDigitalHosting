@@ -108,7 +108,7 @@ export default function ProductGallery({
                   src={image.sourceUrl}
                   alt={image.altText || `${productName} - Image ${index + 1}`}
                   fill
-                  className="object-contain p-4"
+                  className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority={index === 0}
                 />
@@ -203,7 +203,7 @@ export default function ProductGallery({
                     src={image.sourceUrl}
                     alt={image.altText || `${productName} thumbnail ${index + 1}`}
                     fill
-                    className="object-contain p-1"
+                    className="object-cover"
                     sizes="80px"
                   />
                 </button>

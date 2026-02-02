@@ -92,7 +92,7 @@ export function CheckoutSummary() {
                     src={item.image.sourceUrl}
                     alt={item.image.altText || item.name}
                     fill
-                    className="object-contain p-1"
+                    className="object-cover"
                     sizes="56px"
                   />
                 ) : (
