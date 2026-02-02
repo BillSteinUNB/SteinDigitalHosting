@@ -4,9 +4,9 @@ import { Truck, Shield, Award, Clock } from "lucide-react";
 
 // GraphQL data fetching
 import { getFeaturedProducts, getSaleProducts, getBestSellers } from "@/lib/graphql/products";
-import { getFeaturedCategories } from "@/lib/graphql/categories";
 
-// Mock data (brands not available in WooCommerce GraphQL by default)
+// Mock data (categories and brands with proper images)
+import { featuredCategories } from "@/lib/mock/categories";
 import { featuredBrands } from "@/lib/mock/brands";
 
 // Home components
@@ -51,12 +51,10 @@ export default async function HomePage() {
     featuredProducts,
     saleProducts,
     bestSellers,
-    featuredCategories,
   ] = await Promise.all([
     getFeaturedProducts(8),
     getSaleProducts(8),
     getBestSellers(8),
-    getFeaturedCategories(6),
   ]);
 
   return (
@@ -97,11 +95,11 @@ export default async function HomePage() {
         viewAllLink="/shop?featured=true"
       />
 
-      {/* Shop by Category */}
+      {/* Shop by Category - Using mock data with correct images */}
       <CategoryGrid
         title="Popular Categories"
         categories={featuredCategories}
-        columns={6}
+        columns={5}
       />
 
       {/* Sale Banner */}

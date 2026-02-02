@@ -12,7 +12,7 @@ export interface CategoryGridProps {
   title?: string;
   categories: CategoryWithCount[];
   showProductCount?: boolean;
-  columns?: 3 | 4 | 6;
+  columns?: 3 | 4 | 5 | 6;
   className?: string;
 }
 
@@ -32,6 +32,7 @@ export default function CategoryGrid({
   const gridCols = {
     3: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
     4: "grid-cols-2 md:grid-cols-4",
+    5: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
     6: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6",
   };
 
