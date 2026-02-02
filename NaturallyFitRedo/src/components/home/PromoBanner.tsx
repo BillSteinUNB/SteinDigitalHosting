@@ -299,6 +299,58 @@ function PromoBlock({ promo, size = 'small' }: PromoBlockProps) {
 }
 
 // ============================================
+// THREE BANNER ROW (Tab 1 style promo banners)
+// ============================================
+
+export interface ThreeBannerRowProps {
+  banners: {
+    image: string;
+    alt: string;
+    link: string;
+  }[];
+  className?: string;
+}
+
+/**
+ * ThreeBannerRow Component
+ *
+ * Three promotional banners in a row (Tab 1 style):
+ * - Bundles 3 for $99
+ * - Beat ANY Price by 10%
+ * - Free Shipping / Free Hoodie / Free Shaker
+ */
+export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
+  if (banners.length !== 3) {
+    console.warn("ThreeBannerRow expects exactly 3 banners");
+  }
+
+  return (
+    <section className={cn("py-6 bg-white", className)}>
+      <div className="container mx-auto px-4">
+        <div className="flex flex-wrap justify-center gap-4">
+          {banners.map((banner, index) => (
+            <Link
+              key={index}
+              href={banner.link}
+              className="block overflow-hidden hover:opacity-90 transition-opacity"
+              style={{ width: '410px', height: '107px' }}
+            >
+              <Image
+                src={banner.image}
+                alt={banner.alt}
+                width={410}
+                height={107}
+                className="w-full h-full object-cover"
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
 // FEATURES BAR (Value props)
 // ============================================
 

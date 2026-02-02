@@ -70,19 +70,6 @@ export const brands: BrandWithDetails[] = [
   },
   {
     id: "brand-5",
-    name: "TC Nutrition",
-    slug: "tc-nutrition",
-    logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/TC-Nutrition.png",
-      altText: "TC Nutrition Logo",
-    },
-    description: "Premium sports nutrition with clinically dosed ingredients.",
-    productCount: 15,
-    featured: true,
-    website: "https://www.tcnutrition.ca",
-  },
-  {
-    id: "brand-6",
     name: "Nutraphase",
     slug: "nutraphase",
     logo: {
@@ -95,17 +82,30 @@ export const brands: BrandWithDetails[] = [
     website: "https://www.nutraphase.com",
   },
   {
-    id: "brand-7",
-    name: "Yummy Sports",
-    slug: "yummy-sports",
+    id: "brand-6",
+    name: "Ghost",
+    slug: "ghost",
     logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Yummy.png",
-      altText: "Yummy Sports Logo",
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/ghost.png",
+      altText: "Ghost Logo",
     },
-    description: "Great tasting supplements that actually work.",
-    productCount: 12,
+    description: "Be seen® - Premium lifestyle supplements.",
+    productCount: 18,
     featured: true,
-    website: "https://www.yummysports.com",
+    website: "https://www.ghostlifestyle.com",
+  },
+  {
+    id: "brand-7",
+    name: "Grenade",
+    slug: "grenade",
+    logo: {
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/grenade.png",
+      altText: "Grenade Logo",
+    },
+    description: "High-protein snacks and supplements.",
+    productCount: 15,
+    featured: true,
+    website: "https://www.grenade.com",
   },
   {
     id: "brand-8",

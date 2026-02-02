@@ -1,9 +1,9 @@
 // Homepage - Server Component with GraphQL data fetching
 
-import { Truck, Shield, Award, Clock } from "lucide-react";
+import Image from "next/image";
 
 // GraphQL data fetching
-import { getFeaturedProducts, getSaleProducts, getBestSellers } from "@/lib/graphql/products";
+import { getFeaturedProducts, getBestSellers } from "@/lib/graphql/products";
 
 // Mock data (categories and brands with proper images)
 import { featuredCategories } from "@/lib/mock/categories";
@@ -14,10 +14,8 @@ import {
   Hero,
   CategoryGrid,
   BrandLogos,
-  PromoBanner,
-  SaleBanner,
-  SplitPromo,
-  FeaturesBar,
+  ThreeBannerRow,
+  CustomerReviews,
   Newsletter,
 } from "@/components/home";
 
@@ -28,6 +26,10 @@ import { ProductCarousel } from "@/components/product";
 // WORDPRESS IMAGE REFERENCES
 // ============================================
 const WP_IMAGES = {
+  // Three Banner Row (Tab 1 style)
+  bundle3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/3for99bundles-1.png",
+  beatAnyPrice: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BeatANYPriceby10-1.png",
+  freeShipping: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/FreeShippingFreeHoodieFreeShaker-1.png",
   // Promo banners
   promo3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
   bestCreatine: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
@@ -49,11 +51,9 @@ export default async function HomePage() {
   // Fetch data from WooCommerce GraphQL
   const [
     featuredProducts,
-    saleProducts,
     bestSellers,
   ] = await Promise.all([
     getFeaturedProducts(8),
-    getSaleProducts(8),
     getBestSellers(8),
   ]);
 
@@ -62,35 +62,30 @@ export default async function HomePage() {
       {/* Hero Carousel */}
       <Hero />
 
-      {/* Features Bar */}
-      <FeaturesBar
-        features={[
+      {/* Three Promotional Banners (Tab 1 style) */}
+      <ThreeBannerRow
+        banners={[
           {
-            icon: <Truck size={24} strokeWidth={1.5} />,
-            title: "Free Shipping",
-            description: "On orders over $75",
+            image: WP_IMAGES.bundle3for99,
+            alt: "Bundles 3 for $99",
+            link: "/shop?bundles=true",
           },
           {
-            icon: <Shield size={24} strokeWidth={1.5} />,
-            title: "Price Match",
-            description: "Guaranteed lowest prices",
+            image: WP_IMAGES.beatAnyPrice,
+            alt: "Beat ANY Price by 10%",
+            link: "/price-match",
           },
           {
-            icon: <Award size={24} strokeWidth={1.5} />,
-            title: "Veteran Owned",
-            description: "Since 1999",
-          },
-          {
-            icon: <Clock size={24} strokeWidth={1.5} />,
-            title: "Fast Delivery",
-            description: "Same day processing",
+            image: WP_IMAGES.freeShipping,
+            alt: "Free Shipping / Free Hoodie / Free Shaker",
+            link: "/shipping",
           },
         ]}
       />
 
-      {/* Featured Products Carousel */}
+      {/* Latest Deals Carousel (was Featured Products) */}
       <ProductCarousel
-        title="Featured Products"
+        title="Latest Deals"
         products={featuredProducts}
         viewAllLink="/shop?featured=true"
       />
@@ -102,69 +97,41 @@ export default async function HomePage() {
         columns={5}
       />
 
-      {/* Sale Banner */}
-      <SaleBanner
-        saleText="Winter Sale"
-        discountText="Up to 40% Off Select Items"
-        endDate="Jan 31st"
-        ctaText="Shop Sale"
-        ctaLink="/shop?on_sale=true"
-      />
+      {/* Creatine Promo Banner (image only, no text overlay - Tab 1 style) */}
+      <section className="py-8 bg-white">
+        <div className="container mx-auto px-4">
+          <a href="/shop/creatine" className="block mx-auto" style={{ maxWidth: '980px' }}>
+            <Image
+              src={WP_IMAGES.bestCreatine}
+              alt="Best Creatine Prices"
+              width={980}
+              height={201}
+              className="w-full h-auto"
+            />
+          </a>
+        </div>
+      </section>
 
-      {/* Sale Products Carousel */}
+      {/* Recommended Products Carousel */}
       <ProductCarousel
-        title="On Sale Now"
-        products={saleProducts}
-        viewAllLink="/shop?on_sale=true"
-      />
-
-      {/* Split Promo Banners */}
-      <SplitPromo
-        leftPromo={{
-          title: "3 for $99 Deal",
-          subtitle: "Limited Time",
-          ctaText: "Shop Now",
-          ctaLink: "/shop",
-          image: WP_IMAGES.promo3for99,
-        }}
-        rightPromo={{
-          title: "Best Creatine Prices",
-          subtitle: "Guaranteed",
-          ctaText: "Shop Creatine",
-          ctaLink: "/shop/creatine",
-          image: WP_IMAGES.bestCreatine,
-        }}
-      />
-
-      {/* Best Sellers */}
-      <ProductCarousel
-        title="Best Sellers"
+        title="Recommended"
         products={bestSellers}
         viewAllLink="/shop?sort=popularity"
       />
 
-      {/* Shop by Brand */}
+      {/* Shop by Brand - renamed to match Tab 1, no view all link */}
       <BrandLogos
-        title="Shop by Brand"
+        title="Discover Brands You'll Love"
         brands={featuredBrands}
-        viewAllLink="/brands"
       />
 
-      {/* Wholesale Promo */}
-      <PromoBanner
-        title="Wholesale Program"
-        subtitle="For Gyms & Retailers"
-        description="Get exclusive pricing, dedicated support, and priority shipping for your business."
-        ctaText="Learn More"
-        ctaLink="/wholesale"
-        backgroundColor="black"
-        size="lg"
-      />
+      {/* Customer Reviews - Tab 1 style */}
+      <CustomerReviews title="What Customers Say" />
 
-      {/* Newsletter */}
+      {/* Newsletter - Tab 1 style */}
       <Newsletter
-        title="Stay in the Loop"
-        description="Subscribe for exclusive deals, new arrivals, and fitness tips delivered straight to your inbox."
+        title="Sign Up For Newsletter"
+        description="Stay up to date with recent news, advice and weekly offers."
         variant="default"
       />
     </>

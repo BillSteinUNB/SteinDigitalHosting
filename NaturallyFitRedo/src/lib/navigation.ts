@@ -228,7 +228,7 @@ export const footerNavigation = {
 // Contact information
 export const contactInfo = {
   phone: "(506) 451-8707",
-  email: "info@naturallyfit.ca",
+  email: "customercare@naturallyfit.ca",
   address: {
     street: "123 Main Street",
     city: "Fredericton",

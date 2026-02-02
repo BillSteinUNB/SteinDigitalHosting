@@ -86,12 +86,12 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
 
           {/* Right: Phone, Icons, Veteran Badge */}
           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            {/* Phone - Hidden on small screens */}
+            {/* Phone - Hidden on small screens, with LOCAL: prefix */}
             <a
               href={`tel:${contactInfo.phone.replace(/[^0-9]/g, "")}`}
               className="hidden lg:block font-heading font-semibold text-small uppercase text-red-primary hover:text-red-hover transition-colors"
             >
-              {contactInfo.phone}
+              LOCAL: {contactInfo.phone}
             </a>
 
             {/* Veteran Owned Badge - 47px × 53px */}
@@ -105,24 +105,22 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
               />
             </div>
 
-            {/* Wishlist */}
+            {/* Wishlist - Always show badge with 0 if empty */}
             <Link
               href="/account/wishlist"
               className="relative p-2 text-white hover:bg-white/10 transition-colors"
               aria-label={`Wishlist (${wishlistCount} items)`}
             >
               <Heart size={24} strokeWidth={1.5} />
-              {wishlistCount > 0 && (
-                <CountBadge
-                  count={wishlistCount}
-                  size="sm"
-                  className="absolute -top-1 -right-1"
-                />
-              )}
+              <CountBadge
+                count={wishlistCount}
+                size="sm"
+                className="absolute -top-1 -right-1"
+              />
             </Link>
 
-            {/* Cart */}
-            <MiniCart cartCount={cartCount} darkMode={true} iconClassName="text-white" />
+            {/* Cart - Always show badge with 0 if empty */}
+            <MiniCart cartCount={cartCount} darkMode={true} iconClassName="text-white" showBadgeAlways />
           </div>
         </div>
       </div>

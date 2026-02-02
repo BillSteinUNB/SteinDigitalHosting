@@ -11,10 +11,12 @@ function normalizeHref(href: string): string {
 export const wholesaleLinks = {
   /** Where wholesale customers should login */
   login: normalizeHref(
-    process.env.NEXT_PUBLIC_WHOLESALE_LOGIN_URL || "/login?callbackUrl=%2Fshop"
+    process.env.NEXT_PUBLIC_WHOLESALE_LOGIN_URL || "/wholesale/login"
   ),
   /** Where wholesale customers should order / shop (bulk order form or wholesale shop) */
-  order: normalizeHref(process.env.NEXT_PUBLIC_WHOLESALE_ORDER_URL || "/shop"),
+  order: normalizeHref(process.env.NEXT_PUBLIC_WHOLESALE_ORDER_URL || "/wholesale/shop"),
+  /** Where to apply for wholesale account */
+  register: normalizeHref("/wholesale/register"),
 };
 
 export function isExternalHref(href: string): boolean {

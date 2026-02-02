@@ -24,6 +24,8 @@ interface MiniCartProps {
   iconClassName?: string;
   /** Dropdown background for dark header context */
   darkMode?: boolean;
+  /** Always show badge even when count is 0 */
+  showBadgeAlways?: boolean;
 }
 
 // ============================================
@@ -37,7 +39,7 @@ interface MiniCartProps {
  * Opens on hover (desktop) or click (mobile).
  * Connected to Zustand cart store.
  */
-export default function MiniCart({ cartCount: cartCountProp, iconClassName = "", darkMode = false }: MiniCartProps) {
+export default function MiniCart({ cartCount: cartCountProp, iconClassName = "", darkMode = false, showBadgeAlways = false }: MiniCartProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -105,7 +107,7 @@ export default function MiniCart({ cartCount: cartCountProp, iconClassName = "",
         aria-haspopup="true"
       >
         <ShoppingBag size={24} strokeWidth={1.5} />
-        {itemCount > 0 && (
+        {(itemCount > 0 || showBadgeAlways) && (
           <CountBadge
             count={itemCount}
             size="sm"

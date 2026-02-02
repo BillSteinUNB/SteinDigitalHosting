@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
@@ -314,24 +313,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
             textAlignClass
           )}
         >
-          {/* Shop Now Button - Skewed parallelogram shape, centered */}
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              href={slide.ctaLink}
-              className={cn(
-                "inline-flex items-center justify-center",
-                "px-10 py-4 min-h-[52px]",
-                "font-heading font-bold uppercase tracking-button text-lg",
-                "bg-red-primary text-white hover:bg-red-hover",
-                "transition-all duration-200"
-              )}
-              style={{ transform: "skewX(-15deg)" }}
-            >
-              <span style={{ transform: "skewX(15deg)", display: "inline-block" }}>
-                Shop Now
-              </span>
-            </Link>
-          </div>
+          {/* Tab 1 has no SHOP NOW button overlays on hero slides */}
         </div>
       </div>
     </div>

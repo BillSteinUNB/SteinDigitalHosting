@@ -64,6 +64,15 @@ export default function Footer() {
             ]}
           />
 
+          <FooterColumn
+            title="Catalogs"
+            links={[
+              { label: "Supplement Guide", href: "/guides/supplements" },
+              { label: "Protein Catalog", href: "/catalogs/protein" },
+              { label: "Pre-Workout Guide", href: "/guides/pre-workout" },
+            ]}
+          />
+
           {/* Veteran Badge - 98px × 98px & Google Reviews - 225px × 92px */}
           <div className="flex flex-col items-center lg:items-end gap-4">
             <Image
