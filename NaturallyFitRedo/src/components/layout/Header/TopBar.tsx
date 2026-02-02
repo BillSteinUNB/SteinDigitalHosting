@@ -55,13 +55,13 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
 
             {/* Logo + Tagline */}
             <Link href="/" className="flex items-center gap-3 min-w-0">
-              <div className="flex items-center flex-shrink-0">
+              <div className="relative flex-shrink-0 w-[120px] h-[60px]">
                 <Image
                   src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore.webp"
                   alt="Naturally Fit - Canada's Supplement Store"
-                  width={47}
-                  height={53}
-                  className="w-[47px] h-[53px] object-contain"
+                  fill
+                  sizes="120px"
+                  className="object-contain"
                   priority
                 />
               </div>
