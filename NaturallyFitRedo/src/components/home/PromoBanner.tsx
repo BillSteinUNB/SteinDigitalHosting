@@ -327,12 +327,12 @@ export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
   return (
     <section className={cn("py-6 bg-white", className)}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-nowrap justify-center gap-4 overflow-x-auto">
           {banners.map((banner, index) => (
             <Link
               key={index}
               href={banner.link}
-              className="block overflow-hidden hover:opacity-90 transition-opacity"
+              className="block overflow-hidden hover:opacity-90 transition-opacity flex-shrink-0"
               style={{ width: '410px', height: '107px' }}
             >
               <Image

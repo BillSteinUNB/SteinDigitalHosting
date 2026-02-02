@@ -224,27 +224,30 @@ export default function Hero({
 
       {/* Custom Swiper Styles */}
       <style jsx global>{`
-        /* Hero Carousel Container - Full Width Responsive */
+        /* Hero Carousel Container - Floating with rounded corners */
         .hero-swiper {
-          width: 100%;
-          height: 60vh;
-          min-height: 400px;
-          max-height: 600px;
+          width: 90%;
+          height: 54vh;
+          min-height: 360px;
+          max-height: 540px;
+          margin: 16px auto 0;
+          border-radius: 12px;
+          overflow: hidden;
         }
 
         @media (min-width: 768px) {
           .hero-swiper {
-            height: 65vh;
-            min-height: 450px;
-            max-height: 650px;
+            height: 58.5vh;
+            min-height: 405px;
+            max-height: 585px;
           }
         }
 
         @media (min-width: 1024px) {
           .hero-swiper {
-            height: 70vh;
-            min-height: 500px;
-            max-height: 700px;
+            height: 63vh;
+            min-height: 450px;
+            max-height: 630px;
           }
         }
 
@@ -302,10 +305,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
           priority
           sizes="100vw"
         />
-        {/* Overlay */}
-        {slide.overlay && (
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-        )}
+        {/* Overlay - removed grey gradient */}
       </div>
 
       {/* Content */}
