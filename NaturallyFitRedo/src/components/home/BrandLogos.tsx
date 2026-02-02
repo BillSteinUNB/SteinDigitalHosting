@@ -75,6 +75,7 @@ export default function BrandLogos({
             }}
             spaceBetween={24}
             slidesPerView={2}
+            roundLengths
             loop={brands.length > 6}
             autoplay={
               autoplay

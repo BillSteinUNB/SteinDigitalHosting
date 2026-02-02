@@ -27,9 +27,9 @@ import { ProductCarousel } from "@/components/product";
 // ============================================
 const WP_IMAGES = {
   // Three Banner Row (Tab 1 style)
-  bundle3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
-  beatAnyPrice: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/beatanyprice-1.png",
-  freeShipping: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png",
+  bundle3for99: "https://naturallyfit.ca/wp-content/uploads/2026/01/NF_3_for_99-2026.png",
+  beatAnyPrice: "https://naturallyfit.ca/wp-content/uploads/2025/02/shipping-2.png",
+  freeShipping: "https://naturallyfit.ca/wp-content/uploads/2025/04/shipping.png",
   // Promo banners
   promo3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
   bestCreatine: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
@@ -68,17 +68,17 @@ export default async function HomePage() {
           {
             image: WP_IMAGES.bundle3for99,
             alt: "Bundles 3 for $99",
-            link: "/shop?bundles=true",
+            link: "/product/mix-and-match-for-99/",
           },
           {
             image: WP_IMAGES.beatAnyPrice,
             alt: "Beat ANY Price by 10%",
-            link: "/price-match",
+            link: "/price-guarantee/",
           },
           {
             image: WP_IMAGES.freeShipping,
             alt: "Free Shipping / Free Hoodie / Free Shaker",
-            link: "/shipping",
+            link: "/shop/",
           },
         ]}
       />
