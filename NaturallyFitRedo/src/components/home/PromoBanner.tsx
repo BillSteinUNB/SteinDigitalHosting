@@ -332,7 +332,7 @@ export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
             <Link
               key={index}
               href={banner.link}
-              className="block overflow-hidden hover:opacity-90 transition-opacity flex-shrink-0"
+              className="block overflow-hidden hover:opacity-90 transition-opacity flex-shrink-0 rounded-xl"
               style={{ width: '410px', height: '107px' }}
             >
               <Image
@@ -340,7 +340,7 @@ export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
                 alt={banner.alt}
                 width={410}
                 height={107}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-xl"
               />
             </Link>
           ))}

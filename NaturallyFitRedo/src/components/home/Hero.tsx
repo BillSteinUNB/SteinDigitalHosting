@@ -255,6 +255,11 @@ export default function Hero({
           bottom: 20px;
         }
 
+        .hero-swiper .swiper-slide {
+          border-radius: 12px;
+          overflow: hidden;
+        }
+
         .hero-bullet {
           width: 12px;
           height: 12px;
