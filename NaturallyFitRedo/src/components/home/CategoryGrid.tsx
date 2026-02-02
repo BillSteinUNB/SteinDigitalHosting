@@ -82,15 +82,15 @@ function CategoryCard({ category, showProductCount }: CategoryCardProps) {
         "hover:shadow-lg"
       )}
     >
-      {/* Category Image - 200px × 120px display size */}
-      <div className="relative w-[200px] h-[120px] mb-3">
+      {/* Category Image - 240px × 144px display size (20% bigger) */}
+      <div className="relative w-[240px] h-[144px] mb-3">
         {image ? (
           <Image
             src={image.sourceUrl}
             alt={image.altText || name}
             fill
             className="object-contain transition-transform duration-300 group-hover:scale-110"
-            sizes="200px"
+            sizes="240px"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -100,7 +100,7 @@ function CategoryCard({ category, showProductCount }: CategoryCardProps) {
       </div>
 
       {/* Category Name */}
-      <h3 className="font-heading text-sm uppercase text-center tracking-wide text-black group-hover:text-red-primary transition-colors">
+      <h3 className="font-heading text-base uppercase text-center tracking-wide text-black group-hover:text-red-primary transition-colors">
         {name}
       </h3>
 
@@ -218,7 +218,7 @@ function FeaturedCategoryCard({ category }: { category: CategoryWithCount }) {
 export function CategoryCardSkeleton() {
   return (
     <div className="flex flex-col items-center bg-white p-6 border border-gray-border animate-pulse">
-      <div className="w-20 h-20 bg-gray-200 rounded mb-4" />
+      <div className="w-[240px] h-[144px] bg-gray-200 rounded mb-4" />
       <div className="h-4 w-20 bg-gray-200 rounded mb-2" />
       <div className="h-3 w-16 bg-gray-200 rounded" />
     </div>

@@ -4,9 +4,9 @@ import Image from "next/image";
 
 // GraphQL data fetching
 import { getFeaturedProducts, getBestSellers } from "@/lib/graphql/products";
+import { getFeaturedCategories } from "@/lib/graphql/categories";
 
-// Mock data (categories and brands with proper images)
-import { featuredCategories } from "@/lib/mock/categories";
+// Mock data (brands with proper images)
 import { featuredBrands } from "@/lib/mock/brands";
 
 // Home components
@@ -52,9 +52,11 @@ export default async function HomePage() {
   const [
     featuredProducts,
     bestSellers,
+    featuredCategories,
   ] = await Promise.all([
     getFeaturedProducts(8),
     getBestSellers(8),
+    getFeaturedCategories(5),
   ]);
 
   return (
@@ -93,7 +95,7 @@ export default async function HomePage() {
       {/* Creatine Promo Banner (image only, no text overlay - Tab 1 style) */}
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <a href="/shop/creatine" className="block mx-auto" style={{ maxWidth: '980px' }}>
+          <a href="/shop/creatine" className="block mx-auto overflow-hidden rounded-xl" style={{ maxWidth: '980px' }}>
             <Image
               src={WP_IMAGES.bestCreatine}
               alt="Best Creatine Prices"
