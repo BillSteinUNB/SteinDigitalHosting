@@ -51,7 +51,7 @@ const defaultSlides: HeroSlide[] = [
       src: "/images/hero/hero-1.png",
       alt: "Athlete training with supplements",
     },
-    textPosition: "left",
+    textPosition: "center",
     overlay: true,
   },
   {
@@ -65,7 +65,7 @@ const defaultSlides: HeroSlide[] = [
       src: "/images/hero/hero-2.png",
       alt: "Supplement sale promotion",
     },
-    textPosition: "left",
+    textPosition: "center",
     overlay: true,
   },
   {
@@ -79,7 +79,7 @@ const defaultSlides: HeroSlide[] = [
       src: "/images/hero/hero-3.png",
       alt: "GHOST supplements",
     },
-    textPosition: "left",
+    textPosition: "center",
     overlay: true,
   },
   {
@@ -95,7 +95,7 @@ const defaultSlides: HeroSlide[] = [
       src: "/images/hero/hero-4.png",
       alt: "Wholesale supplements",
     },
-    textPosition: "left",
+    textPosition: "center",
     overlay: true,
   },
 ];
@@ -150,21 +150,22 @@ export default function Hero({
         ))}
       </Swiper>
 
-      {/* Custom Navigation Arrows */}
+      {/* Custom Navigation Arrows - Subtle style matching original */}
       <button
         type="button"
         onClick={() => swiperRef.current?.slidePrev()}
         className={cn(
           "absolute left-4 top-1/2 -translate-y-1/2 z-10",
-          "w-12 h-12 min-w-[44px] min-h-[44px]",
+          "w-10 h-10 min-w-[44px] min-h-[44px]",
           "flex items-center justify-center",
-          "bg-white/90 hover:bg-white",
-          "text-black transition-colors",
+          "bg-black/50 hover:bg-black/70",
+          "text-white transition-colors",
           "hidden md:flex"
         )}
+        style={{ transform: "translateY(-50%) skewX(-15deg)" }}
         aria-label="Previous slide"
       >
-        <ChevronLeft size={24} strokeWidth={1.5} />
+        <ChevronLeft size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
       </button>
 
       <button
@@ -172,15 +173,16 @@ export default function Hero({
         onClick={() => swiperRef.current?.slideNext()}
         className={cn(
           "absolute right-4 top-1/2 -translate-y-1/2 z-10",
-          "w-12 h-12 min-w-[44px] min-h-[44px]",
+          "w-10 h-10 min-w-[44px] min-h-[44px]",
           "flex items-center justify-center",
-          "bg-white/90 hover:bg-white",
-          "text-black transition-colors",
+          "bg-black/50 hover:bg-black/70",
+          "text-white transition-colors",
           "hidden md:flex"
         )}
+        style={{ transform: "translateY(-50%) skewX(-15deg)" }}
         aria-label="Next slide"
       >
-        <ChevronRight size={24} strokeWidth={1.5} />
+        <ChevronRight size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
       </button>
 
       {/* Custom Swiper Styles */}
@@ -248,7 +250,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
     left: "items-start text-left",
     center: "items-center text-center",
     right: "items-end text-right",
-  }[slide.textPosition || "left"];
+  }[slide.textPosition || "center"];
 
   return (
     <div className="relative w-full h-full">
@@ -273,23 +275,26 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
         <div
           className={cn(
             "h-full flex flex-col justify-center",
-            "max-w-xl",
+            "max-w-xl mx-auto",
             textAlignClass
           )}
         >
-          {/* Shop Now Button Only */}
-          <div className="flex flex-wrap gap-4">
+          {/* Shop Now Button - Skewed parallelogram shape, centered */}
+          <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href={slide.ctaLink}
               className={cn(
                 "inline-flex items-center justify-center",
-                "px-10 py-5 min-h-[56px]",
+                "px-10 py-4 min-h-[52px]",
                 "font-heading font-bold uppercase tracking-button text-lg",
                 "bg-red-primary text-white hover:bg-red-hover",
                 "transition-all duration-200"
               )}
+              style={{ transform: "skewX(-15deg)" }}
             >
-              Shop Now
+              <span style={{ transform: "skewX(15deg)", display: "inline-block" }}>
+                Shop Now
+              </span>
             </Link>
           </div>
         </div>

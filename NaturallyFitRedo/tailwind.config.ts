@@ -14,12 +14,12 @@ const config: Config = {
         black: "#000000",
         white: "#FFFFFF",
         red: {
-          primary: "#C41E3A",
-          hover: "#A01830",
+          primary: "#D24028",
+          hover: "#B53520",
         },
         // Secondary
         yellow: {
-          highlight: "#FFE600",
+          highlight: "#FFFF42",
         },
         gray: {
           dark: "#1A1A1A",

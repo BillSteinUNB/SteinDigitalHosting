@@ -10,11 +10,11 @@
   /* === PRIMARY COLORS === */
   --color-black: #000000;
   --color-white: #FFFFFF;
-  --color-red-primary: #C41E3A;
-  --color-red-hover: #A01830;
+  --color-red-primary: #D24028;
+  --color-red-hover: #B53520;
   
   /* === SECONDARY COLORS === */
-  --color-yellow-highlight: #FFE600;
+  --color-yellow-highlight: #FFFF42;
   --color-gray-dark: #1A1A1A;
   --color-gray-medium: #333333;
   --color-gray-light: #F5F5F5;
@@ -424,6 +424,21 @@
   .price-strikethrough {
     text-decoration: line-through;
     color: var(--color-gray-medium);
+  }
+  
+  /* Skew utilities for buttons and accents */
+  .skew-x-neg15 {
+    transform: skewX(-15deg);
+  }
+  
+  .skew-x-neg15 > * {
+    transform: skewX(15deg);
+  }
+  
+  /* Counter-skew for text inside skewed containers */
+  .unskew {
+    transform: skewX(15deg);
+    display: inline-block;
   }
 }
 

@@ -20,6 +20,10 @@ import { useCartStore, selectCartItems, selectCartItemCount, selectCartSubtotal,
 interface MiniCartProps {
   /** Optional override for cart count (for SSR/static) */
   cartCount?: number;
+  /** Icon color class */
+  iconClassName?: string;
+  /** Dropdown background for dark header context */
+  darkMode?: boolean;
 }
 
 // ============================================
@@ -33,7 +37,7 @@ interface MiniCartProps {
  * Opens on hover (desktop) or click (mobile).
  * Connected to Zustand cart store.
  */
-export default function MiniCart({ cartCount: cartCountProp }: MiniCartProps) {
+export default function MiniCart({ cartCount: cartCountProp, iconClassName = "", darkMode = false }: MiniCartProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -91,7 +95,11 @@ export default function MiniCart({ cartCount: cartCountProp }: MiniCartProps) {
       {/* Cart Icon Button */}
       <button
         onClick={() => (isOpen ? closeMiniCart() : openMiniCart())}
-        className="relative p-2 hover:bg-gray-light transition-colors"
+        className={cn(
+          "relative p-2 transition-colors",
+          darkMode ? "hover:bg-white/10" : "hover:bg-gray-light",
+          iconClassName
+        )}
         aria-label={`Shopping cart (${itemCount} items)`}
         aria-expanded={isOpen}
         aria-haspopup="true"

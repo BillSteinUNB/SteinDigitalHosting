@@ -14,6 +14,7 @@ import MegaMenu from "./MegaMenu";
  * Row 2 of Header (Height: 50px):
  * - Navigation items with dropdowns
  * - Red bottom border (3px)
+ * - Red skewed accent after dropdown items
  * - 24 Hour Gym button in yellow
  * - Auth status (Login/Register or User dropdown)
  */
@@ -34,9 +35,14 @@ export default function MainNav() {
     await signOut({ callbackUrl: "/" });
   };
 
+  // Check if nav item should have red skewed accent
+  const hasRedAccent = (label: string) => {
+    return label === "Shop" || label === "Brands" || label === "Wholesale";
+  };
+
   return (
     <nav
-      className="hidden lg:block border-b-[3px] border-red-primary"
+      className="hidden lg:block border-b-[3px] border-red-primary bg-white"
       aria-label="Main navigation"
     >
       <div className="container">
@@ -45,6 +51,7 @@ export default function MainNav() {
             const isShop = item.label === "Shop";
             const hasDropdown = isShop || (item.children && item.children.length > 0);
             const isActive = activeDropdown === item.label;
+            const showRedAccent = hasRedAccent(item.label);
 
             return (
               <li
@@ -62,14 +69,22 @@ export default function MainNav() {
                     "transition-colors",
                     // Highlight style (24 Hour Gym)
                     item.highlight
-                      ? "bg-yellow-highlight text-black hover:brightness-95"
+                      ? "bg-yellow-highlight text-black hover:brightness-95 font-bold"
                       : "text-black hover:text-red-primary",
                     // Active state
                     isActive && !item.highlight && "text-red-primary"
                   )}
                 >
                   {item.label}
-                  {hasDropdown && (
+                  {showRedAccent && (
+                    /* Red skewed rectangular accent */
+                    <span 
+                      className="inline-block w-2 h-3 bg-red-primary ml-1"
+                      style={{ transform: "skewX(-15deg)" }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {hasDropdown && !showRedAccent && (
                     <ChevronDown
                       size={14}
                       strokeWidth={2}
