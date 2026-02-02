@@ -90,13 +90,6 @@ export default async function HomePage() {
         viewAllLink="/shop?featured=true"
       />
 
-      {/* Shop by Category - Using mock data with correct images */}
-      <CategoryGrid
-        title="Popular Categories"
-        categories={featuredCategories}
-        columns={5}
-      />
-
       {/* Creatine Promo Banner (image only, no text overlay - Tab 1 style) */}
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
@@ -106,11 +99,18 @@ export default async function HomePage() {
               alt="Best Creatine Prices"
               width={980}
               height={201}
-              className="w-full h-auto"
+              className="w-full h-auto rounded-xl"
             />
           </a>
         </div>
       </section>
+
+      {/* Shop by Category - Using mock data with correct images */}
+      <CategoryGrid
+        title="Popular Categories"
+        categories={featuredCategories}
+        columns={5}
+      />
 
       {/* Recommended Products Carousel */}
       <ProductCarousel
