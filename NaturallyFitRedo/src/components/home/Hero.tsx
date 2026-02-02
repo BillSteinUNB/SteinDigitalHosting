@@ -224,23 +224,27 @@ export default function Hero({
 
       {/* Custom Swiper Styles */}
       <style jsx global>{`
-        /* Hero Carousel Container: 1618px × 487px (~3.3:1 aspect ratio) */
+        /* Hero Carousel Container - Full Width Responsive */
         .hero-swiper {
           width: 100%;
-          max-width: 1618px;
-          height: 487px;
-          margin: 0 auto;
+          height: 60vh;
+          min-height: 400px;
+          max-height: 600px;
         }
 
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
           .hero-swiper {
-            height: 350px;
+            height: 65vh;
+            min-height: 450px;
+            max-height: 650px;
           }
         }
 
-        @media (max-width: 480px) {
+        @media (min-width: 1024px) {
           .hero-swiper {
-            height: 280px;
+            height: 70vh;
+            min-height: 500px;
+            max-height: 700px;
           }
         }
 
