@@ -22,6 +22,13 @@ import { Input, Textarea } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 
 // ============================================
+// WORDPRESS IMAGE REFERENCES
+// ============================================
+const WP_IMAGES = {
+  heroBg: "https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg",
+};
+
+// ============================================
 // VALIDATION SCHEMA
 // ============================================
 
@@ -218,7 +225,7 @@ export default function WholesalePage() {
       <section className="relative bg-black py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <Image
-            src="/images/wholesale/hero-bg.jpg"
+            src={WP_IMAGES.heroBg}
             alt=""
             fill
             className="object-cover"

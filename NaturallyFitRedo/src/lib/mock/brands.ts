@@ -12,44 +12,66 @@ export interface BrandWithDetails extends ProductBrand {
 }
 
 // ============================================
+// WORDPRESS BRAND LOGO REFERENCES
+// ============================================
+const WP_BRAND_LOGOS = {
+  advancedGenetics: "https://naturallyfit.ca/wp-content/uploads/2024/04/Advanced-Genetics.png",
+  alaniNu: "https://naturallyfit.ca/wp-content/uploads/2024/04/alani-nu.png",
+  anabar: "https://naturallyfit.ca/wp-content/uploads/2024/04/Anabar.png",
+  cellucor: "https://naturallyfit.ca/wp-content/uploads/2024/04/Cellucor.png",
+  nutraphase: "https://naturallyfit.ca/wp-content/uploads/2024/04/nutraphase.png",
+  tcNutrition: "https://naturallyfit.ca/wp-content/uploads/2024/04/TC-Nutrition.png",
+  ams: "https://naturallyfit.ca/wp-content/uploads/2024/04/AMS.png",
+  believe: "https://naturallyfit.ca/wp-content/uploads/2024/04/Believe.png",
+  c4: "https://naturallyfit.ca/wp-content/uploads/2024/04/C4.png",
+  mammoth: "https://naturallyfit.ca/wp-content/uploads/2024/04/Mammoth-1.png",
+  mutant: "https://naturallyfit.ca/wp-content/uploads/2024/04/Mutant-1.png",
+  perfect: "https://naturallyfit.ca/wp-content/uploads/2024/04/Perfect.png",
+  teNutrition: "https://naturallyfit.ca/wp-content/uploads/2024/04/te-nutrition.png",
+  vandel: "https://naturallyfit.ca/wp-content/uploads/2024/04/Vandel.png",
+  yummy: "https://naturallyfit.ca/wp-content/uploads/2024/04/Yummy.png",
+  batch: "https://naturallyfit.ca/wp-content/uploads/2024/04/batch-21.png",
+};
+
+// ============================================
 // ALL BRANDS
 // ============================================
 
 export const brands: BrandWithDetails[] = [
   {
     id: "brand-1",
-    name: "Optimum Nutrition",
-    slug: "optimum-nutrition",
+    name: "Advanced Genetics",
+    slug: "advanced-genetics",
     logo: {
-      sourceUrl: "/images/brands/brand-1.svg",
-      altText: "Optimum Nutrition Logo",
+      sourceUrl: WP_BRAND_LOGOS.advancedGenetics,
+      altText: "Advanced Genetics Logo",
     },
     description:
-      "Optimum Nutrition is the world's most awarded sports nutrition brand. Since 1986, ON has been setting the standard with high-quality products like Gold Standard 100% Whey.",
+      "Advanced Genetics is a premium Canadian supplement brand known for high-quality formulations.",
     productCount: 45,
     featured: true,
-    website: "https://www.optimumnutrition.com",
+    website: "https://www.advancedgenetics.com",
   },
   {
     id: "brand-2",
-    name: "MuscleTech",
-    slug: "muscletech",
+    name: "Alani Nu",
+    slug: "alani-nu",
     logo: {
-      sourceUrl: "/images/brands/brand-2.svg",
-      altText: "MuscleTech Logo",
+      sourceUrl: WP_BRAND_LOGOS.alaniNu,
+      altText: "Alani Nu Logo",
     },
     description:
-      "MuscleTech is America's #1 selling bodybuilding supplement brand. For over 20 years, MuscleTech has been developing cutting-edge formulas backed by science.",
+      "Alani Nu creates supplements designed with women in mind, featuring great-tasting products with effective formulations.",
     productCount: 38,
     featured: true,
-    website: "https://www.muscletech.com",
+    website: "https://www.alaninu.com",
   },
   {
     id: "brand-3",
     name: "Cellucor",
     slug: "cellucor",
     logo: {
-      sourceUrl: "/images/brands/brand-3.svg",
+      sourceUrl: WP_BRAND_LOGOS.cellucor,
       altText: "Cellucor Logo",
     },
     description:
@@ -60,167 +82,153 @@ export const brands: BrandWithDetails[] = [
   },
   {
     id: "brand-4",
-    name: "Ghost",
-    slug: "ghost",
+    name: "Mammoth",
+    slug: "mammoth",
     logo: {
-      sourceUrl: "/images/brands/brand-4.svg",
-      altText: "GHOST Logo",
+      sourceUrl: WP_BRAND_LOGOS.mammoth,
+      altText: "Mammoth Logo",
     },
     description:
-      "GHOST is a lifestyle sports nutrition brand that believes in full label transparency. Known for legendary flavor collaborations with iconic candy and food brands.",
+      "Mammoth Supplements is a Canadian brand known for mass gainers and muscle building supplements.",
     productCount: 28,
     featured: true,
-    website: "https://www.ghostlifestyle.com",
+    website: "https://www.mammothsupplements.com",
   },
   {
     id: "brand-5",
-    name: "BSN",
-    slug: "bsn",
+    name: "Believe Supplements",
+    slug: "believe",
     logo: {
-      sourceUrl: "/images/brands/brand-5.svg",
-      altText: "BSN Logo",
+      sourceUrl: WP_BRAND_LOGOS.believe,
+      altText: "Believe Supplements Logo",
     },
     description:
-      "BSN (Bio-Engineered Supplements and Nutrition) is a global leader in sports nutrition. Makers of legendary products like N.O.-XPLODE and SYNTHA-6.",
+      "Believe Supplements offers premium quality supplements with transparent labeling and effective formulas.",
     productCount: 26,
     featured: true,
-    website: "https://www.bsnonline.com",
+    website: "https://www.believesupplements.com",
   },
   {
     id: "brand-6",
-    name: "EVL Nutrition",
-    slug: "evl-nutrition",
+    name: "TC Nutrition",
+    slug: "tc-nutrition",
     logo: {
-      sourceUrl: "/images/brands/brand-6.svg",
-      altText: "EVL Nutrition Logo",
+      sourceUrl: WP_BRAND_LOGOS.tcNutrition,
+      altText: "TC Nutrition Logo",
     },
     description:
-      "EVL Nutrition creates high-quality sports supplements designed to help athletes evolve their training. Known for effective formulas at competitive prices.",
+      "TC Nutrition creates high-quality sports supplements designed to help athletes evolve their training.",
     productCount: 22,
     featured: true,
-    website: "https://www.evlnutrition.com",
+    website: "https://www.tcnutrition.com",
   },
   {
     id: "brand-7",
-    name: "Dymatize",
-    slug: "dymatize",
+    name: "Nutraphase",
+    slug: "nutraphase",
     logo: {
-      sourceUrl: "/images/brands/brand-7.svg",
-      altText: "Dymatize Logo",
+      sourceUrl: WP_BRAND_LOGOS.nutraphase,
+      altText: "Nutraphase Logo",
     },
     description:
-      "Dymatize is dedicated to creating the highest quality sports nutrition products. ISO100, their flagship protein, is one of the most advanced whey isolates available.",
+      "Nutraphase is dedicated to creating clean, effective supplements with transparent ingredient lists.",
     productCount: 24,
     featured: true,
-    website: "https://www.dymatize.com",
+    website: "https://www.nutraphase.com",
   },
   {
     id: "brand-8",
-    name: "JYM Supplement Science",
-    slug: "jym",
+    name: "Yummy Sports",
+    slug: "yummy-sports",
     logo: {
-      sourceUrl: "/images/brands/brand-8.svg",
-      altText: "JYM Supplement Science Logo",
+      sourceUrl: WP_BRAND_LOGOS.yummy,
+      altText: "Yummy Sports Logo",
     },
     description:
-      "JYM Supplement Science was founded by Dr. Jim Stoppani to create supplements based on real science with no proprietary blends and full transparency.",
+      "Yummy Sports creates supplements with amazing flavors and effective formulations.",
     productCount: 18,
-    featured: false,
-    website: "https://www.jymsupplementscience.com",
+    featured: true,
+    website: "https://www.yummysports.com",
   },
   {
     id: "brand-9",
-    name: "Rule One Proteins",
-    slug: "rule-one",
+    name: "Perfect Sports",
+    slug: "perfect-sports",
     logo: {
-      sourceUrl: "/images/brands/brand-1.svg",
-      altText: "Rule One Proteins Logo",
+      sourceUrl: WP_BRAND_LOGOS.perfect,
+      altText: "Perfect Sports Logo",
     },
     description:
-      "Rule One Proteins was founded by the original founders of Optimum Nutrition. Focused on quality proteins and supplements with simple, effective formulas.",
+      "Perfect Sports creates high-quality Canadian supplements with a focus on purity and effectiveness.",
     productCount: 16,
     featured: false,
-    website: "https://www.ruleoneproteins.com",
+    website: "https://www.perfectsports.com",
   },
   {
     id: "brand-10",
-    name: "PEScience",
-    slug: "pescience",
+    name: "Mutant",
+    slug: "mutant",
     logo: {
-      sourceUrl: "/images/brands/brand-2.svg",
-      altText: "PEScience Logo",
+      sourceUrl: WP_BRAND_LOGOS.mutant,
+      altText: "Mutant Logo",
     },
     description:
-      "PEScience creates innovative sports nutrition products focused on great taste and effective ingredients. Known for their Select Protein line.",
+      "Mutant creates hardcore supplements for serious athletes looking to build mass and strength.",
     productCount: 14,
     featured: false,
   },
   {
     id: "brand-11",
-    name: "Nutrex Research",
-    slug: "nutrex",
+    name: "VNDL Project",
+    slug: "vndl",
     logo: {
-      sourceUrl: "/images/brands/brand-3.svg",
-      altText: "Nutrex Research Logo",
+      sourceUrl: WP_BRAND_LOGOS.vandel,
+      altText: "VNDL Project Logo",
     },
     description:
-      "Nutrex Research creates hardcore supplements for serious athletes. Known for LIPO-6 fat burners and Outlift pre-workouts.",
+      "VNDL Project creates performance-driven supplements for athletes seeking next-level results.",
     productCount: 20,
     featured: false,
   },
   {
     id: "brand-12",
-    name: "Redcon1",
-    slug: "redcon1",
+    name: "Anabar",
+    slug: "anabar",
     logo: {
-      sourceUrl: "/images/brands/brand-4.svg",
-      altText: "Redcon1 Logo",
+      sourceUrl: WP_BRAND_LOGOS.anabar,
+      altText: "Anabar Logo",
     },
     description:
-      "Redcon1 is a military-inspired supplement brand creating the highest state of readiness. Known for Total War pre-workout and MRE meal replacements.",
+      "Anabar creates delicious, protein-packed snack bars with real food ingredients.",
     productCount: 30,
     featured: true,
-    website: "https://www.redcon1.com",
+    website: "https://www.anabar.com",
   },
   {
     id: "brand-13",
-    name: "Allmax Nutrition",
-    slug: "allmax",
+    name: "AMS",
+    slug: "ams",
     logo: {
-      sourceUrl: "/images/brands/brand-5.svg",
-      altText: "Allmax Nutrition Logo",
+      sourceUrl: WP_BRAND_LOGOS.ams,
+      altText: "AMS Logo",
     },
     description:
-      "Allmax Nutrition produces pharmaceutical-grade supplements with strict quality control. Canadian brand known for IsoFlex protein.",
+      "AMS produces pharmaceutical-grade supplements with strict quality control.",
     productCount: 22,
     featured: false,
   },
   {
     id: "brand-14",
-    name: "GAT Sport",
-    slug: "gat-sport",
+    name: "Batch 27",
+    slug: "batch-27",
     logo: {
-      sourceUrl: "/images/brands/brand-6.svg",
-      altText: "GAT Sport Logo",
+      sourceUrl: WP_BRAND_LOGOS.batch,
+      altText: "Batch 27 Logo",
     },
     description:
-      "GAT Sport creates clinically-dosed supplements for athletes seeking peak performance. Known for Nitraflex pre-workout.",
+      "Batch 27 creates premium supplements with innovative formulations.",
     productCount: 18,
     featured: false,
-  },
-  {
-    id: "brand-15",
-    name: "Quest Nutrition",
-    slug: "quest",
-    logo: {
-      sourceUrl: "/images/brands/brand-7.svg",
-      altText: "Quest Nutrition Logo",
-    },
-    description:
-      "Quest Nutrition revolutionized the protein bar category. Known for high-protein, low-sugar snacks that taste like treats.",
-    productCount: 35,
-    featured: true,
-    website: "https://www.questnutrition.com",
   },
 ];
 

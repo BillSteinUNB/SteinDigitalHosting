@@ -1,7 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react";
 import { footerNavigation, contactInfo } from "@/lib/navigation";
+
+// ============================================
+// WORDPRESS IMAGE REFERENCES
+// ============================================
+const WP_IMAGES = {
+  logo: "https://naturallyfit.ca/wp-content/uploads/2018/02/cropped-web_logo.png",
+  beatAnyPrice: "https://naturallyfit.ca/wp-content/uploads/2023/02/beatanyprice-1.png",
+  canadasSupplementStore: "https://naturallyfit.ca/wp-content/uploads/2023/02/canadassupplementstore.png",
+  googleReviews: "https://naturallyfit.ca/wp-content/uploads/2026/01/google-reviews_logo.jpg",
+};
 
 // ============================================
 // FOOTER COMPONENT
@@ -27,16 +38,53 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            {/* Logo placeholder - will be replaced with actual logo */}
+            {/* Logo from WordPress */}
             <Link href="/" className="inline-block mb-4">
-              <span className="font-heading text-2xl uppercase tracking-wide text-white">
-                Naturally Fit
-              </span>
+              <Image
+                src={WP_IMAGES.logo}
+                alt="Naturally Fit"
+                width={150}
+                height={40}
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
               Canada&apos;s premier supplement retailer since 1999. Veteran-owned with
               a price-match guarantee.
             </p>
+
+            {/* Trust Badges */}
+            <div className="flex gap-3 mb-4">
+              <div className="relative w-20 h-12">
+                <Image
+                  src={WP_IMAGES.beatAnyPrice}
+                  alt="We Beat Any Price"
+                  fill
+                  className="object-contain"
+                  sizes="80px"
+                />
+              </div>
+              <div className="relative w-20 h-12">
+                <Image
+                  src={WP_IMAGES.canadasSupplementStore}
+                  alt="Canada's Supplement Store"
+                  fill
+                  className="object-contain"
+                  sizes="80px"
+                />
+              </div>
+            </div>
+
+            {/* Google Reviews Badge */}
+            <div className="relative w-24 h-12 mb-4">
+              <Image
+                src={WP_IMAGES.googleReviews}
+                alt="Google Reviews"
+                fill
+                className="object-contain"
+                sizes="96px"
+              />
+            </div>
 
             {/* Social Links */}
             <div className="flex gap-3">

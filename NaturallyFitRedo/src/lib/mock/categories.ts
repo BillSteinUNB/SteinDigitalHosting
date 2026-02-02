@@ -11,6 +11,21 @@ export interface CategoryWithCount extends ProductCategory {
 }
 
 // ============================================
+// WORDPRESS CATEGORY IMAGE REFERENCES
+// ============================================
+const WP_CATEGORY_IMAGES = {
+  nfCategory: "https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg",
+  featuredProduct1: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-14.png",
+  featuredProduct2: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-15.png",
+  featuredProduct3: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-16.png",
+  featuredProduct4: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-17.png",
+  featuredProduct5: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-18.png",
+  featuredProduct6: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-19.png",
+  featuredProduct7: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-20.png",
+  featuredProduct8: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-21.png",
+};
+
+// ============================================
 // MAIN CATEGORIES (Matching WooCommerce CSV Export)
 // ============================================
 
@@ -22,7 +37,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 245,
     description: "Shop by your favorite supplement brands.",
     image: {
-      sourceUrl: "/images/categories/protein.png",
+      sourceUrl: WP_CATEGORY_IMAGES.nfCategory,
       altText: "Supplement Brands",
     },
     children: [
@@ -131,7 +146,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 156,
     description: "High-quality protein powders, bars, and drinks to fuel your gains.",
     image: {
-      sourceUrl: "/images/categories/protein.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct1,
       altText: "Protein Supplements",
     },
     children: [
@@ -176,7 +191,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 89,
     description: "Boost your energy and performance before training.",
     image: {
-      sourceUrl: "/images/categories/pre-workout.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct2,
       altText: "Pre-Workout Supplements",
     },
     children: [
@@ -205,7 +220,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 67,
     description: "Thermogenic and metabolic support for weight management.",
     image: {
-      sourceUrl: "/images/categories/fat-burners.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct3,
       altText: "Fat Burner Supplements",
     },
     children: [
@@ -242,7 +257,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 94,
     description: "Optimize your recovery and reduce muscle soreness.",
     image: {
-      sourceUrl: "/images/categories/recovery.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct4,
       altText: "Recovery Supplements",
     },
     children: [
@@ -271,7 +286,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 52,
     description: "High-calorie formulas for building mass and muscle.",
     image: {
-      sourceUrl: "/images/categories/weight-gainers.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct5,
       altText: "Weight Gainer Supplements",
     },
     children: [
@@ -308,7 +323,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 128,
     description: "Healthy snacks, drinks, and on-the-go nutrition.",
     image: {
-      sourceUrl: "/images/categories/health-wellness.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct6,
       altText: "Healthy Snacks and Drinks",
     },
     children: [
@@ -345,7 +360,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 76,
     description: "Specialized dietary supplements for health and performance.",
     image: {
-      sourceUrl: "/images/categories/recovery.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct7,
       altText: "Dietary Supplements",
     },
     children: [
@@ -374,7 +389,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 112,
     description: "Vitamins, minerals, and wellness supplements for overall health.",
     image: {
-      sourceUrl: "/images/categories/health-wellness.png",
+      sourceUrl: WP_CATEGORY_IMAGES.featuredProduct8,
       altText: "Health and Balance Supplements",
     },
     children: [
@@ -419,7 +434,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 24,
     description: "Special featured products and exclusive bundles.",
     image: {
-      sourceUrl: "/images/categories/protein.png",
+      sourceUrl: WP_CATEGORY_IMAGES.nfCategory,
       altText: "Featured Products",
     },
     children: [

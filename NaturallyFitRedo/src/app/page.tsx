@@ -25,6 +25,23 @@ import {
 import { ProductCarousel } from "@/components/product";
 
 // ============================================
+// WORDPRESS IMAGE REFERENCES
+// ============================================
+const WP_IMAGES = {
+  // Promo banners
+  promo3for99: "https://naturallyfit.ca/wp-content/uploads/2026/01/NF_3_for_99-2026.png",
+  bestCreatine: "https://naturallyfit.ca/wp-content/uploads/2025/12/BEST-CREATINE-PRICES-1.png",
+  // Shipping icons
+  shipping1: "https://naturallyfit.ca/wp-content/uploads/2025/04/shipping.png",
+  shipping2: "https://naturallyfit.ca/wp-content/uploads/2025/02/shipping-2.png",
+  // Featured products showcase
+  creatineGummies: "https://naturallyfit.ca/wp-content/uploads/2026/01/Creatine_Gummies_Orange_Vibe_120ct_Render_ca13f6cc-00aa-4c70-8525-8599d9b65243.webp",
+  shaker: "https://naturallyfit.ca/wp-content/uploads/2026/01/WhiteShaker1.webp",
+  proteinBar: "https://naturallyfit.ca/wp-content/uploads/2025/12/PHD_CHOCORASP_UNIT.webp",
+  energyDrink: "https://naturallyfit.ca/wp-content/uploads/2026/01/LemonIcedTea_nEW.webp",
+};
+
+// ============================================
 // HOMEPAGE - Server Component
 // ============================================
 
@@ -106,18 +123,18 @@ export default async function HomePage() {
       {/* Split Promo Banners */}
       <SplitPromo
         leftPromo={{
-          title: "New Pre-Workouts",
-          subtitle: "Just Arrived",
-          ctaText: "Shop Pre-Workout",
-          ctaLink: "/shop/pre-workout",
-          image: "/images/promos/promo-preworkout.jpg",
+          title: "3 for $99 Deal",
+          subtitle: "Limited Time",
+          ctaText: "Shop Now",
+          ctaLink: "/shop",
+          image: WP_IMAGES.promo3for99,
         }}
         rightPromo={{
-          title: "Protein Sale",
-          subtitle: "This Week Only",
-          ctaText: "Shop Protein",
-          ctaLink: "/shop/protein",
-          image: "/images/promos/promo-protein.jpg",
+          title: "Best Creatine Prices",
+          subtitle: "Guaranteed",
+          ctaText: "Shop Creatine",
+          ctaLink: "/shop/creatine",
+          image: WP_IMAGES.bestCreatine,
         }}
       />
 

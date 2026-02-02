@@ -43,10 +43,10 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
-              {/* Naturally Fit Logo - White SVG */}
+              {/* Naturally Fit Logo - From WordPress */}
               <div className="flex items-center">
                 <Image
-                  src="/images/logo.svg"
+                  src="https://naturallyfit.ca/wp-content/uploads/2018/02/cropped-web_logo.png"
                   alt="Naturally Fit"
                   width={146}
                   height={36}

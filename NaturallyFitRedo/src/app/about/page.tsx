@@ -5,6 +5,16 @@ import { Award, Users, Clock, Heart, Shield, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ============================================
+// WORDPRESS IMAGE REFERENCES
+// ============================================
+const WP_IMAGES = {
+  // Using community/store images from WordPress
+  communityImage: "https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg",
+  servingCommunity: "https://naturallyfit.ca/wp-content/uploads/2025/01/serving-the-community.png",
+  nfCategory: "https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg",
+};
+
+// ============================================
 // METADATA
 // ============================================
 
@@ -124,7 +134,7 @@ export default function AboutPage() {
       <section className="relative bg-black py-20 md:py-32 overflow-hidden">
         <div className="absolute inset-0 opacity-30">
           <Image
-            src="/images/about/hero-bg.jpg"
+            src={WP_IMAGES.communityImage}
             alt=""
             fill
             className="object-cover"
@@ -189,11 +199,11 @@ export default function AboutPage() {
               <div className="mt-8 flex items-center gap-4">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/images/about/veteran-badge.png"
+                    src={WP_IMAGES.servingCommunity}
                     alt="Veteran Owned Business"
                     width={80}
                     height={80}
-                    className="w-20 h-20"
+                    className="w-20 h-20 object-contain"
                   />
                 </div>
                 <div>
@@ -208,7 +218,7 @@ export default function AboutPage() {
             </div>
             <div className="relative aspect-[4/3] bg-gray-light overflow-hidden">
               <Image
-                src="/images/about/store-front.jpg"
+                src={WP_IMAGES.nfCategory}
                 alt="Naturally Fit Store"
                 fill
                 className="object-cover"
@@ -281,25 +291,25 @@ export default function AboutPage() {
             <TeamMember
               name="Mike Johnson"
               role="Founder & CEO"
-              image="/images/team/mike.jpg"
+              image={WP_IMAGES.servingCommunity}
               bio="Canadian Armed Forces veteran with 30+ years in the fitness industry."
             />
             <TeamMember
               name="Sarah Chen"
               role="Head of Operations"
-              image="/images/team/sarah.jpg"
+              image={WP_IMAGES.servingCommunity}
               bio="Certified nutritionist ensuring our product selection meets the highest standards."
             />
             <TeamMember
               name="Dave Williams"
               role="Store Manager"
-              image="/images/team/dave.jpg"
+              image={WP_IMAGES.servingCommunity}
               bio="Former competitive bodybuilder with expertise in sports nutrition."
             />
             <TeamMember
               name="Lisa Park"
               role="Customer Success"
-              image="/images/team/lisa.jpg"
+              image={WP_IMAGES.servingCommunity}
               bio="Dedicated to making sure every customer finds their perfect fit."
             />
           </div>
