@@ -228,14 +228,16 @@ export interface SplitPromoProps {
  * SplitPromo Component
  *
  * Two side-by-side promotional blocks.
+ * Best Creatine Banner: 980px × 201px
+ * 3 for $99 Banner: 410px × 107px
  */
 export function SplitPromo({ leftPromo, rightPromo, className }: SplitPromoProps) {
   return (
     <section className={cn("py-8", className)}>
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <PromoBlock promo={leftPromo} />
-          <PromoBlock promo={rightPromo} />
+        <div className="flex flex-wrap justify-center gap-6">
+          <PromoBlock promo={leftPromo} size="small" />
+          <PromoBlock promo={rightPromo} size="large" />
         </div>
       </div>
     </section>
@@ -250,13 +252,21 @@ interface PromoBlockProps {
     ctaLink: string;
     image: string;
   };
+  size?: 'small' | 'large';
 }
 
-function PromoBlock({ promo }: PromoBlockProps) {
+function PromoBlock({ promo, size = 'small' }: PromoBlockProps) {
+  // Small banner: 410px × 107px (3 for $99)
+  // Large banner: 980px × 201px (Best Creatine)
+  const dimensions = size === 'large' 
+    ? { width: '980px', height: '201px' }
+    : { width: '410px', height: '107px' };
+
   return (
     <Link
       href={promo.ctaLink}
-      className="group relative block aspect-[16/9] md:aspect-[2/1] overflow-hidden"
+      className="group relative block overflow-hidden"
+      style={{ width: dimensions.width, height: dimensions.height }}
     >
       {/* Background Image */}
       <Image
@@ -264,7 +274,7 @@ function PromoBlock({ promo }: PromoBlockProps) {
         alt={promo.title}
         fill
         className="object-cover transition-transform duration-500 group-hover:scale-105"
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={size === 'large' ? '980px' : '410px'}
       />
 
       {/* Overlay */}

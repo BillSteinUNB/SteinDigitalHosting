@@ -152,27 +152,35 @@ interface BrandLogoProps {
 }
 
 function BrandLogo({ brand }: BrandLogoProps) {
+  // Determine if logo is rectangular or square based on aspect ratio hint
+  // Rectangular logos: 159px × 121px (1.32:1 ratio) - e.g., TC Nutrition, Advanced Genetics
+  // Square logos: 159px × 159px (1:1 ratio) - e.g., Alani Nu, Anabar
+  const isSquareLogo = brand.slug?.match(/alani-nu|anabar|believe|yummy/i);
+  const logoWidth = 159;
+  const logoHeight = isSquareLogo ? 159 : 121;
+
   return (
     <Link
       href={`/brands/${brand.slug}`}
       className={cn(
         "flex items-center justify-center",
-        "h-20 px-4",
         "bg-gray-light border border-transparent",
         "grayscale hover:grayscale-0",
         "opacity-60 hover:opacity-100",
         "hover:border-gray-border",
         "transition-all duration-300"
       )}
+      style={{ width: '159px', height: isSquareLogo ? '159px' : '121px' }}
       title={brand.name}
     >
       {brand.logo ? (
         <Image
           src={brand.logo.sourceUrl}
           alt={brand.logo.altText || brand.name}
-          width={120}
-          height={60}
-          className="object-contain max-h-12"
+          width={logoWidth}
+          height={logoHeight}
+          className="object-contain"
+          style={{ maxWidth: '159px', maxHeight: isSquareLogo ? '159px' : '121px' }}
         />
       ) : (
         <span className="font-heading text-sm uppercase text-gray-dark">
@@ -241,25 +249,32 @@ interface BrandCardProps {
 }
 
 function BrandCard({ brand, showProductCount }: BrandCardProps) {
+  // Determine if logo is rectangular or square
+  const isSquareLogo = brand.slug?.match(/alani-nu|anabar|believe|yummy/i);
+  const logoHeight = isSquareLogo ? 159 : 121;
+
   return (
     <Link
       href={`/brands/${brand.slug}`}
       className={cn(
         "group flex flex-col items-center justify-center",
-        "p-6 bg-white border border-gray-border",
+        "p-4 bg-white border border-gray-border",
         "hover:shadow-lg hover:border-red-primary",
         "transition-all duration-200"
       )}
     >
-      {/* Logo */}
-      <div className="h-16 flex items-center justify-center mb-3">
+      {/* Logo - 159px × 121px (rectangular) or 159px × 159px (square) */}
+      <div 
+        className="flex items-center justify-center mb-3"
+        style={{ width: '159px', height: `${logoHeight}px` }}
+      >
         {brand.logo ? (
           <Image
             src={brand.logo.sourceUrl}
             alt={brand.logo.altText || brand.name}
-            width={120}
-            height={60}
-            className="object-contain max-h-full grayscale group-hover:grayscale-0 transition-all duration-300"
+            width={159}
+            height={logoHeight}
+            className="object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
           />
         ) : (
           <span className="font-heading text-lg uppercase text-gray-dark group-hover:text-red-primary transition-colors">

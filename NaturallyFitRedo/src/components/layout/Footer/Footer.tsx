@@ -26,15 +26,15 @@ export default function Footer() {
       {/* Top Footer */}
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto] gap-8 items-start">
-          {/* Logo + Tagline */}
+          {/* Logo + Tagline - 240px × 102px */}
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center">
               <Image
                 src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore_footer.png"
                 alt="Naturally Fit - Canada's Supplement Store"
-                width={260}
-                height={90}
-                className="object-contain"
+                width={240}
+                height={102}
+                className="w-[240px] h-[102px] object-contain"
                 priority
               />
             </Link>
@@ -64,14 +64,21 @@ export default function Footer() {
             ]}
           />
 
-          {/* Veteran Badge */}
-          <div className="flex lg:justify-end">
+          {/* Veteran Badge - 98px × 98px & Google Reviews - 225px × 92px */}
+          <div className="flex flex-col items-center lg:items-end gap-4">
             <Image
               src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/veteran-owned-badge.png"
               alt="Veteran Owned Business"
-              width={90}
-              height={90}
-              className="object-contain"
+              width={98}
+              height={98}
+              className="w-[98px] h-[98px] object-contain"
+            />
+            <Image
+              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/google-reviews-logo.png"
+              alt="Google Reviews"
+              width={225}
+              height={92}
+              className="w-[225px] h-[92px] object-contain"
             />
           </div>
         </div>
@@ -109,12 +116,13 @@ export default function Footer() {
 
             <div className="flex flex-col items-center md:items-end gap-2">
               <span className="text-sm font-semibold text-white">We Accept</span>
+              {/* Payment Icons - 183px × 28px */}
               <Image
                 src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/footer1_2026.png"
                 alt="Accepted payment methods"
-                width={180}
-                height={40}
-                className="object-contain"
+                width={183}
+                height={28}
+                className="w-[183px] h-[28px] object-contain"
               />
             </div>
           </div>

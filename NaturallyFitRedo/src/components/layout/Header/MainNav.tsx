@@ -11,7 +11,7 @@ import MegaMenu from "./MegaMenu";
 /**
  * MainNav Component
  *
- * Row 2 of Header (Height: 50px):
+ * Row 2 of Header (Height: 50-60px, Horizontal Padding: 30px each side):
  * - Navigation items with dropdowns
  * - Light gray background
  * - 24 Hour Gym button in yellow
@@ -39,8 +39,8 @@ export default function MainNav() {
       className="hidden lg:block bg-[#e6e6e6] border-b border-gray-border"
       aria-label="Main navigation"
     >
-      <div className="container">
-        <ul className="flex items-center h-[46px] gap-1">
+      <div className="container px-[30px]">
+        <ul className="flex items-center h-[50px] gap-1">
           {mainNavItems.map((item) => {
             const isShop = item.label === "Shop";
             const hasDropdown = isShop || (item.children && item.children.length > 0);
@@ -67,6 +67,7 @@ export default function MainNav() {
                     // Active state
                     isActive && !item.highlight && "text-red-primary"
                   )}
+                  style={{ lineHeight: '50px' }}
                 >
                   {item.label}
                   {hasDropdown && (

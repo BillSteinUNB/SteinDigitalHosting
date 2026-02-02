@@ -75,21 +75,21 @@ function CategoryCard({ category, showProductCount }: CategoryCardProps) {
       href={`/shop/${slug}`}
       className={cn(
         "group relative flex flex-col items-center",
-        "bg-white p-6",
+        "bg-white p-4",
         "border border-gray-border",
         "transition-all duration-200",
         "hover:shadow-lg hover:border-red-primary"
       )}
     >
-      {/* Category Image */}
-      <div className="relative w-20 h-20 mb-4">
+      {/* Category Image - 200px × 120px display size */}
+      <div className="relative w-[200px] h-[120px] mb-3">
         {image ? (
           <Image
             src={image.sourceUrl}
             alt={image.altText || name}
             fill
             className="object-contain transition-transform duration-300 group-hover:scale-110"
-            sizes="80px"
+            sizes="200px"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">

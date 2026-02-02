@@ -104,10 +104,11 @@ export default function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Container */}
+      {/* Image Container - 260px × 300px display size */}
       <Link
         href={`/product/${slug}`}
-        className="relative aspect-square overflow-hidden bg-gray-light"
+        className="relative overflow-hidden bg-gray-light"
+        style={{ width: '260px', height: '300px' }}
       >
         {/* Product Image */}
         {image && !imageError ? (
@@ -119,7 +120,7 @@ export default function ProductCard({
               "object-cover transition-transform duration-300",
               "group-hover:scale-105"
             )}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="260px"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -236,8 +237,8 @@ export default function ProductCard({
 export function ProductCardSkeleton() {
   return (
     <div className="flex flex-col bg-white border border-gray-border animate-pulse">
-      {/* Image skeleton */}
-      <div className="aspect-square bg-gray-200" />
+      {/* Image skeleton - 260px × 300px */}
+      <div className="bg-gray-200" style={{ width: '260px', height: '300px' }} />
 
       {/* Content skeleton */}
       <div className="p-4 space-y-3">
