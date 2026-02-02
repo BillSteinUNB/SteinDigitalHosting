@@ -73,7 +73,7 @@ export default function CustomerReviews({
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <section className={cn("py-12 bg-gray-light", className)}>
+    <section className={cn("py-12 bg-white", className)}>
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">

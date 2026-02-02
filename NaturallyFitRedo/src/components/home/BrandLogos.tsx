@@ -48,7 +48,7 @@ export default function BrandLogos({
   }
 
   return (
-    <section className={cn("py-12 bg-gray-light", className)}>
+    <section className={cn("py-12 bg-white", className)}>
       <div className="container">
         {/* Header */}
         {showTitle && (

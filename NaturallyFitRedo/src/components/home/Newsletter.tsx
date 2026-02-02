@@ -70,7 +70,7 @@ export default function Newsletter({
   };
 
   const variantStyles = {
-    default: "bg-gray-light py-16",
+    default: "bg-white py-16",
     compact: "bg-white py-8 border-y border-gray-border",
     dark: "bg-black py-16",
   };
