@@ -86,7 +86,7 @@ export const brands: BrandWithDetails[] = [
     name: "Ghost",
     slug: "ghost",
     logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/ghost.png",
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Ghost_Logo.png",
       altText: "Ghost Logo",
     },
     description: "Be seen® - Premium lifestyle supplements.",
@@ -99,7 +99,7 @@ export const brands: BrandWithDetails[] = [
     name: "Grenade",
     slug: "grenade",
     logo: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/grenade.png",
+      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Grenade_Logo.png",
       altText: "Grenade Logo",
     },
     description: "High-protein snacks and supplements.",
