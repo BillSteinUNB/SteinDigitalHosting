@@ -187,18 +187,24 @@ export default function Hero({
       <style jsx global>{`
         .hero-swiper {
           width: 100%;
-          height: 500px;
+          height: 60vh;
+          min-height: 400px;
+          max-height: 600px;
         }
 
         @media (min-width: 768px) {
           .hero-swiper {
-            height: 600px;
+            height: 65vh;
+            min-height: 450px;
+            max-height: 650px;
           }
         }
 
         @media (min-width: 1024px) {
           .hero-swiper {
-            height: 700px;
+            height: 70vh;
+            min-height: 500px;
+            max-height: 700px;
           }
         }
 
@@ -271,55 +277,20 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
             textAlignClass
           )}
         >
-          {/* Subtitle */}
-          {slide.subtitle && (
-            <span className="inline-block mb-2 px-3 py-1 bg-red-primary text-white text-sm font-heading uppercase tracking-wide">
-              {slide.subtitle}
-            </span>
-          )}
-
-          {/* Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white uppercase leading-tight mb-4">
-            {slide.title}
-          </h1>
-
-          {/* Description */}
-          {slide.description && (
-            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-md">
-              {slide.description}
-            </p>
-          )}
-
-          {/* CTAs */}
+          {/* Shop Now Button Only */}
           <div className="flex flex-wrap gap-4">
             <Link
               href={slide.ctaLink}
               className={cn(
                 "inline-flex items-center justify-center",
-                "px-8 py-4 min-h-[52px]",
-                "font-heading font-bold uppercase tracking-button text-body",
+                "px-10 py-5 min-h-[56px]",
+                "font-heading font-bold uppercase tracking-button text-lg",
                 "bg-red-primary text-white hover:bg-red-hover",
                 "transition-all duration-200"
               )}
             >
-              {slide.ctaText}
+              Shop Now
             </Link>
-
-            {slide.secondaryCtaText && slide.secondaryCtaLink && (
-              <Link
-                href={slide.secondaryCtaLink}
-                className={cn(
-                  "inline-flex items-center justify-center",
-                  "px-8 py-4 min-h-[52px]",
-                  "font-heading font-bold uppercase tracking-button text-body",
-                  "bg-transparent border-2 border-white text-white",
-                  "hover:bg-white hover:text-black",
-                  "transition-all duration-200"
-                )}
-              >
-                {slide.secondaryCtaText}
-              </Link>
-            )}
           </div>
         </div>
       </div>
