@@ -35,8 +35,3 @@ export async function fetchGraphQL<T>(
 
   return json.data;
 }
-
-// Helper to check if we should use mock data
-export function shouldUseMockData(): boolean {
-  return process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
-}

@@ -1,5 +1,5 @@
 // WooCommerce GraphQL Categories
-import { fetchGraphQL, shouldUseMockData } from './client';
+import { fetchGraphQL } from './client';
 
 interface WooCategory {
   id: string;
@@ -47,9 +47,23 @@ const CATEGORY_FIELDS = `
   }
 `;
 
-// Re-export the type from mock to ensure compatibility
-import type { CategoryWithCount } from '@/lib/mock/categories';
-export type { CategoryWithCount };
+// Category type definition
+export interface CategoryWithCount {
+  id: string;
+  name: string;
+  slug: string;
+  productCount: number;
+  description?: string;
+  image?: {
+    sourceUrl: string;
+    altText: string;
+  };
+  parent?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
 
 function transformCategory(wooCategory: WooCategory): CategoryWithCount {
   return {
@@ -72,11 +86,6 @@ function transformCategory(wooCategory: WooCategory): CategoryWithCount {
 
 // Fetch all categories
 export async function getCategories(): Promise<CategoryWithCount[]> {
-  if (shouldUseMockData()) {
-    const { categories } = await import('@/lib/mock/categories');
-    return categories;
-  }
-
   const query = `
     query GetCategories {
       productCategories(first: 100) {
@@ -87,23 +96,12 @@ export async function getCategories(): Promise<CategoryWithCount[]> {
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<CategoriesResponse>(query);
-    return data.productCategories.nodes.map(transformCategory);
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    const { categories } = await import('@/lib/mock/categories');
-    return categories;
-  }
+  const data = await fetchGraphQL<CategoriesResponse>(query);
+  return data.productCategories.nodes.map(transformCategory);
 }
 
 // Fetch single category by slug
 export async function getCategoryBySlug(slug: string): Promise<CategoryWithCount | null> {
-  if (shouldUseMockData()) {
-    const { getCategoryBySlug: getMockCategory } = await import('@/lib/mock/categories');
-    return getMockCategory(slug) || null;
-  }
-
   const query = `
     query GetCategory($slug: ID!) {
       productCategory(id: $slug, idType: SLUG) {
@@ -112,28 +110,17 @@ export async function getCategoryBySlug(slug: string): Promise<CategoryWithCount
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<{ productCategory: WooCategory | null }>(query, { slug });
-    
-    if (!data.productCategory) {
-      return null;
-    }
-
-    return transformCategory(data.productCategory);
-  } catch (error) {
-    console.error('Error fetching category:', error);
-    const { getCategoryBySlug: getMockCategory } = await import('@/lib/mock/categories');
-    return getMockCategory(slug) || null;
+  const data = await fetchGraphQL<{ productCategory: WooCategory | null }>(query, { slug });
+  
+  if (!data.productCategory) {
+    return null;
   }
+
+  return transformCategory(data.productCategory);
 }
 
 // Fetch featured/parent categories for homepage
 export async function getFeaturedCategories(limit: number = 6): Promise<CategoryWithCount[]> {
-  if (shouldUseMockData()) {
-    const { featuredCategories } = await import('@/lib/mock/categories');
-    return featuredCategories.slice(0, limit);
-  }
-
   // Fetch parent categories (no parent = top level)
   const query = `
     query GetFeaturedCategories($first: Int!) {
@@ -145,12 +132,6 @@ export async function getFeaturedCategories(limit: number = 6): Promise<Category
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<CategoriesResponse>(query, { first: limit });
-    return data.productCategories.nodes.map(transformCategory);
-  } catch (error) {
-    console.error('Error fetching featured categories:', error);
-    const { featuredCategories } = await import('@/lib/mock/categories');
-    return featuredCategories.slice(0, limit);
-  }
+  const data = await fetchGraphQL<CategoriesResponse>(query, { first: limit });
+  return data.productCategories.nodes.map(transformCategory);
 }

@@ -1,6 +1,5 @@
 // WooCommerce GraphQL Queries
-import { fetchGraphQL, shouldUseMockData } from './client';
-import { getFallbackImage, isWordPressImage } from '@/lib/fallback-images';
+import { fetchGraphQL } from './client';
 import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockStatus } from '@/types/product';
 
 // GraphQL response types
@@ -207,24 +206,22 @@ function convertStockStatus(status: string): StockStatus {
   }
 }
 
+// Default placeholder for products without images
+const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x600/1a1a2e/ffffff?text=No+Image';
+
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
-  // Check if WordPress image needs fallback
-  const originalImageUrl = wooProduct.image?.sourceUrl || '';
-  const needsFallback = !originalImageUrl || isWordPressImage(originalImageUrl);
-  const fallbackUrl = needsFallback ? getFallbackImage(wooProduct.name) : originalImageUrl;
+  // Use WordPress image if available, otherwise use placeholder
+  const imageUrl = wooProduct.image?.sourceUrl || DEFAULT_PLACEHOLDER;
   
   return {
     id: wooProduct.id,
     databaseId: wooProduct.databaseId,
     slug: wooProduct.slug,
     name: wooProduct.name,
-    image: wooProduct.image ? {
-      sourceUrl: fallbackUrl,
-      altText: wooProduct.image.altText || wooProduct.name,
-    } : {
-      sourceUrl: fallbackUrl,
-      altText: wooProduct.name,
+    image: {
+      sourceUrl: imageUrl,
+      altText: wooProduct.image?.altText || wooProduct.name,
     },
     price: wooProduct.price || '$0.00',
     regularPrice: wooProduct.regularPrice || '$0.00',
@@ -243,34 +240,26 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
 
 // Convert WooCommerce product to full Product type
 function transformToProduct(wooProduct: WooProduct): Product {
-  // Check if WordPress image needs fallback
-  const originalImageUrl = wooProduct.image?.sourceUrl || '';
-  const needsFallback = !originalImageUrl || isWordPressImage(originalImageUrl);
-  const fallbackUrl = needsFallback ? getFallbackImage(wooProduct.name) : originalImageUrl;
+  // Use WordPress image if available, otherwise use placeholder
+  const imageUrl = wooProduct.image?.sourceUrl || DEFAULT_PLACEHOLDER;
   
-  // Process gallery images with fallbacks
-  const galleryImages = wooProduct.galleryImages?.nodes.map(img => {
-    const imgNeedsFallback = !img.sourceUrl || isWordPressImage(img.sourceUrl);
-    return {
-      sourceUrl: imgNeedsFallback ? fallbackUrl : img.sourceUrl,
-      altText: img.altText || wooProduct.name,
-    };
-  }) || [];
+  // Process gallery images
+  const galleryImages = wooProduct.galleryImages?.nodes.map(img => ({
+    sourceUrl: img.sourceUrl || DEFAULT_PLACEHOLDER,
+    altText: img.altText || wooProduct.name,
+  })) || [];
   
   const baseProduct = {
     id: wooProduct.id,
     databaseId: wooProduct.databaseId,
     slug: wooProduct.slug,
     name: wooProduct.name,
-    image: wooProduct.image ? {
-      sourceUrl: fallbackUrl,
-      altText: wooProduct.image.altText || wooProduct.name,
-    } : {
-      sourceUrl: fallbackUrl,
-      altText: wooProduct.name,
+    image: {
+      sourceUrl: imageUrl,
+      altText: wooProduct.image?.altText || wooProduct.name,
     },
     galleryImages: galleryImages.length > 0 ? galleryImages : [{
-      sourceUrl: fallbackUrl,
+      sourceUrl: imageUrl,
       altText: wooProduct.name,
     }],
     description: wooProduct.description || '',
@@ -338,15 +327,6 @@ export async function getProducts(
   after?: string,
   categorySlug?: string
 ): Promise<{ products: ProductCardData[]; hasNextPage: boolean; endCursor: string | null }> {
-  if (shouldUseMockData()) {
-    const { allProductCards } = await import('@/lib/mock/products');
-    return {
-      products: allProductCards.slice(0, first),
-      hasNextPage: false,
-      endCursor: null,
-    };
-  }
-
   const whereClause = categorySlug ? `, where: { category: "${categorySlug}" }` : '';
   
   const query = `
@@ -363,33 +343,17 @@ export async function getProducts(
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first, after });
+  const data = await fetchGraphQL<ProductsResponse>(query, { first, after });
 
-    return {
-      products: data.products.nodes.map(transformToCardData),
-      hasNextPage: data.products.pageInfo.hasNextPage,
-      endCursor: data.products.pageInfo.endCursor,
-    };
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    // Fallback to mock data on error
-    const { allProductCards } = await import('@/lib/mock/products');
-    return {
-      products: allProductCards.slice(0, first),
-      hasNextPage: false,
-      endCursor: null,
-    };
-  }
+  return {
+    products: data.products.nodes.map(transformToCardData),
+    hasNextPage: data.products.pageInfo.hasNextPage,
+    endCursor: data.products.pageInfo.endCursor,
+  };
 }
 
 // Fetch single product by slug
 export async function getProductBySlugGraphQL(slug: string): Promise<Product | null> {
-  if (shouldUseMockData()) {
-    const { getProductBySlug } = await import('@/lib/mock');
-    return getProductBySlug(slug) || null;
-  }
-
   const query = `
     query GetProduct($slug: ID!) {
       product(id: $slug, idType: SLUG) {
@@ -398,28 +362,17 @@ export async function getProductBySlugGraphQL(slug: string): Promise<Product | n
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<SingleProductResponse>(query, { slug });
-    
-    if (!data.product) {
-      return null;
-    }
-
-    return transformToProduct(data.product);
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    const { getProductBySlug } = await import('@/lib/mock');
-    return getProductBySlug(slug) || null;
+  const data = await fetchGraphQL<SingleProductResponse>(query, { slug });
+  
+  if (!data.product) {
+    return null;
   }
+
+  return transformToProduct(data.product);
 }
 
 // Fetch featured products
 export async function getFeaturedProducts(limit: number = 8): Promise<ProductCardData[]> {
-  if (shouldUseMockData()) {
-    const { featuredProducts } = await import('@/lib/mock/products');
-    return featuredProducts.slice(0, limit);
-  }
-
   const query = `
     query GetFeaturedProducts($first: Int!) {
       products(first: $first, where: { featured: true }) {
@@ -430,23 +383,12 @@ export async function getFeaturedProducts(limit: number = 8): Promise<ProductCar
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-    return data.products.nodes.map(transformToCardData);
-  } catch (error) {
-    console.error('Error fetching featured products:', error);
-    const { featuredProducts } = await import('@/lib/mock/products');
-    return featuredProducts.slice(0, limit);
-  }
+  const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
+  return data.products.nodes.map(transformToCardData);
 }
 
 // Fetch sale products
 export async function getSaleProducts(limit: number = 8): Promise<ProductCardData[]> {
-  if (shouldUseMockData()) {
-    const { saleProducts } = await import('@/lib/mock/products');
-    return saleProducts.slice(0, limit);
-  }
-
   const query = `
     query GetSaleProducts($first: Int!) {
       products(first: $first, where: { onSale: true }) {
@@ -457,24 +399,13 @@ export async function getSaleProducts(limit: number = 8): Promise<ProductCardDat
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-    return data.products.nodes.map(transformToCardData);
-  } catch (error) {
-    console.error('Error fetching sale products:', error);
-    const { saleProducts } = await import('@/lib/mock/products');
-    return saleProducts.slice(0, limit);
-  }
+  const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
+  return data.products.nodes.map(transformToCardData);
 }
 
 // Fetch best sellers
 export async function getBestSellers(limit: number = 8): Promise<ProductCardData[]> {
-  if (shouldUseMockData()) {
-    const { bestSellers } = await import('@/lib/mock/products');
-    return bestSellers.slice(0, limit);
-  }
-
-  // WooGraphQL may not support sorting by total_sales, so we fetch recent products as fallback
+  // WooGraphQL may not support sorting by total_sales, so we fetch recent products
   const query = `
     query GetBestSellers($first: Int!) {
       products(first: $first) {
@@ -485,14 +416,8 @@ export async function getBestSellers(limit: number = 8): Promise<ProductCardData
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-    return data.products.nodes.map(transformToCardData);
-  } catch (error) {
-    console.error('Error fetching best sellers:', error);
-    const { bestSellers } = await import('@/lib/mock/products');
-    return bestSellers.slice(0, limit);
-  }
+  const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
+  return data.products.nodes.map(transformToCardData);
 }
 
 // Import types for paginated function
@@ -505,11 +430,6 @@ export async function getPaginatedProductsGraphQL(
   page: number = 1,
   perPage: number = 12
 ): Promise<PaginatedProducts> {
-  if (shouldUseMockData()) {
-    const { getPaginatedProducts } = await import('@/lib/mock');
-    return getPaginatedProducts({ filters, sortBy, page, perPage });
-  }
-
   // Build where clause based on filters
   const whereConditions: string[] = [];
   
@@ -572,33 +492,26 @@ export async function getPaginatedProductsGraphQL(
     }
   `;
 
-  try {
-    const data = await fetchGraphQL<ProductsResponse>(query, { first });
-    
-    const allProducts = data.products.nodes.map(transformToCardData);
-    
-    // Apply client-side pagination since WooGraphQL doesn't support skip
-    const startIndex = (page - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    const paginatedProducts = allProducts.slice(startIndex, endIndex);
-    
-    const total = allProducts.length;
-    const totalPages = Math.ceil(total / perPage);
+  const data = await fetchGraphQL<ProductsResponse>(query, { first });
+  
+  const allProducts = data.products.nodes.map(transformToCardData);
+  
+  // Apply client-side pagination since WooGraphQL doesn't support skip
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedProducts = allProducts.slice(startIndex, endIndex);
+  
+  const total = allProducts.length;
+  const totalPages = Math.ceil(total / perPage);
 
-    return {
-      products: paginatedProducts,
-      pageInfo: {
-        total,
-        totalPages,
-        currentPage: page,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching paginated products:', error);
-    // Fallback to mock data
-    const { getPaginatedProducts } = await import('@/lib/mock');
-    return getPaginatedProducts({ filters, sortBy, page, perPage });
-  }
+  return {
+    products: paginatedProducts,
+    pageInfo: {
+      total,
+      totalPages,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
 }

@@ -54,7 +54,7 @@ export default function ProductGallery({
 
   // Handle case with no images
   const galleryImages = images.length > 0 ? images : [
-    { sourceUrl: "/images/products/placeholder.jpg", altText: productName }
+    { sourceUrl: "https://placehold.co/600x600/1a1a2e/eee?text=No+Image", altText: productName }
   ];
 
   const isOutOfStock = stockStatus === "OUT_OF_STOCK";

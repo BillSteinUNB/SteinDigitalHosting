@@ -1,5 +1,5 @@
 // GraphQL exports
-export { fetchGraphQL, shouldUseMockData } from './client';
+export { fetchGraphQL } from './client';
 export { 
   getProducts, 
   getProductBySlugGraphQL, 
