@@ -48,8 +48,8 @@ export default function BrandLogos({
   }
 
   return (
-    <section className={cn("py-12 bg-white", className)}>
-      <div className="container mx-auto px-4">
+    <section className={cn("py-12 bg-gray-light", className)}>
+      <div className="container">
         {/* Header */}
         {showTitle && (
           <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
@@ -152,38 +152,36 @@ interface BrandLogoProps {
 }
 
 function BrandLogo({ brand }: BrandLogoProps) {
-  // Determine if logo is rectangular or square based on aspect ratio hint
-  // Rectangular logos: 159px × 121px (1.32:1 ratio) - e.g., TC Nutrition, Advanced Genetics
-  // Square logos: 159px × 159px (1:1 ratio) - e.g., Alani Nu, Anabar
-  const isSquareLogo = brand.slug?.match(/alani-nu|anabar|believe|yummy/i);
-  const logoWidth = 159;
-  const logoHeight = isSquareLogo ? 159 : 121;
-
   return (
     <Link
       href={`/brands/${brand.slug}`}
       className={cn(
+        "group",
         "flex items-center justify-center",
-        "bg-gray-light border border-transparent",
-        "grayscale hover:grayscale-0",
-        "opacity-60 hover:opacity-100",
-        "hover:border-gray-border",
-        "transition-all duration-300"
+        "w-full h-[110px]",
+        "transition-all duration-300",
+        "focus-ring"
       )}
-      style={{ width: '159px', height: isSquareLogo ? '159px' : '121px' }}
       title={brand.name}
     >
       {brand.logo ? (
-        <Image
-          src={brand.logo.sourceUrl}
-          alt={brand.logo.altText || brand.name}
-          width={logoWidth}
-          height={logoHeight}
-          className="object-contain"
-          style={{ maxWidth: '159px', maxHeight: isSquareLogo ? '159px' : '121px' }}
-        />
+        <div className="relative w-full max-w-[170px] h-[60px]">
+          <Image
+            src={brand.logo.sourceUrl}
+            alt={brand.logo.altText || brand.name}
+            fill
+            sizes="(min-width: 1280px) 170px, (min-width: 1024px) 160px, (min-width: 768px) 140px, 120px"
+            className={cn(
+              "object-contain",
+              "grayscale opacity-60",
+              "transition-all duration-300",
+              "group-hover:grayscale-0 group-hover:opacity-100"
+            )}
+            quality={100}
+          />
+        </div>
       ) : (
-        <span className="font-heading text-sm uppercase text-gray-dark">
+        <span className="font-heading text-sm uppercase text-gray-dark opacity-60 group-hover:opacity-100 transition-opacity">
           {brand.name}
         </span>
       )}

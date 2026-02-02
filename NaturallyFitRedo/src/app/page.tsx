@@ -27,9 +27,9 @@ import { ProductCarousel } from "@/components/product";
 // ============================================
 const WP_IMAGES = {
   // Three Banner Row (Tab 1 style)
-  bundle3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/3for99bundles-1.png",
-  beatAnyPrice: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BeatANYPriceby10-1.png",
-  freeShipping: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/FreeShippingFreeHoodieFreeShaker-1.png",
+  bundle3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
+  beatAnyPrice: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/beatanyprice-1.png",
+  freeShipping: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png",
   // Promo banners
   promo3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
   bestCreatine: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",

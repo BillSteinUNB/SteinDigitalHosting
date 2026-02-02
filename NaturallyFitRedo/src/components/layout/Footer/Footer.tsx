@@ -83,7 +83,7 @@ export default function Footer() {
               className="w-[98px] h-[98px] object-contain"
             />
             <Image
-              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/google-reviews-logo.png"
+              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/google-reviews_logo.jpg"
               alt="Google Reviews"
               width={225}
               height={92}
