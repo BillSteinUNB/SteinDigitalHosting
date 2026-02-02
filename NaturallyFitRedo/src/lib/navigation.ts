@@ -2,6 +2,8 @@
 // NAVIGATION DATA
 // ============================================
 
+import { wholesaleLinks } from "@/lib/wholesale/links";
+
 export interface NavItem {
   label: string;
   href: string;
@@ -57,7 +59,7 @@ export const mainNavItems: NavItem[] = [
     children: [
       { label: "Wholesale Program", href: "/wholesale" },
       { label: "Apply Now", href: "/wholesale#apply" },
-      { label: "Wholesale Login", href: "/login?callbackUrl=%2Fshop" },
+      { label: "Wholesale Login", href: wholesaleLinks.login },
     ],
   },
   {

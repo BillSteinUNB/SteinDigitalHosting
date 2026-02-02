@@ -46,7 +46,7 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
               {/* Naturally Fit Logo */}
               <div className="flex items-center">
                 <Image
-                  src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/cropped-web_logo.png"
+                  src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore.webp"
                   alt="Naturally Fit - Canada's Supplement Store"
                   width={146}
                   height={36}

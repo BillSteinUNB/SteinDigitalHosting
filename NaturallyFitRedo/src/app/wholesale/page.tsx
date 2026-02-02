@@ -21,6 +21,7 @@ import {
   yearsInBusinessOptions,
   type WholesaleInquiryInput,
 } from "@/lib/wholesale/schema";
+import { wholesaleLinks, isExternalHref } from "@/lib/wholesale/links";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -56,6 +57,28 @@ function SectionHeading({
       {children}
       <span className="w-3 h-3 bg-red-primary flex-shrink-0" aria-hidden="true" />
     </h2>
+  );
+}
+
+function LinkOrExternal({
+  href,
+  className,
+  style,
+  children,
+}: {
+  href: string;
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  return isExternalHref(href) ? (
+    <a href={href} className={className} style={style}>
+      {children}
+    </a>
+  ) : (
+    <Link href={href} className={className} style={style}>
+      {children}
+    </Link>
   );
 }
 
@@ -185,8 +208,8 @@ export default function WholesalePage() {
                 your request and contact you within 1-2 business days.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/login?callbackUrl=%2Fshop"
+                <LinkOrExternal
+                  href={wholesaleLinks.login}
                   className={cn(
                     "inline-flex items-center justify-center",
                     "px-8 py-4 min-h-[52px]",
@@ -196,9 +219,9 @@ export default function WholesalePage() {
                   )}
                 >
                   Wholesale Login
-                </Link>
-                <Link
-                  href="/shop"
+                </LinkOrExternal>
+                <LinkOrExternal
+                  href={wholesaleLinks.order}
                   className={cn(
                     "inline-flex items-center justify-center",
                     "px-8 py-4 min-h-[52px]",
@@ -209,7 +232,7 @@ export default function WholesalePage() {
                   )}
                 >
                   Start Shopping
-                </Link>
+                </LinkOrExternal>
               </div>
             </div>
           </div>
@@ -263,8 +286,8 @@ export default function WholesalePage() {
                   Apply for Wholesale
                 </span>
               </a>
-              <Link
-                href="/login?callbackUrl=%2Fshop"
+              <LinkOrExternal
+                href={wholesaleLinks.login}
                 className={cn(
                   "inline-flex items-center justify-center",
                   "px-10 py-4 min-h-[52px]",
@@ -277,7 +300,7 @@ export default function WholesalePage() {
                 <span style={{ transform: "skewX(15deg)", display: "inline-block" }}>
                   Wholesale Login
                 </span>
-              </Link>
+              </LinkOrExternal>
             </div>
           </div>
         </div>
@@ -292,8 +315,8 @@ export default function WholesalePage() {
               <p className="text-gray-dark mb-4">
                 Approved partners can order online and access wholesale pricing.
               </p>
-              <Link
-                href="/shop"
+              <LinkOrExternal
+                href={wholesaleLinks.order}
                 className={cn(
                   "inline-flex items-center justify-center",
                   "px-6 py-3 min-h-[44px]",
@@ -303,7 +326,7 @@ export default function WholesalePage() {
                 )}
               >
                 Wholesale Shop
-              </Link>
+              </LinkOrExternal>
             </div>
 
             <div className="bg-white border border-gray-border p-6">
@@ -313,8 +336,8 @@ export default function WholesalePage() {
               <p className="text-gray-dark mb-4">
                 Sign in to see wholesale pricing and place your order.
               </p>
-              <Link
-                href="/login?callbackUrl=%2Fshop"
+              <LinkOrExternal
+                href={wholesaleLinks.login}
                 className={cn(
                   "inline-flex items-center justify-center",
                   "px-6 py-3 min-h-[44px]",
@@ -324,7 +347,7 @@ export default function WholesalePage() {
                 )}
               >
                 Wholesale Login
-              </Link>
+              </LinkOrExternal>
             </div>
 
             <div className="bg-white border border-gray-border p-6">
@@ -565,8 +588,8 @@ export default function WholesalePage() {
                 >
                   Submit Inquiry
                 </Button>
-                <Link
-                  href="/login?callbackUrl=%2Fshop"
+                <LinkOrExternal
+                  href={wholesaleLinks.login}
                   className={cn(
                     "inline-flex items-center justify-center w-full sm:w-auto",
                     "px-8 py-4 min-h-[52px]",
@@ -577,7 +600,7 @@ export default function WholesalePage() {
                   )}
                 >
                   Wholesale Login
-                </Link>
+                </LinkOrExternal>
               </div>
 
               <p className="text-tiny text-gray-medium mt-4">
