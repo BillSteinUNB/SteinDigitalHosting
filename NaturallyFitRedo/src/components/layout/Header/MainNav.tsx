@@ -39,126 +39,117 @@ export default function MainNav() {
       className="hidden lg:block bg-[#e6e6e6] border-b border-gray-border"
       aria-label="Main navigation"
     >
-      <div className="container px-[30px]">
-        <ul className="flex items-center h-[50px] gap-1">
-          {mainNavItems.map((item) => {
-            const isShop = item.label === "Shop";
-            const hasDropdown = isShop || (item.children && item.children.length > 0);
-            const isActive = activeDropdown === item.label;
+      <div className="container">
+        <div className="flex items-center h-[60px]">
+          {/* Nav Items */}
+          <ul className="flex items-center gap-6 flex-1 justify-center">
+            {mainNavItems.map((item) => {
+              const isShop = item.label === "Shop";
+              const hasDropdown = isShop || (item.children && item.children.length > 0);
+              const isActive = activeDropdown === item.label;
 
-            return (
-              <li
-                key={item.label}
-                className="relative h-full"
-                onMouseEnter={() => hasDropdown && handleMouseEnter(item.label)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {/* Nav Item */}
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-1 h-full px-3",
-                    "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
-                    "transition-colors",
-                    // Highlight style (24 Hour Gym)
-                    item.highlight
-                      ? "bg-yellow-highlight text-[#151515] hover:brightness-95"
-                      : "text-[#151515] hover:text-red-primary",
-                    // Active state
-                    isActive && !item.highlight && "text-red-primary"
-                  )}
-                  style={{ lineHeight: '50px' }}
+              return (
+                <li
+                  key={item.label}
+                  className="relative h-full flex items-center"
+                  onMouseEnter={() => hasDropdown && handleMouseEnter(item.label)}
+                  onMouseLeave={handleMouseLeave}
                 >
-                  {item.label}
-                  {hasDropdown && (
-                    <ChevronDown
-                      size={14}
-                      strokeWidth={2}
-                      className={cn(
-                        "transition-transform",
-                        isActive && "rotate-180"
-                      )}
-                    />
-                  )}
-                </Link>
-
-                {/* Mega Menu (SHOP only) */}
-                {isShop && isActive && (
-                  <MegaMenu
-                    categories={megaMenuCategories}
-                    onClose={() => setActiveDropdown(null)}
-                  />
-                )}
-
-                {/* Standard Dropdown */}
-                {!isShop && item.children && isActive && (
-                  <div
+                  {/* Nav Item */}
+                  <Link
+                    href={item.href}
                     className={cn(
-                      "absolute left-0 top-full",
-                      "min-w-[220px] bg-white",
-                      "border border-gray-border shadow-dropdown",
-                      "animate-slide-down",
-                      "z-dropdown"
+                      "flex items-center gap-1",
+                      "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
+                      "transition-colors",
+                      item.highlight
+                        ? "h-[32px] px-4 bg-yellow-highlight text-[#151515] hover:brightness-95"
+                        : "h-full px-1 text-[#151515] hover:text-red-primary",
+                      isActive && !item.highlight && "text-red-primary"
                     )}
                   >
-                    <ul className="py-2">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            className={cn(
-                              "block px-4 py-2",
-                              "text-small text-gray-dark hover:text-red-primary hover:bg-gray-light",
-                              "transition-colors"
-                            )}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </li>
-            );
-          })}
+                    {item.label}
+                    {hasDropdown && (
+                      <ChevronDown
+                        size={14}
+                        strokeWidth={2}
+                        className={cn("transition-transform", isActive && "rotate-180")}
+                      />
+                    )}
+                  </Link>
 
-          {/* Spacer to push Auth to the right */}
-          <li className="flex-1" />
+                  {/* Mega Menu (SHOP only) */}
+                  {isShop && isActive && (
+                    <MegaMenu
+                      categories={megaMenuCategories}
+                      onClose={() => setActiveDropdown(null)}
+                    />
+                  )}
 
-          {/* Auth Section */}
-          <li className="h-full relative">
+                  {/* Standard Dropdown */}
+                  {!isShop && item.children && isActive && (
+                    <div
+                      className={cn(
+                        "absolute left-0 top-full",
+                        "min-w-[220px] bg-white",
+                        "border border-gray-border shadow-dropdown",
+                        "animate-slide-down",
+                        "z-dropdown"
+                      )}
+                    >
+                      <ul className="py-2">
+                        {item.children.map((child) => (
+                          <li key={child.href}>
+                            <Link
+                              href={child.href}
+                              className={cn(
+                                "block px-4 py-2",
+                                "text-small text-gray-dark hover:text-red-primary hover:bg-gray-light",
+                                "transition-colors"
+                              )}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Auth Section (right aligned) */}
+          <div className="flex-shrink-0 pl-8">
             {status === "loading" ? (
-              // Loading state
-              <div className="flex items-center h-full px-3">
-                <div className="w-20 h-4 bg-gray-light animate-pulse" />
+              <div className="flex items-center h-[60px]">
+                <div className="w-24 h-4 bg-gray-light animate-pulse" />
               </div>
             ) : session?.user ? (
-              // Authenticated - User Dropdown
               <div
-                className="relative h-full"
+                className="relative h-[60px] flex items-center"
                 onMouseEnter={() => setShowUserMenu(true)}
                 onMouseLeave={() => setShowUserMenu(false)}
               >
                 <button
                   className={cn(
-                    "flex items-center gap-2 h-full px-3",
+                    "flex items-center gap-2 h-full",
                     "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
                     "text-[#151515] hover:text-red-primary transition-colors",
                     showUserMenu && "text-red-primary"
                   )}
                 >
                   <User size={18} strokeWidth={1.5} />
-                  <span className="max-w-[100px] truncate">
-                    {session.user.firstName || session.user.name?.split(" ")[0] || "Account"}
+                  <span className="max-w-[120px] truncate">
+                    {session.user.firstName ||
+                      session.user.name?.split(" ")[0] ||
+                      "Account"}
                   </span>
                   <ChevronDown
                     size={14}
                     strokeWidth={2}
-                    className={cn(
-                      "transition-transform",
-                      showUserMenu && "rotate-180"
-                    )}
+                    className={cn("transition-transform", showUserMenu && "rotate-180")}
                   />
                 </button>
 
@@ -238,11 +229,10 @@ export default function MainNav() {
                 )}
               </div>
             ) : (
-              // Unauthenticated - Login/Register Link
               <Link
                 href="/login"
                 className={cn(
-                  "flex items-center h-full px-3",
+                  "flex items-center h-[60px]",
                   "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
                   "text-[#151515] hover:text-red-primary transition-colors"
                 )}
@@ -250,8 +240,8 @@ export default function MainNav() {
                 Login / Register
               </Link>
             )}
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </nav>
   );
