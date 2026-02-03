@@ -28,8 +28,8 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
 
   return (
     <div className="bg-[#2b2b2b] border-b border-[#1f1f1f]">
-      <div className="container">
-        <div className="flex items-center justify-between h-[70px] gap-4">
+      <div className="container max-w-[1600px]">
+        <div className="flex items-center justify-between h-[80px] gap-4">
           {/* Left: Mobile Menu + Veteran Badge + Logo & Tagline */}
           <div className="flex items-center gap-4 flex-shrink-0 min-w-0">
             {/* Mobile menu toggle */}
@@ -55,12 +55,12 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
 
             {/* Logo + Tagline */}
             <Link href="/" className="flex items-center gap-3 min-w-0">
-              <div className="relative flex-shrink-0 w-[120px] h-[60px]">
+              <div className="relative flex-shrink-0 w-[220px] h-[64px] xl:w-[260px] xl:h-[70px]">
                 <Image
                   src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore.webp"
                   alt="Naturally Fit - Canada's Supplement Store"
                   fill
-                  sizes="120px"
+                  sizes="(min-width: 1280px) 260px, 220px"
                   className="object-contain"
                   priority
                 />

@@ -39,7 +39,7 @@ export default function MainNav() {
       className="hidden lg:block bg-[#e6e6e6] border-b border-gray-border"
       aria-label="Main navigation"
     >
-      <div className="container">
+      <div className="container max-w-[1600px]">
         <div className="flex items-center h-[60px]">
           {/* Nav Items */}
           <ul className="flex items-center gap-6 flex-1 justify-center">
