@@ -1,12 +1,21 @@
-// Homepage - Server Component with GraphQL data fetching
-
-import Image from "next/image";
+// Homepage - Server Component with WordPress Banners + GraphQL
 
 // GraphQL data fetching
 import { getFeaturedProducts, getBestSellers } from "@/lib/graphql/products";
 import { getFeaturedCategories } from "@/lib/graphql/categories";
 
-// Mock data (brands with proper images)
+// Banner fetching from WordPress
+import { 
+  getHeroSlides, 
+  getMiniBanners, 
+  getMediumBanner,
+  defaultHeroSlides,
+  defaultMiniBanners,
+  defaultMediumBanner,
+  type Banner
+} from "@/lib/wordpress/banners";
+
+// Mock data (fallback for brands)
 import { featuredBrands } from "@/lib/mock/brands";
 
 // Home components
@@ -15,6 +24,7 @@ import {
   CategoryGrid,
   BrandLogos,
   ThreeBannerRow,
+  MediumBanner,
   CustomerReviews,
   Newsletter,
 } from "@/components/home";
@@ -23,31 +33,21 @@ import {
 import { ProductCarousel } from "@/components/product";
 
 // ============================================
-// WORDPRESS IMAGE REFERENCES
-// ============================================
-const WP_IMAGES = {
-  // Three Banner Row (Tab 1 style)
-  bundle3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
-  beatAnyPrice: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping-2.png",
-  freeShipping: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png",
-  // Promo banners
-  promo3for99: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
-  bestCreatine: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
-  // Shipping icons
-  shipping1: "https://naturallyfit.ca/wp-content/uploads/2025/04/shipping.png",
-  shipping2: "https://naturallyfit.ca/wp-content/uploads/2025/02/shipping-2.png",
-  // Featured products showcase
-  creatineGummies: "https://naturallyfit.ca/wp-content/uploads/2026/01/Creatine_Gummies_Orange_Vibe_120ct_Render_ca13f6cc-00aa-4c70-8525-8599d9b65243.webp",
-  shaker: "https://naturallyfit.ca/wp-content/uploads/2026/01/WhiteShaker1.webp",
-  proteinBar: "https://naturallyfit.ca/wp-content/uploads/2025/12/PHD_CHOCORASP_UNIT.webp",
-  energyDrink: "https://naturallyfit.ca/wp-content/uploads/2026/01/LemonIcedTea_nEW.webp",
-};
-
-// ============================================
 // HOMEPAGE - Server Component
 // ============================================
 
 export default async function HomePage() {
+  // Fetch banners from WordPress
+  const [
+    wpHeroSlides,
+    wpMiniBanners,
+    wpMediumBanner,
+  ] = await Promise.all([
+    getHeroSlides(),
+    getMiniBanners(),
+    getMediumBanner(),
+  ]);
+  
   // Fetch data from WooCommerce GraphQL
   const [
     featuredProducts,
@@ -59,83 +59,57 @@ export default async function HomePage() {
     getFeaturedCategories(5),
   ]);
 
+  // Transform WordPress banners to component format
+  const heroSlides = (wpHeroSlides.length > 0 ? wpHeroSlides : defaultHeroSlides).map(bannerToHeroSlide);
+  const miniBanners = (wpMiniBanners.length > 0 ? wpMiniBanners : defaultMiniBanners).map(bannerToMiniBanner);
+  const mediumBanner = wpMediumBanner ? bannerToMediumBanner(wpMediumBanner) : defaultMediumBanner;
+
   return (
     <>
-      {/* Hero Carousel */}
-      <Hero />
+      {/* Hero Carousel - Uses WordPress banners */}
+      <Hero slides={heroSlides} />
 
-      {/* Three Promotional Banners (Tab 1 style) */}
-      <ThreeBannerRow
-        banners={[
-          {
-            image: WP_IMAGES.bundle3for99,
-            alt: "Bundles 3 for $99",
-            link: "/product/mix-and-match-for-99/",
-          },
-          {
-            image: WP_IMAGES.beatAnyPrice,
-            alt: "Beat ANY Price by 10%",
-            link: "/price-guarantee/",
-          },
-          {
-            image: WP_IMAGES.freeShipping,
-            alt: "Free Shipping / Free Hoodie / Free Shaker",
-            link: "/shop/",
-          },
-        ]}
-      />
+      {/* Three Promotional Banners */}
+      <ThreeBannerRow banners={miniBanners} />
 
-      {/* Latest Deals Carousel (was Featured Products) */}
+      {/* Latest Deals Carousel */}
       <ProductCarousel
         title="Latest Deals"
         products={featuredProducts}
         viewAllLink="/shop?featured=true"
       />
 
-      {/* Creatine Promo Banner (image only, no text overlay - Tab 1 style) */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4">
-          <a 
-            href="/shop/creatine" 
-            className="block mx-auto" 
-            style={{ maxWidth: '980px', borderRadius: '12px', overflow: 'hidden', lineHeight: 0 }}
-          >
-            <Image
-              src={WP_IMAGES.bestCreatine}
-              alt="Best Creatine Prices"
-              width={980}
-              height={201}
-              className="w-full h-auto"
-              style={{ display: 'block' }}
-            />
-          </a>
-        </div>
-      </section>
+      {/* Medium Banner */}
+      <MediumBanner 
+        image={mediumBanner.imageUrl}
+        alt={mediumBanner.alt}
+        link={mediumBanner.link}
+      />
 
-      {/* Shop by Category - Using mock data with correct images */}
+      {/* Shop by Category */}
       <CategoryGrid
         title="Popular Categories"
         categories={featuredCategories}
         columns={5}
       />
 
-      {/* Recommended Products Carousel */}
+      {/* Recommended Products */}
       <ProductCarousel
         title="Recommended"
         products={bestSellers}
         viewAllLink="/shop?sort=popularity"
       />
 
-      {/* Shop by Brand - renamed to match Tab 1, no view all link */}
+      {/* Shop by Brand */}
       <BrandLogos
         title="Discover Brands You'll Love"
         brands={featuredBrands}
       />
 
-      {/* Customer Reviews - Tab 1 style */}
+      {/* Customer Reviews */}
       <CustomerReviews title="What Customers Say" />
 
-      {/* Newsletter - Tab 1 style */}
+      {/* Newsletter */}
       <Newsletter
         title="Sign Up For Newsletter"
         description="Stay up to date with recent news, advice and weekly offers."
@@ -143,4 +117,43 @@ export default async function HomePage() {
       />
     </>
   );
+}
+
+// ============================================
+// DATA TRANSFORMATION HELPERS
+// ============================================
+
+import type { HeroSlide } from "@/components/home/Hero";
+
+function bannerToHeroSlide(banner: Banner | Omit<Banner, 'id' | 'type' | 'order'>): HeroSlide {
+  return {
+    id: 'id' in banner ? banner.id.toString() : banner.title,
+    title: banner.title,
+    subtitle: '',
+    description: '',
+    ctaText: 'Shop Now',
+    ctaLink: banner.link,
+    image: {
+      src: banner.imageUrl,
+      alt: banner.alt,
+    },
+    textPosition: 'center',
+    overlay: true,
+  };
+}
+
+function bannerToMiniBanner(banner: Banner | Omit<Banner, 'id' | 'type' | 'order'>) {
+  return {
+    image: banner.imageUrl,
+    alt: banner.alt,
+    link: banner.link,
+  };
+}
+
+function bannerToMediumBanner(banner: Banner | Omit<Banner, 'id' | 'type' | 'order'>) {
+  return {
+    imageUrl: banner.imageUrl,
+    alt: banner.alt,
+    link: banner.link,
+  };
 }

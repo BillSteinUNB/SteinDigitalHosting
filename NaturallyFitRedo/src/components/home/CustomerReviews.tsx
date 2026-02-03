@@ -8,12 +8,13 @@ import type { Swiper as SwiperType } from "swiper";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui";
+import type { ACFCustomerReview } from "@/lib/wordpress/acf/types";
 
 // Import Swiper styles
 import "swiper/css";
 
 // ============================================
-// CUSTOMER REVIEWS DATA
+// CUSTOMER REVIEWS DATA - Default/Fallback
 // ============================================
 
 interface Review {
@@ -24,7 +25,7 @@ interface Review {
   avatar?: string;
 }
 
-const reviews: Review[] = [
+const defaultReviews: Review[] = [
   {
     id: "review-1",
     name: "Matt Niles",
@@ -57,7 +58,9 @@ const reviews: Review[] = [
 
 export interface CustomerReviewsProps {
   title?: string;
+  reviews?: Review[] | ACFCustomerReview[];
   className?: string;
+  useACFFormat?: boolean;
 }
 
 /**
@@ -65,12 +68,20 @@ export interface CustomerReviewsProps {
  *
  * Testimonials carousel showing customer reviews (Tab 1 style).
  * Includes star ratings, reviewer names, and quoted testimonials.
+ * Supports both ACF and default data formats.
  */
 export default function CustomerReviews({
   title = "What Customers Say",
+  reviews,
   className,
+  useACFFormat = false,
 }: CustomerReviewsProps) {
   const swiperRef = useRef<SwiperType | null>(null);
+
+  // Use provided reviews or fall back to defaults
+  const displayReviews = reviews && reviews.length > 0 
+    ? reviews 
+    : defaultReviews;
 
   return (
     <section className={cn("py-12 bg-white", className)}>
@@ -101,9 +112,9 @@ export default function CustomerReviews({
             }}
             className="reviews-swiper"
           >
-            {reviews.map((review) => (
-              <SwiperSlide key={review.id}>
-                <ReviewCard review={review} />
+            {displayReviews.map((review) => (
+              <SwiperSlide key={useACFFormat ? (review as ACFCustomerReview).name : (review as Review).id}>
+                <ReviewCard review={review} isACF={useACFFormat} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -164,10 +175,46 @@ export default function CustomerReviews({
 // ============================================
 
 interface ReviewCardProps {
-  review: Review;
+  review: Review | ACFCustomerReview;
+  isACF?: boolean;
 }
 
-function ReviewCard({ review }: ReviewCardProps) {
+function ReviewCard({ review, isACF = false }: ReviewCardProps) {
+  // Handle ACF format
+  if (isACF) {
+    const acfReview = review as ACFCustomerReview;
+    return (
+      <div className="bg-white p-6 border border-gray-border h-full">
+        {/* Stars */}
+        <div className="flex gap-1 mb-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              size={16}
+              strokeWidth={1.5}
+              className={cn(
+                "fill-current",
+                i < acfReview.rating ? "text-yellow-400" : "text-gray-300"
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Review Text */}
+        <blockquote className="text-gray-dark mb-4 line-clamp-4">
+          &ldquo;{acfReview.text}&rdquo;
+        </blockquote>
+
+        {/* Reviewer Name */}
+        <p className="font-heading font-semibold text-sm uppercase text-black">
+          {acfReview.name}
+        </p>
+      </div>
+    );
+  }
+
+  // Handle default format
+  const defaultReview = review as Review;
   return (
     <div className="bg-white p-6 border border-gray-border h-full">
       {/* Stars */}
@@ -179,7 +226,7 @@ function ReviewCard({ review }: ReviewCardProps) {
             strokeWidth={1.5}
             className={cn(
               "fill-current",
-              i < review.rating ? "text-yellow-400" : "text-gray-300"
+              i < defaultReview.rating ? "text-yellow-400" : "text-gray-300"
             )}
           />
         ))}
@@ -187,12 +234,12 @@ function ReviewCard({ review }: ReviewCardProps) {
 
       {/* Review Text */}
       <blockquote className="text-gray-dark mb-4 line-clamp-4">
-        &ldquo;{review.text}&rdquo;
+        &ldquo;{defaultReview.text}&rdquo;
       </blockquote>
 
       {/* Reviewer Name */}
       <p className="font-heading font-semibold text-sm uppercase text-black">
-        {review.name}
+        {defaultReview.name}
       </p>
     </div>
   );

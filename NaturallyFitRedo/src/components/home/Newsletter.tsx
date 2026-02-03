@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
 import { Mail, CheckCircle, AlertCircle } from "lucide-react";
+import type { ACFNewsletterSection } from "@/lib/wordpress/acf/types";
 
 // ============================================
 // NEWSLETTER SIGNUP COMPONENT
@@ -16,25 +17,45 @@ export interface NewsletterProps {
   buttonText?: string;
   variant?: "default" | "compact" | "dark";
   className?: string;
+  // If provided, overrides individual props
+  acfData?: ACFNewsletterSection;
 }
+
+// Default content - fallback
+const defaultContent = {
+  title: "Join Our Newsletter",
+  description: "Subscribe for exclusive deals, new product alerts, and fitness tips delivered to your inbox.",
+  placeholder: "Enter your email address",
+  buttonText: "Subscribe",
+};
 
 /**
  * Newsletter Component
  *
  * Email signup form for newsletter subscriptions.
  * Includes success/error states.
+ * Supports ACF data format.
  */
 export default function Newsletter({
-  title = "Join Our Newsletter",
-  description = "Subscribe for exclusive deals, new product alerts, and fitness tips delivered to your inbox.",
-  placeholder = "Enter your email address",
-  buttonText = "Subscribe",
+  title,
+  description,
+  placeholder,
+  buttonText,
   variant = "default",
   className,
+  acfData,
 }: NewsletterProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  // Use ACF data if provided, otherwise fall back to props or defaults
+  const content = acfData || {
+    title: title || defaultContent.title,
+    description: description || defaultContent.description,
+    placeholder: placeholder || defaultContent.placeholder,
+    button_text: buttonText || defaultContent.buttonText,
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +76,7 @@ export default function Newsletter({
 
     setStatus("loading");
 
-    // Simulate API call
+    // Simulate API call - replace with actual newsletter signup endpoint
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -101,11 +122,11 @@ export default function Newsletter({
               textColorClass
             )}
           >
-            {title}
+            {content.title}
           </h2>
 
           {/* Description */}
-          <p className={cn("text-base mb-6", descColorClass)}>{description}</p>
+          <p className={cn("text-base mb-6", descColorClass)}>{content.description}</p>
 
           {/* Form */}
           {status !== "success" ? (
@@ -118,7 +139,7 @@ export default function Newsletter({
                     setEmail(e.target.value);
                     if (status === "error") setStatus("idle");
                   }}
-                  placeholder={placeholder}
+                  placeholder={content.placeholder}
                   disabled={status === "loading"}
                   className={cn(
                     "flex-1 px-4 py-3 min-h-[48px]",
@@ -137,7 +158,7 @@ export default function Newsletter({
                   isLoading={status === "loading"}
                   className="sm:w-auto w-full"
                 >
-                  {buttonText}
+                  {content.button_text}
                 </Button>
               </div>
 

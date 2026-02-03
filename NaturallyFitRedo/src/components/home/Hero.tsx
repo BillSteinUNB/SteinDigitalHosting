@@ -36,37 +36,16 @@ export interface HeroSlide {
 }
 
 // ============================================
-// WORDPRESS IMAGE REFERENCES - RevSlider Homepage
+// FALLBACK - ONLY MAMMOTH (for testing)
 // ============================================
 const WP_HERO_IMAGES = {
-  alaniSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Alani-Slider-1.png",
   mammothSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-Slider-1.png",
-  believeSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Believe-Slider-1.png",
-  vndlSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/VNDL-Slider-1.png",
-  batchSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Batch-27-Slider-2.png",
-  energyPouches: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Energy-Pouches-1.jpg",
-  communityImage: "https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg",
-  promoSlider: "https://naturallyfit.ca/wp-content/uploads/2025/10/Add-a-heading-1350-x-510-px-1.png",
 };
 
-// Default hero slides
+// Single slide fallback - Mammoth only (no scrolling)
 const defaultSlides: HeroSlide[] = [
   {
     id: "slide-1",
-    title: "Alani Nu",
-    subtitle: "Shop Now",
-    description: "Premium supplements for your fitness journey.",
-    ctaText: "Shop Now",
-    ctaLink: "/shop",
-    image: {
-      src: WP_HERO_IMAGES.alaniSlider,
-      alt: "Alani Nu Supplements",
-    },
-    textPosition: "center",
-    overlay: true,
-  },
-  {
-    id: "slide-2",
     title: "Mammoth Supplements",
     subtitle: "Canadian Made",
     description: "High-quality Canadian supplements for serious athletes.",
@@ -75,62 +54,6 @@ const defaultSlides: HeroSlide[] = [
     image: {
       src: WP_HERO_IMAGES.mammothSlider,
       alt: "Mammoth Supplements",
-    },
-    textPosition: "center",
-    overlay: true,
-  },
-  {
-    id: "slide-3",
-    title: "Believe Supplements",
-    subtitle: "Premium Quality",
-    description: "Fuel your workouts with Believe Supplements.",
-    ctaText: "Shop Believe",
-    ctaLink: "/brands/believe",
-    image: {
-      src: WP_HERO_IMAGES.believeSlider,
-      alt: "Believe Supplements",
-    },
-    textPosition: "center",
-    overlay: true,
-  },
-  {
-    id: "slide-4",
-    title: "VNDL Project",
-    subtitle: "Performance Driven",
-    description: "Next-level performance supplements.",
-    ctaText: "Shop VNDL",
-    ctaLink: "/brands/vndl",
-    image: {
-      src: WP_HERO_IMAGES.vndlSlider,
-      alt: "VNDL Project Supplements",
-    },
-    textPosition: "center",
-    overlay: true,
-  },
-  {
-    id: "slide-5",
-    title: "Batch 27",
-    subtitle: "New Arrival",
-    description: "Discover the latest from Batch 27.",
-    ctaText: "Shop Now",
-    ctaLink: "/shop",
-    image: {
-      src: WP_HERO_IMAGES.batchSlider,
-      alt: "Batch 27 Supplements",
-    },
-    textPosition: "center",
-    overlay: true,
-  },
-  {
-    id: "slide-6",
-    title: "Energy Pouches",
-    subtitle: "New Product",
-    description: "Convenient energy on the go.",
-    ctaText: "Shop Now",
-    ctaLink: "/shop",
-    image: {
-      src: WP_HERO_IMAGES.energyPouches,
-      alt: "Energy Pouches",
     },
     textPosition: "center",
     overlay: true,
@@ -149,13 +72,19 @@ interface HeroProps {
 
 export default function Hero({
   slides = defaultSlides,
-  autoplay = true,
+  autoplay = false, // DISABLED by default for testing
   autoplayDelay = 5000,
 }: HeroProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
+  // Use default slides if no slides provided
+  const heroSlides = slides.length > 0 ? slides : defaultSlides;
+  
+  // Check if we have multiple slides
+  const hasMultipleSlides = heroSlides.length > 1;
+
   return (
-    <section className="relative w-full" aria-label="Hero carousel">
+    <section className="relative w-full" aria-label="Hero banner">
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         onSwiper={(swiper) => {
@@ -163,9 +92,9 @@ export default function Hero({
         }}
         effect="fade"
         fadeEffect={{ crossFade: true }}
-        loop={true}
+        loop={hasMultipleSlides} // Only loop if multiple slides
         autoplay={
-          autoplay
+          autoplay && hasMultipleSlides // Only autoplay if multiple slides
             ? {
                 delay: autoplayDelay,
                 disableOnInteraction: false,
@@ -173,54 +102,63 @@ export default function Hero({
               }
             : false
         }
-        pagination={{
-          clickable: true,
-          bulletClass: "hero-bullet",
-          bulletActiveClass: "hero-bullet-active",
-        }}
+        pagination={
+          hasMultipleSlides // Only show pagination if multiple slides
+            ? {
+                clickable: true,
+                bulletClass: "hero-bullet",
+                bulletActiveClass: "hero-bullet-active",
+              }
+            : false
+        }
+        allowTouchMove={hasMultipleSlides} // Disable swipe if single slide
         className="hero-swiper"
       >
-        {slides.map((slide) => (
+        {heroSlides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <HeroSlideContent slide={slide} />
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* Custom Navigation Arrows - Subtle style matching original */}
-      <button
-        type="button"
-        onClick={() => swiperRef.current?.slidePrev()}
-        className={cn(
-          "absolute left-4 top-1/2 -translate-y-1/2 z-10",
-          "w-10 h-10 min-w-[44px] min-h-[44px]",
-          "flex items-center justify-center",
-          "bg-black/50 hover:bg-black/70",
-          "text-white transition-colors",
-          "hidden md:flex"
-        )}
-        style={{ transform: "translateY(-50%) skewX(-15deg)" }}
-        aria-label="Previous slide"
-      >
-        <ChevronLeft size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
-      </button>
+      {/* Navigation Arrows - Only show if multiple slides */}
+      {hasMultipleSlides && (
+        <>
+          <button
+            type="button"
+            onClick={() => swiperRef.current?.slidePrev()}
+            className={cn(
+              "absolute left-4 top-1/2 -translate-y-1/2 z-10",
+              "w-10 h-10 min-w-[44px] min-h-[44px]",
+              "flex items-center justify-center",
+              "bg-black/50 hover:bg-black/70",
+              "text-white transition-colors",
+              "hidden md:flex"
+            )}
+            style={{ transform: "translateY(-50%) skewX(-15deg)" }}
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
+          </button>
 
-      <button
-        type="button"
-        onClick={() => swiperRef.current?.slideNext()}
-        className={cn(
-          "absolute right-4 top-1/2 -translate-y-1/2 z-10",
-          "w-10 h-10 min-w-[44px] min-h-[44px]",
-          "flex items-center justify-center",
-          "bg-black/50 hover:bg-black/70",
-          "text-white transition-colors",
-          "hidden md:flex"
-        )}
-        style={{ transform: "translateY(-50%) skewX(-15deg)" }}
-        aria-label="Next slide"
-      >
-        <ChevronRight size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
-      </button>
+          <button
+            type="button"
+            onClick={() => swiperRef.current?.slideNext()}
+            className={cn(
+              "absolute right-4 top-1/2 -translate-y-1/2 z-10",
+              "w-10 h-10 min-w-[44px] min-h-[44px]",
+              "flex items-center justify-center",
+              "bg-black/50 hover:bg-black/70",
+              "text-white transition-colors",
+              "hidden md:flex"
+            )}
+            style={{ transform: "translateY(-50%) skewX(-15deg)" }}
+            aria-label="Next slide"
+          >
+            <ChevronRight size={24} strokeWidth={1.5} style={{ transform: "skewX(15deg)" }} />
+          </button>
+        </>
+      )}
 
       {/* Custom Swiper Styles */}
       <style jsx global>{`

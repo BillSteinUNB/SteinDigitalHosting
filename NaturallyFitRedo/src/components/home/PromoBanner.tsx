@@ -311,6 +311,25 @@ export interface ThreeBannerRowProps {
   className?: string;
 }
 
+// Default banners - fallback when no ACF data
+const defaultMiniBanners = [
+  {
+    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
+    alt: "Bundles 3 for $99",
+    link: "/product/mix-and-match-for-99/",
+  },
+  {
+    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping-2.png",
+    alt: "Beat ANY Price by 10%",
+    link: "/price-guarantee/",
+  },
+  {
+    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png",
+    alt: "Free Shipping / Free Hoodie / Free Shaker",
+    link: "/shop/",
+  },
+];
+
 /**
  * ThreeBannerRow Component
  *
@@ -320,7 +339,10 @@ export interface ThreeBannerRowProps {
  * - Free Shipping / Free Hoodie / Free Shaker
  */
 export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
-  if (banners.length !== 3) {
+  // Use default banners if none provided
+  const displayBanners = banners.length > 0 ? banners : defaultMiniBanners;
+
+  if (displayBanners.length !== 3) {
     console.warn("ThreeBannerRow expects exactly 3 banners");
   }
 
@@ -328,7 +350,7 @@ export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
     <section className={cn("py-6 bg-white", className)}>
       <div className="container mx-auto px-4">
         <div className="flex flex-nowrap justify-center gap-2 md:gap-4">
-          {banners.map((banner, index) => (
+          {displayBanners.map((banner, index) => (
             <Link
               key={index}
               href={banner.link}
@@ -345,6 +367,63 @@ export function ThreeBannerRow({ banners, className }: ThreeBannerRowProps) {
             </Link>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================
+// MEDIUM BANNER (Single large promo banner)
+// ============================================
+
+export interface MediumBannerProps {
+  image: string;
+  alt: string;
+  link: string;
+  className?: string;
+}
+
+// Default medium banner - fallback
+const defaultMediumBanner = {
+  image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
+  alt: "Best Creatine Prices",
+  link: "/shop/creatine",
+};
+
+/**
+ * MediumBanner Component
+ *
+ * Single medium-width promotional banner (980px)
+ * Used for featured promotions like "Best Creatine Prices"
+ */
+export function MediumBanner({ 
+  image, 
+  alt, 
+  link, 
+  className 
+}: MediumBannerProps) {
+  // Use default if no image provided
+  const bannerImage = image || defaultMediumBanner.image;
+  const bannerAlt = alt || defaultMediumBanner.alt;
+  const bannerLink = link || defaultMediumBanner.link;
+
+  return (
+    <section className={cn("py-8 bg-white", className)}>
+      <div className="container mx-auto px-4">
+        <Link 
+          href={bannerLink}
+          className="block mx-auto" 
+          style={{ maxWidth: '980px', borderRadius: '12px', overflow: 'hidden', lineHeight: 0 }}
+        >
+          <Image
+            src={bannerImage}
+            alt={bannerAlt}
+            width={980}
+            height={201}
+            className="w-full h-auto"
+            style={{ display: 'block' }}
+          />
+        </Link>
       </div>
     </section>
   );

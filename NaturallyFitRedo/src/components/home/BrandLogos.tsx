@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui";
 import type { BrandWithDetails } from "@/lib/mock/brands";
+import type { ACFBrandLogo } from "@/lib/wordpress/acf/types";
 
 // Import Swiper styles
 import "swiper/css";
@@ -20,11 +21,13 @@ import "swiper/css";
 
 export interface BrandLogosProps {
   title?: string;
-  brands: BrandWithDetails[];
+  brands: BrandWithDetails[] | ACFBrandLogo[];
   showTitle?: boolean;
   autoplay?: boolean;
   viewAllLink?: string;
   className?: string;
+  // If true, brands are ACF format; if false, they're mock format
+  useACFFormat?: boolean;
 }
 
 /**
@@ -32,14 +35,16 @@ export interface BrandLogosProps {
  *
  * Horizontal scrolling/carousel of brand logos.
  * Used on homepage to showcase featured brands.
+ * Supports both ACF and mock data formats.
  */
 export default function BrandLogos({
-  title = "Shop by Brand",
+  title = "Discover Brands You'll Love",
   brands,
   showTitle = true,
   autoplay = true,
   viewAllLink = "/brands",
   className,
+  useACFFormat = false,
 }: BrandLogosProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -96,8 +101,11 @@ export default function BrandLogos({
             className="brand-logos-swiper"
           >
             {brands.map((brand) => (
-              <SwiperSlide key={brand.id}>
-                <BrandLogo brand={brand} />
+              <SwiperSlide key={useACFFormat ? (brand as ACFBrandLogo).name : (brand as BrandWithDetails).id}>
+                <BrandLogo 
+                  brand={brand} 
+                  isACF={useACFFormat} 
+                />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -149,13 +157,56 @@ export default function BrandLogos({
 // ============================================
 
 interface BrandLogoProps {
-  brand: BrandWithDetails;
+  brand: BrandWithDetails | ACFBrandLogo;
+  isACF?: boolean;
 }
 
-function BrandLogo({ brand }: BrandLogoProps) {
+function BrandLogo({ brand, isACF = false }: BrandLogoProps) {
+  // Handle ACF format
+  if (isACF) {
+    const acfBrand = brand as ACFBrandLogo;
+    return (
+      <Link
+        href={acfBrand.link}
+        className={cn(
+          "group",
+          "flex items-center justify-center",
+          "w-full h-[159px]",
+          "transition-all duration-300",
+          "focus-ring"
+        )}
+        title={acfBrand.name}
+      >
+        {acfBrand.logo?.url ? (
+          <div className="relative w-[159px] h-[159px]">
+            <Image
+              src={acfBrand.logo.url}
+              alt={acfBrand.logo.alt || acfBrand.name}
+              fill
+              sizes="159px"
+              className={cn(
+                "object-contain",
+                "grayscale opacity-60",
+                "transition-all duration-300",
+                "group-hover:grayscale-0 group-hover:opacity-100"
+              )}
+              quality={100}
+            />
+          </div>
+        ) : (
+          <span className="font-heading text-sm uppercase text-gray-dark opacity-60 group-hover:opacity-100 transition-opacity">
+            {acfBrand.name}
+          </span>
+        )}
+      </Link>
+    );
+  }
+
+  // Handle mock/original format
+  const mockBrand = brand as BrandWithDetails;
   return (
     <Link
-      href={`/brands/${brand.slug}`}
+      href={`/brands/${mockBrand.slug}`}
       className={cn(
         "group",
         "flex items-center justify-center",
@@ -163,13 +214,13 @@ function BrandLogo({ brand }: BrandLogoProps) {
         "transition-all duration-300",
         "focus-ring"
       )}
-      title={brand.name}
+      title={mockBrand.name}
     >
-      {brand.logo ? (
+      {mockBrand.logo ? (
         <div className="relative w-[159px] h-[159px]">
           <Image
-            src={brand.logo.sourceUrl}
-            alt={brand.logo.altText || brand.name}
+            src={mockBrand.logo.sourceUrl}
+            alt={mockBrand.logo.altText || mockBrand.name}
             fill
             sizes="159px"
             className={cn(
@@ -183,7 +234,7 @@ function BrandLogo({ brand }: BrandLogoProps) {
         </div>
       ) : (
         <span className="font-heading text-sm uppercase text-gray-dark opacity-60 group-hover:opacity-100 transition-opacity">
-          {brand.name}
+          {mockBrand.name}
         </span>
       )}
     </Link>
@@ -196,10 +247,11 @@ function BrandLogo({ brand }: BrandLogoProps) {
 
 export interface BrandGridProps {
   title?: string;
-  brands: BrandWithDetails[];
+  brands: BrandWithDetails[] | ACFBrandLogo[];
   columns?: 4 | 5 | 6;
   showProductCount?: boolean;
   className?: string;
+  useACFFormat?: boolean;
 }
 
 /**
@@ -214,6 +266,7 @@ export function BrandGrid({
   columns = 5,
   showProductCount = true,
   className,
+  useACFFormat = false,
 }: BrandGridProps) {
   const gridCols = {
     4: "grid-cols-2 md:grid-cols-4",
@@ -232,9 +285,10 @@ export function BrandGrid({
       <div className={cn("grid gap-4", gridCols[columns])}>
         {brands.map((brand) => (
           <BrandCard
-            key={brand.id}
+            key={useACFFormat ? (brand as ACFBrandLogo).name : (brand as BrandWithDetails).id}
             brand={brand}
             showProductCount={showProductCount}
+            isACF={useACFFormat}
           />
         ))}
       </div>
@@ -243,18 +297,62 @@ export function BrandGrid({
 }
 
 interface BrandCardProps {
-  brand: BrandWithDetails;
+  brand: BrandWithDetails | ACFBrandLogo;
   showProductCount?: boolean;
+  isACF?: boolean;
 }
 
-function BrandCard({ brand, showProductCount }: BrandCardProps) {
+function BrandCard({ brand, showProductCount, isACF = false }: BrandCardProps) {
+  // Handle ACF format
+  if (isACF) {
+    const acfBrand = brand as ACFBrandLogo;
+    return (
+      <Link
+        href={acfBrand.link}
+        className={cn(
+          "group flex flex-col items-center justify-center",
+          "p-4 bg-white border border-gray-border",
+          "hover:shadow-lg hover:border-red-primary",
+          "transition-all duration-200"
+        )}
+      >
+        {/* Logo - 159px × 159px */}
+        <div 
+          className="flex items-center justify-center mb-3"
+          style={{ width: '159px', height: '159px' }}
+        >
+          {acfBrand.logo?.url ? (
+            <Image
+              src={acfBrand.logo.url}
+              alt={acfBrand.logo.alt || acfBrand.name}
+              width={159}
+              height={159}
+              className="object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+            />
+          ) : (
+            <span className="font-heading text-lg uppercase text-gray-dark group-hover:text-red-primary transition-colors">
+              {acfBrand.name}
+            </span>
+          )}
+        </div>
+
+        {/* Brand Name */}
+        <h3 className="font-heading text-sm uppercase text-center text-black group-hover:text-red-primary transition-colors">
+          {acfBrand.name}
+        </h3>
+      </Link>
+    );
+  }
+
+  // Handle mock/original format
+  const mockBrand = brand as BrandWithDetails;
   // Determine if logo is rectangular or square
-  const isSquareLogo = brand.slug?.match(/alani-nu|anabar|believe|yummy/i);
+  const isSquareLogo = mockBrand.slug?.match(/alani-nu|anabar|believe|yummy/i);
   const logoHeight = isSquareLogo ? 159 : 121;
 
   return (
     <Link
-      href={`/brands/${brand.slug}`}
+      href={`/brands/${mockBrand.slug}`}
       className={cn(
         "group flex flex-col items-center justify-center",
         "p-4 bg-white border border-gray-border",
@@ -267,30 +365,30 @@ function BrandCard({ brand, showProductCount }: BrandCardProps) {
         className="flex items-center justify-center mb-3"
         style={{ width: '159px', height: `${logoHeight}px` }}
       >
-        {brand.logo ? (
+        {mockBrand.logo ? (
           <Image
-            src={brand.logo.sourceUrl}
-            alt={brand.logo.altText || brand.name}
+            src={mockBrand.logo.sourceUrl}
+            alt={mockBrand.logo.altText || mockBrand.name}
             width={159}
             height={logoHeight}
             className="object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
           />
         ) : (
           <span className="font-heading text-lg uppercase text-gray-dark group-hover:text-red-primary transition-colors">
-            {brand.name}
+            {mockBrand.name}
           </span>
         )}
       </div>
 
       {/* Brand Name */}
       <h3 className="font-heading text-sm uppercase text-center text-black group-hover:text-red-primary transition-colors">
-        {brand.name}
+        {mockBrand.name}
       </h3>
 
       {/* Product Count */}
       {showProductCount && (
         <span className="text-tiny text-gray-medium mt-1">
-          {brand.productCount} Products
+          {mockBrand.productCount} Products
         </span>
       )}
     </Link>

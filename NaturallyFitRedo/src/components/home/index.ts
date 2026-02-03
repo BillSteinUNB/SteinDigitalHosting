@@ -8,8 +8,8 @@ export type { CategoryGridProps, FeaturedCategoriesProps } from "./CategoryGrid"
 export { default as BrandLogos, BrandGrid } from "./BrandLogos";
 export type { BrandLogosProps, BrandGridProps } from "./BrandLogos";
 
-export { default as PromoBanner, SaleBanner, SplitPromo, FeaturesBar, ThreeBannerRow } from "./PromoBanner";
-export type { PromoBannerProps, SaleBannerProps, SplitPromoProps, FeatureItem, FeaturesBarProps, ThreeBannerRowProps } from "./PromoBanner";
+export { default as PromoBanner, SaleBanner, SplitPromo, FeaturesBar, ThreeBannerRow, MediumBanner } from "./PromoBanner";
+export type { PromoBannerProps, SaleBannerProps, SplitPromoProps, FeatureItem, FeaturesBarProps, ThreeBannerRowProps, MediumBannerProps } from "./PromoBanner";
 
 export { default as Newsletter, InlineNewsletter } from "./Newsletter";
 export type { NewsletterProps, InlineNewsletterProps } from "./Newsletter";

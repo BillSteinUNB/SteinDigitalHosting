@@ -1,0 +1,148 @@
+// ============================================
+// Banners Fetcher - WordPress Custom Post Type
+// Fetches banners from "banners" post type
+// ============================================
+
+import { fetchREST } from './rest/client';
+
+// WordPress URL is used via fetchREST, kept for reference
+// const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://nftest.dreamhosters.com';
+
+// Banner types matching WordPress categories
+export type BannerType = 'hero' | 'mini-1' | 'mini-2' | 'mini-3' | 'medium';
+
+export interface Banner {
+  id: number;
+  title: string;
+  imageUrl: string;
+  link: string;
+  alt: string;
+  type: BannerType;
+  order: number;
+}
+
+/**
+ * Fetch all published banners from WordPress
+ */
+export async function getBanners(): Promise<Banner[]> {
+  try {
+    // Fetch from custom post type "banners"
+    const response = await fetchREST<Array<{
+      id: number;
+      title: { rendered: string };
+      link: string;
+      _embedded?: {
+        'wp:featuredmedia'?: Array<{
+          source_url: string;
+          alt_text: string;
+        }>;
+      };
+      meta?: {
+        banner_link?: string;
+      };
+      banner_type?: string[];
+      menu_order: number;
+    }>>('/banners', {
+      _embed: true,
+      per_page: 20,
+      orderby: 'menu_order',
+      order: 'asc',
+      status: 'publish',
+    });
+
+    return response.map((banner) => {
+      const featuredImage = banner._embedded?.['wp:featuredmedia']?.[0];
+      // Get banner type from taxonomy or meta
+      const bannerType = (banner.banner_type?.[0] as BannerType) || 'hero';
+      
+      return {
+        id: banner.id,
+        title: banner.title.rendered,
+        imageUrl: featuredImage?.source_url || '',
+        link: banner.meta?.banner_link || '/shop',
+        alt: featuredImage?.alt_text || banner.title.rendered,
+        type: bannerType,
+        order: banner.menu_order || 0,
+      };
+    }).filter(banner => banner.imageUrl); // Only return banners with images
+
+  } catch (error) {
+    console.error('Failed to fetch banners:', error);
+    return [];
+  }
+}
+
+/**
+ * Get banners by type
+ */
+export async function getBannersByType(type: BannerType): Promise<Banner[]> {
+  const allBanners = await getBanners();
+  return allBanners
+    .filter(banner => banner.type === type)
+    .sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Get hero slides (multiple hero banners)
+ */
+export async function getHeroSlides(): Promise<Banner[]> {
+  return getBannersByType('hero');
+}
+
+/**
+ * Get mini banners (3 banners)
+ */
+export async function getMiniBanners(): Promise<Banner[]> {
+  const types: BannerType[] = ['mini-1', 'mini-2', 'mini-3'];
+  const allBanners = await getBanners();
+  
+  return types
+    .map(type => allBanners.find(b => b.type === type))
+    .filter((b): b is Banner => b !== undefined);
+}
+
+/**
+ * Get medium banner
+ */
+export async function getMediumBanner(): Promise<Banner | null> {
+  const banners = await getBannersByType('medium');
+  return banners[0] || null;
+}
+
+// Default banner as fallback - MAMMOTH ONLY (for testing)
+export const defaultHeroSlides: Omit<Banner, 'id' | 'type' | 'order'>[] = [
+  {
+    title: 'Mammoth Supplements',
+    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-Slider-1.png',
+    link: '/brands/mammoth',
+    alt: 'Mammoth Supplements',
+  },
+];
+
+export const defaultMiniBanners: Omit<Banner, 'id' | 'type' | 'order'>[] = [
+  {
+    title: '3 for $99',
+    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png',
+    link: '/product/mix-and-match-for-99/',
+    alt: 'Bundles 3 for $99',
+  },
+  {
+    title: 'Beat Any Price',
+    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping-2.png',
+    link: '/price-guarantee/',
+    alt: 'Beat ANY Price by 10%',
+  },
+  {
+    title: 'Free Shipping',
+    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png',
+    link: '/shop/',
+    alt: 'Free Shipping / Free Hoodie / Free Shaker',
+  },
+];
+
+export const defaultMediumBanner: Omit<Banner, 'id' | 'type' | 'order'> = {
+  title: 'Best Creatine Prices',
+  imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png',
+  link: '/shop/creatine',
+  alt: 'Best Creatine Prices',
+};
