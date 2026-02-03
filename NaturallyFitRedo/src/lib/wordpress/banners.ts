@@ -9,7 +9,7 @@ import { fetchREST } from './rest/client';
 // const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://nftest.dreamhosters.com';
 
 // Banner types matching WordPress categories
-export type BannerType = 'hero' | 'mini-1' | 'mini-2' | 'mini-3' | 'medium';
+export type BannerType = 'hero' | 'mini-1' | 'mini-2' | 'mini-3' | 'mini-4';
 
 export interface Banner {
   id: number;
@@ -102,10 +102,10 @@ export async function getMiniBanners(): Promise<Banner[]> {
 }
 
 /**
- * Get medium banner
+ * Get medium banner (mini-4)
  */
 export async function getMediumBanner(): Promise<Banner | null> {
-  const banners = await getBannersByType('medium');
+  const banners = await getBannersByType('mini-4');
   return banners[0] || null;
 }
 

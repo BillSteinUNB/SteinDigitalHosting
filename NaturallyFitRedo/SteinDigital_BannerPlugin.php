@@ -256,10 +256,10 @@ add_action('manage_banners_posts_custom_column', 'steindigital_custom_banners_co
 function steindigital_create_default_banner_types() {
     $banner_types = array(
         'hero'    => __('Hero Slide', 'steindigital-banners'),
-        'mini-1'  => __('Mini Banner 1', 'steindigital-banners'),
-        'mini-2'  => __('Mini Banner 2', 'steindigital-banners'),
-        'mini-3'  => __('Mini Banner 3', 'steindigital-banners'),
-        'medium'  => __('Medium Banner', 'steindigital-banners'),
+        'mini-1'  => __('Mini Banner Left', 'steindigital-banners'),
+        'mini-2'  => __('Mini Banner Middle', 'steindigital-banners'),
+        'mini-3'  => __('Mini Banner Right', 'steindigital-banners'),
+        'mini-4'  => __('Medium Banner', 'steindigital-banners'),
     );
 
     foreach ($banner_types as $slug => $name) {
