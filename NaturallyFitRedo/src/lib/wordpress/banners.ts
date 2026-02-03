@@ -4,6 +4,7 @@
 // ============================================
 
 import { fetchREST } from './rest/client';
+import { wpAsset } from '@/lib/config/wordpress';
 
 // Banner types matching WordPress categories (your actual slugs)
 export type BannerType = 'hero-slides' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
@@ -18,12 +19,48 @@ export interface Banner {
   order: number;
 }
 
+// Cache for banner type ID to slug mapping
+let bannerTypeCache: Map<number, string> | null = null;
+
+/**
+ * Fetch banner type taxonomy terms to build ID -> slug mapping
+ */
+async function getBannerTypeMapping(): Promise<Map<number, string>> {
+  if (bannerTypeCache) {
+    return bannerTypeCache;
+  }
+
+  try {
+    const response = await fetchREST<Array<{
+      id: number;
+      slug: string;
+    }>>('/banner_type', {
+      per_page: 100,
+    });
+
+    const mapping = new Map<number, string>();
+    for (const term of response) {
+      mapping.set(term.id, term.slug);
+    }
+
+    bannerTypeCache = mapping;
+    return mapping;
+  } catch (error) {
+    console.error('Failed to fetch banner types:', error);
+    // Return empty map as fallback
+    return new Map<number, string>();
+  }
+}
+
 /**
  * Fetch all published banners from WordPress
  */
 export async function getBanners(): Promise<Banner[]> {
   try {
-    // Fetch from custom post type "banners" with embedded terms
+    // Get banner type mapping first
+    const typeMapping = await getBannerTypeMapping();
+
+    // Fetch from custom post type "banners"
     const response = await fetchREST<Array<{
       id: number;
       title: { rendered: string };
@@ -33,18 +70,14 @@ export async function getBanners(): Promise<Banner[]> {
           source_url: string;
           alt_text: string;
         }>;
-        'wp:term'?: Array<Array<{
-          id: number;
-          slug: string;
-          name: string;
-        }>>;
       };
       meta?: {
         banner_link?: string;
       };
+      banner_type?: number[];
       menu_order: number;
     }>>('/banners', {
-      _embed: 'wp:term,wp:featuredmedia',
+      _embed: true,
       per_page: 20,
       orderby: 'menu_order',
       order: 'asc',
@@ -54,23 +87,9 @@ export async function getBanners(): Promise<Banner[]> {
     return response.map((banner) => {
       const featuredImage = banner._embedded?.['wp:featuredmedia']?.[0];
       
-      // Extract banner type slug from embedded terms
-      // wp:term is an array of arrays, we need to find the banner_type taxonomy
-      let bannerType: string = '';
-      const terms = banner._embedded?.['wp:term'];
-      if (terms && Array.isArray(terms)) {
-        for (const termGroup of terms) {
-          if (Array.isArray(termGroup) && termGroup.length > 0) {
-            // Check if this is the banner_type taxonomy by looking at the first term
-            const firstTerm = termGroup[0];
-            if (firstTerm && firstTerm.slug) {
-              // This is a banner_type term
-              bannerType = firstTerm.slug;
-              break;
-            }
-          }
-        }
-      }
+      // Get banner type ID and convert to slug
+      const typeId = banner.banner_type?.[0];
+      const typeSlug = typeId ? typeMapping.get(typeId) : '';
       
       return {
         id: banner.id,
@@ -78,7 +97,7 @@ export async function getBanners(): Promise<Banner[]> {
         imageUrl: featuredImage?.source_url || '',
         link: banner.meta?.banner_link || '/shop',
         alt: featuredImage?.alt_text || banner.title.rendered,
-        type: (bannerType as BannerType) || 'hero-slides',
+        type: (typeSlug as BannerType) || 'hero-slides',
         order: banner.menu_order || 0,
       };
     }).filter(banner => banner.imageUrl); // Only return banners with images
@@ -130,7 +149,7 @@ export async function getMediumBanner(): Promise<Banner | null> {
 export const defaultHeroSlides: Omit<Banner, 'id' | 'type' | 'order'>[] = [
   {
     title: 'Mammoth Supplements',
-    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-Slider-1.png',
+    imageUrl: wpAsset('2026/02/Mammoth-Slider-1.png'),
     link: '/brands/mammoth',
     alt: 'Mammoth Supplements',
   },
@@ -139,19 +158,19 @@ export const defaultHeroSlides: Omit<Banner, 'id' | 'type' | 'order'>[] = [
 export const defaultMiniBanners: Omit<Banner, 'id' | 'type' | 'order'>[] = [
   {
     title: '3 for $99',
-    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png',
+    imageUrl: wpAsset('2026/02/NF_3_for_99-2026.png'),
     link: '/product/mix-and-match-for-99/',
     alt: 'Bundles 3 for $99',
   },
   {
     title: 'Beat Any Price',
-    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping-2.png',
+    imageUrl: wpAsset('2026/02/shipping-2.png'),
     link: '/price-guarantee/',
     alt: 'Beat ANY Price by 10%',
   },
   {
     title: 'Free Shipping',
-    imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png',
+    imageUrl: wpAsset('2026/02/shipping.png'),
     link: '/shop/',
     alt: 'Free Shipping / Free Hoodie / Free Shaker',
   },
@@ -159,7 +178,7 @@ export const defaultMiniBanners: Omit<Banner, 'id' | 'type' | 'order'>[] = [
 
 export const defaultMediumBanner: Omit<Banner, 'id' | 'type' | 'order'> = {
   title: 'Best Creatine Prices',
-  imageUrl: 'https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png',
+  imageUrl: wpAsset('2026/02/BEST-CREATINE-PRICES-1.png'),
   link: '/shop/creatine',
   alt: 'Best Creatine Prices',
 };
