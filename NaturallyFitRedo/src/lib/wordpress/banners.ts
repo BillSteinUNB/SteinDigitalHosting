@@ -7,7 +7,7 @@ import { fetchREST } from './rest/client';
 import { wpAsset } from '@/lib/config/wordpress';
 
 // Banner types matching WordPress categories (your actual slugs)
-export type BannerType = 'hero-slides' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
+export type BannerType = 'hero-slide' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
 
 export interface Banner {
   id: number;
@@ -114,7 +114,7 @@ export async function getBanners(): Promise<Banner[]> {
         imageUrl: banner.featured_image_url || '',
         link: banner.meta?.banner_link || '/shop',
         alt: decodedTitle,
-        type: (typeSlug as BannerType) || 'hero-slides',
+        type: (typeSlug as BannerType) || 'hero-slide',
         order: banner.menu_order || 0,
       };
     }).filter(banner => banner.imageUrl);
@@ -139,7 +139,7 @@ export async function getBannersByType(type: BannerType): Promise<Banner[]> {
  * Get hero slides (multiple hero banners)
  */
 export async function getHeroSlides(): Promise<Banner[]> {
-  return getBannersByType('hero-slides');
+  return getBannersByType('hero-slide');
 }
 
 /**
