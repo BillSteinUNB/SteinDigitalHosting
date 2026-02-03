@@ -5,9 +5,6 @@
 
 import { fetchREST } from './rest/client';
 
-// WordPress URL is used via fetchREST, kept for reference
-// const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://nftest.dreamhosters.com';
-
 // Banner types matching WordPress categories (your actual slugs)
 export type BannerType = 'hero-slides' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
 
@@ -26,7 +23,7 @@ export interface Banner {
  */
 export async function getBanners(): Promise<Banner[]> {
   try {
-    // Fetch from custom post type "banners"
+    // Fetch from custom post type "banners" with embedded terms
     const response = await fetchREST<Array<{
       id: number;
       title: { rendered: string };
@@ -36,14 +33,18 @@ export async function getBanners(): Promise<Banner[]> {
           source_url: string;
           alt_text: string;
         }>;
+        'wp:term'?: Array<Array<{
+          id: number;
+          slug: string;
+          name: string;
+        }>>;
       };
       meta?: {
         banner_link?: string;
       };
-      banner_type?: string[];
       menu_order: number;
     }>>('/banners', {
-      _embed: true,
+      _embed: 'wp:term,wp:featuredmedia',
       per_page: 20,
       orderby: 'menu_order',
       order: 'asc',
@@ -52,8 +53,24 @@ export async function getBanners(): Promise<Banner[]> {
 
     return response.map((banner) => {
       const featuredImage = banner._embedded?.['wp:featuredmedia']?.[0];
-      // Get banner type from taxonomy or meta
-      const bannerType = (banner.banner_type?.[0] as BannerType) || 'hero';
+      
+      // Extract banner type slug from embedded terms
+      // wp:term is an array of arrays, we need to find the banner_type taxonomy
+      let bannerType: string = '';
+      const terms = banner._embedded?.['wp:term'];
+      if (terms && Array.isArray(terms)) {
+        for (const termGroup of terms) {
+          if (Array.isArray(termGroup) && termGroup.length > 0) {
+            // Check if this is the banner_type taxonomy by looking at the first term
+            const firstTerm = termGroup[0];
+            if (firstTerm && firstTerm.slug) {
+              // This is a banner_type term
+              bannerType = firstTerm.slug;
+              break;
+            }
+          }
+        }
+      }
       
       return {
         id: banner.id,
@@ -61,7 +78,7 @@ export async function getBanners(): Promise<Banner[]> {
         imageUrl: featuredImage?.source_url || '',
         link: banner.meta?.banner_link || '/shop',
         alt: featuredImage?.alt_text || banner.title.rendered,
-        type: bannerType,
+        type: (bannerType as BannerType) || 'hero-slides',
         order: banner.menu_order || 0,
       };
     }).filter(banner => banner.imageUrl); // Only return banners with images
