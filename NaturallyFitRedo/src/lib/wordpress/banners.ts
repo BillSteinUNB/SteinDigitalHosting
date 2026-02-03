@@ -8,8 +8,8 @@ import { fetchREST } from './rest/client';
 // WordPress URL is used via fetchREST, kept for reference
 // const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://nftest.dreamhosters.com';
 
-// Banner types matching WordPress categories
-export type BannerType = 'hero' | 'mini-1' | 'mini-2' | 'mini-3' | 'mini-4';
+// Banner types matching WordPress categories (your actual slugs)
+export type BannerType = 'hero-slides' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
 
 export interface Banner {
   id: number;
@@ -86,14 +86,14 @@ export async function getBannersByType(type: BannerType): Promise<Banner[]> {
  * Get hero slides (multiple hero banners)
  */
 export async function getHeroSlides(): Promise<Banner[]> {
-  return getBannersByType('hero');
+  return getBannersByType('hero-slides');
 }
 
 /**
  * Get mini banners (3 banners)
  */
 export async function getMiniBanners(): Promise<Banner[]> {
-  const types: BannerType[] = ['mini-1', 'mini-2', 'mini-3'];
+  const types: BannerType[] = ['mini-banner-1', 'mini-banner-2', 'mini-banner-3'];
   const allBanners = await getBanners();
   
   return types
@@ -102,10 +102,10 @@ export async function getMiniBanners(): Promise<Banner[]> {
 }
 
 /**
- * Get medium banner (mini-4)
+ * Get medium banner (mini-banner-4)
  */
 export async function getMediumBanner(): Promise<Banner | null> {
-  const banners = await getBannersByType('mini-4');
+  const banners = await getBannersByType('mini-banner-4');
   return banners[0] || null;
 }
 
