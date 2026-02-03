@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -261,7 +262,20 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
             textAlignClass
           )}
         >
-          {/* Tab 1 has no SHOP NOW button overlays on hero slides */}
+          {/* CTA Button */}
+          <Link
+            href={slide.ctaLink}
+            className={cn(
+              "inline-flex items-center justify-center",
+              "px-8 py-4 min-h-[52px]",
+              "font-heading font-bold uppercase tracking-button text-body",
+              "bg-red-primary text-white hover:bg-red-hover",
+              "transition-all duration-200",
+              "mt-auto mb-12"
+            )}
+          >
+            {slide.ctaText}
+          </Link>
         </div>
       </div>
     </div>
