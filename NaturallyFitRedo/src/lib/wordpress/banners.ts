@@ -23,6 +23,29 @@ export interface Banner {
 let bannerTypeCache: Map<number, string> | null = null;
 
 /**
+ * Decode HTML entities in text
+ * e.g., "Alani Nu &#8211; Hero Banner" -> "Alani Nu - Hero Banner"
+ */
+function decodeHtmlEntities(text: string): string {
+  if (!text) return '';
+  
+  return text
+    .replace(/&#8211;/g, '-')
+    .replace(/&#8212;/g, '--')
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8230;/g, '...')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#038;/g, '&')
+    .replace(/&#039;/g, "'");
+}
+
+/**
  * Fetch banner type taxonomy terms to build ID -> slug mapping
  */
 async function getBannerTypeMapping(): Promise<Map<number, string>> {
@@ -47,7 +70,6 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
     return mapping;
   } catch (error) {
     console.error('Failed to fetch banner types:', error);
-    // Return empty map as fallback
     return new Map<number, string>();
   }
 }
@@ -65,19 +87,13 @@ export async function getBanners(): Promise<Banner[]> {
       id: number;
       title: { rendered: string };
       link: string;
-      _embedded?: {
-        'wp:featuredmedia'?: Array<{
-          source_url: string;
-          alt_text: string;
-        }>;
-      };
       meta?: {
         banner_link?: string;
       };
       banner_type?: number[];
       menu_order: number;
+      featured_image_url?: string;
     }>>('/banners', {
-      _embed: true,
       per_page: 20,
       orderby: 'menu_order',
       order: 'asc',
@@ -85,22 +101,23 @@ export async function getBanners(): Promise<Banner[]> {
     });
 
     return response.map((banner) => {
-      const featuredImage = banner._embedded?.['wp:featuredmedia']?.[0];
-      
       // Get banner type ID and convert to slug
       const typeId = banner.banner_type?.[0];
       const typeSlug = typeId ? typeMapping.get(typeId) : '';
       
+      // Decode HTML entities in title
+      const decodedTitle = decodeHtmlEntities(banner.title.rendered);
+      
       return {
         id: banner.id,
-        title: banner.title.rendered,
-        imageUrl: featuredImage?.source_url || '',
+        title: decodedTitle,
+        imageUrl: banner.featured_image_url || '',
         link: banner.meta?.banner_link || '/shop',
-        alt: featuredImage?.alt_text || banner.title.rendered,
+        alt: decodedTitle,
         type: (typeSlug as BannerType) || 'hero-slides',
         order: banner.menu_order || 0,
       };
-    }).filter(banner => banner.imageUrl); // Only return banners with images
+    }).filter(banner => banner.imageUrl);
 
   } catch (error) {
     console.error('Failed to fetch banners:', error);
