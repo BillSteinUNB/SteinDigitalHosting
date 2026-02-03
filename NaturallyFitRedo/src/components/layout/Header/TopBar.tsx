@@ -27,9 +27,9 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
   const wishlistCount = 0;
 
   return (
-    <div className="bg-[#2b2b2b] border-b border-[#1f1f1f]">
-      <div className="container max-w-[1600px]">
-        <div className="flex items-center justify-between h-[80px] gap-4">
+    <div className="bg-[#151515]">
+      <div className="container max-w-[2158px]">
+        <div className="flex items-center justify-between h-[110px] gap-4">
           {/* Left: Mobile Menu + Veteran Badge + Logo & Tagline */}
           <div className="flex items-center gap-4 flex-shrink-0 min-w-0">
             {/* Mobile menu toggle */}
@@ -46,35 +46,26 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
               <Image
                 src="/images/about/veteran-badge.png"
                 alt="Veteran Owned Business"
-                width={47}
-                height={53}
-                className="w-[47px] h-[53px] object-contain"
+                width={50}
+                height={56}
+                className="w-[50px] h-[56px] object-contain"
                 priority
               />
             </div>
 
             {/* Logo + Tagline */}
             <Link href="/" className="flex items-center gap-3 min-w-0">
-              <div className="relative flex-shrink-0 w-[220px] h-[64px] xl:w-[260px] xl:h-[70px]">
+              <div className="relative flex-shrink-0 w-[454px] h-[71px]">
                 <Image
                   src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore.webp"
                   alt="Naturally Fit - Canada's Supplement Store"
                   fill
-                  sizes="(min-width: 1280px) 260px, 220px"
+                  sizes="454px"
                   className="object-contain"
                   priority
                 />
               </div>
 
-              {/* Tagline - Hidden on mobile */}
-              <div className="hidden md:block min-w-0">
-                <p className="font-heading font-bold text-small uppercase tracking-heading text-white truncate">
-                  Canada&apos;s Supplement Store
-                </p>
-                <p className="text-tiny text-gray-400 truncate">
-                  Serving Canada&apos;s Supplement Needs Since 1999
-                </p>
-              </div>
             </Link>
           </div>
 

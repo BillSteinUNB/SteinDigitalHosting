@@ -34,7 +34,7 @@ export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
   return (
     <div
       className={cn(
-        "fixed left-4 right-4 top-[140px] mx-auto",
+        "fixed left-4 right-4 top-[206px] mx-auto",
         "max-w-[1400px] bg-white",
         "border border-gray-border shadow-dropdown",
         "animate-slide-down",

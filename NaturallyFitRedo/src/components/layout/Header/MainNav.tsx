@@ -36,11 +36,11 @@ export default function MainNav() {
 
   return (
     <nav
-      className="hidden lg:block bg-[#e6e6e6] border-b border-gray-border"
+      className="hidden lg:block bg-[#F4F4F4] border-b border-gray-border"
       aria-label="Main navigation"
     >
-      <div className="container max-w-[1600px]">
-        <div className="flex items-center h-[60px]">
+      <div className="container max-w-[2158px]">
+        <div className="flex items-center h-[96px]">
           {/* Nav Items */}
           <ul className="flex items-center gap-6 flex-1 justify-center">
             {mainNavItems.map((item) => {
@@ -63,7 +63,7 @@ export default function MainNav() {
                       "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
                       "transition-colors",
                       item.highlight
-                        ? "h-[32px] px-4 bg-yellow-highlight text-[#151515] hover:brightness-95"
+                        ? "h-[44px] px-5 bg-yellow-highlight text-[#151515] hover:brightness-95"
                         : "h-full px-1 text-[#151515] hover:text-red-primary",
                       isActive && !item.highlight && "text-red-primary"
                     )}
@@ -123,12 +123,12 @@ export default function MainNav() {
           {/* Auth Section (right aligned) */}
           <div className="flex-shrink-0 pl-8">
             {status === "loading" ? (
-              <div className="flex items-center h-[60px]">
+              <div className="flex items-center h-[96px]">
                 <div className="w-24 h-4 bg-gray-light animate-pulse" />
               </div>
             ) : session?.user ? (
               <div
-                className="relative h-[60px] flex items-center"
+                className="relative h-[96px] flex items-center"
                 onMouseEnter={() => setShowUserMenu(true)}
                 onMouseLeave={() => setShowUserMenu(false)}
               >
@@ -232,7 +232,7 @@ export default function MainNav() {
               <Link
                 href="/login"
                 className={cn(
-                  "flex items-center h-[60px]",
+                  "flex items-center h-[96px]",
                   "font-body font-medium text-[13px] uppercase tracking-[0.02em]",
                   "text-[#151515] hover:text-red-primary transition-colors"
                 )}
