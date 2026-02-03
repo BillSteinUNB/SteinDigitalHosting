@@ -95,13 +95,18 @@ export default async function HomePage() {
       {/* Creatine Promo Banner (image only, no text overlay - Tab 1 style) */}
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <a href="/shop/creatine" className="block mx-auto rounded-xl overflow-hidden" style={{ maxWidth: '980px' }}>
+          <a 
+            href="/shop/creatine" 
+            className="block mx-auto" 
+            style={{ maxWidth: '980px', borderRadius: '12px', overflow: 'hidden', lineHeight: 0 }}
+          >
             <Image
               src={WP_IMAGES.bestCreatine}
               alt="Best Creatine Prices"
               width={980}
               height={201}
               className="w-full h-auto"
+              style={{ display: 'block' }}
             />
           </a>
         </div>
