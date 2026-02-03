@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // METADATA
@@ -18,13 +19,13 @@ export const metadata: Metadata = {
 
 const WP_IMAGES = {
   // Gift Service page images from WordPress
-  gift1: "https://naturallyfit.ca/wp-content/uploads/2020/12/gift1.png",
-  gift2: "https://naturallyfit.ca/wp-content/uploads/2020/12/gift2.png",
+  gift1: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2020/12/gift1.png"),
+  gift2: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2020/12/gift2.png"),
   // Gift card designs
-  giftCard: "https://naturallyfit.ca/wp-content/uploads/2021/10/gift-card2.png",
-  happyHolidays: "https://naturallyfit.ca/wp-content/uploads/2021/11/happy-holidays.jpeg",
-  merryChristmas: "https://naturallyfit.ca/wp-content/uploads/2021/11/merrychristmas.jpg",
-  merryLiftmas: "https://naturallyfit.ca/wp-content/uploads/2021/11/merry-liftmas.jpg",
+  giftCard: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2021/10/gift-card2.png"),
+  happyHolidays: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2021/11/happy-holidays.jpeg"),
+  merryChristmas: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2021/11/merrychristmas.jpg"),
+  merryLiftmas: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2021/11/merry-liftmas.jpg"),
 };
 
 // ============================================

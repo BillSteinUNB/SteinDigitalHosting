@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // METADATA
@@ -18,8 +19,8 @@ export const metadata: Metadata = {
 
 const WP_IMAGES = {
   // NF Rewards page images from WordPress
-  rewardsHero: "https://naturallyfit.ca/wp-content/uploads/2020/07/rewards.jpg",
-  nfBucks: "https://naturallyfit.ca/wp-content/uploads/2020/07/nf-bucks-add-to-cart.png",
+  rewardsHero: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2020/07/rewards.jpg"),
+  nfBucks: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2020/07/nf-bucks-add-to-cart.png"),
 };
 
 // ============================================

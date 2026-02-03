@@ -3,6 +3,8 @@
 // ============================================
 // When WordPress images fail, use these official brand images
 
+import { isWordPressImageUrl } from '@/lib/config/wordpress';
+
 export const fallbackImages: Record<string, string> = {
   // Quest Products
   'Quest |Tortilla Style | Protein Chips | Single': 
@@ -58,5 +60,5 @@ export function getFallbackImage(productName: string): string {
 
 // Helper to check if a URL is from WordPress (needs fallback)
 export function isWordPressImage(url: string): boolean {
-  return url.includes('nftest.dreamhosters.com') || url.includes('naturallyfit.ca');
+  return isWordPressImageUrl(url);
 }

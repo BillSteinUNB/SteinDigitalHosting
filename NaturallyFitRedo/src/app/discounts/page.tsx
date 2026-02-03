@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // METADATA
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 const WP_IMAGES = {
   // Purchase Discounts page images from WordPress
-  discountsHero: "https://naturallyfit.ca/wp-content/uploads/2020/05/discounts.png",
+  discountsHero: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2020/05/discounts.png"),
 };
 
 // ============================================

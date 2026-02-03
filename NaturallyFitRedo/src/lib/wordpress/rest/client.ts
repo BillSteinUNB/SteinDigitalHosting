@@ -3,7 +3,9 @@
 // For fetching Pods fields via REST API
 // ============================================
 
-const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://nftest.dreamhosters.com';
+import { getWordPressBaseUrl } from '@/lib/config/wordpress';
+
+const WORDPRESS_URL = getWordPressBaseUrl();
 const REST_ENDPOINT = `${WORDPRESS_URL}/wp-json/wp/v2`;
 const PODS_ENDPOINT = `${WORDPRESS_URL}/wp-json/pods/v1`;
 

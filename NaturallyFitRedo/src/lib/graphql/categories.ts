@@ -1,5 +1,6 @@
 // WooCommerce GraphQL Categories
 import { fetchGraphQL } from './client';
+import { replaceWordPressBase } from '@/lib/config/wordpress';
 
 interface WooCategory {
   id: string;
@@ -73,7 +74,7 @@ function transformCategory(wooCategory: WooCategory): CategoryWithCount {
     productCount: wooCategory.count || 0,
     description: wooCategory.description || undefined,
     image: wooCategory.image ? {
-      sourceUrl: wooCategory.image.sourceUrl,
+      sourceUrl: replaceWordPressBase(wooCategory.image.sourceUrl),
       altText: wooCategory.image.altText || wooCategory.name,
     } : undefined,
     parent: wooCategory.parent?.node ? {

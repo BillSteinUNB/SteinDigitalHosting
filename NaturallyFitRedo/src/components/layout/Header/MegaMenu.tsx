@@ -3,19 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 import type { MegaMenuCategory } from "@/lib/navigation";
 
 // ============================================
 // WORDPRESS MEGA MENU IMAGE REFERENCES
 // ============================================
 const WP_MENU_IMAGES = {
-  menuImg1: "https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img.png",
-  menuImg2: "https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img1.png",
-  menuImg3: "https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img2.png",
+  menuImg1: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img.png"),
+  menuImg2: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img1.png"),
+  menuImg3: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2022/05/Menu_img2.png"),
   // Category feature images
-  categoryFeature1: "https://naturallyfit.ca/wp-content/uploads/2019/05/Untitled-design-3.png",
-  categoryFeature2: "https://naturallyfit.ca/wp-content/uploads/2023/11/Untitled-design-8.png",
-  categoryFeature3: "https://naturallyfit.ca/wp-content/uploads/2023/12/81vSatsWL._AC_UF8941000_QL80_.jpg",
+  categoryFeature1: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2019/05/Untitled-design-3.png"),
+  categoryFeature2: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2023/11/Untitled-design-8.png"),
+  categoryFeature3: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2023/12/81vSatsWL._AC_UF8941000_QL80_.jpg"),
 };
 
 interface MegaMenuProps {

@@ -1,5 +1,7 @@
 // GraphQL client for WooCommerce
-const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'https://nftest.dreamhosters.com/graphql';
+import { getWordPressGraphqlUrl } from '@/lib/config/wordpress';
+
+const GRAPHQL_ENDPOINT = getWordPressGraphqlUrl();
 
 interface GraphQLResponse<T> {
   data?: T;

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // METADATA
@@ -18,11 +19,11 @@ export const metadata: Metadata = {
 
 const WP_IMAGES = {
   // 24 Hour Gym page images from WordPress
-  heroImage: "https://naturallyfit.ca/wp-content/uploads/2026/01/24-HR-ACCESS-7.png",
-  communityImage: "https://naturallyfit.ca/wp-content/uploads/2025/01/serving-the-community.png",
-  gymPhoto: "https://naturallyfit.ca/wp-content/uploads/2025/10/Untitled-design-2025-10-29T125128.244.png",
-  backToBasics: "https://naturallyfit.ca/wp-content/uploads/2022/02/back2basics.jpg",
-  hwhLogo: "https://naturallyfit.ca/wp-content/uploads/2022/02/hwh-logo.png",
+  heroImage: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2026/01/24-HR-ACCESS-7.png"),
+  communityImage: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2025/01/serving-the-community.png"),
+  gymPhoto: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2025/10/Untitled-design-2025-10-29T125128.244.png"),
+  backToBasics: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2022/02/back2basics.jpg"),
+  hwhLogo: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2022/02/hwh-logo.png"),
 };
 
 // ============================================

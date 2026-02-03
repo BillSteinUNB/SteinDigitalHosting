@@ -7,6 +7,7 @@ import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { wpAsset } from "@/lib/config/wordpress";
 
 // Import Swiper styles
 import "swiper/css";
@@ -39,7 +40,7 @@ export interface HeroSlide {
 // FALLBACK - ONLY MAMMOTH (for testing)
 // ============================================
 const WP_HERO_IMAGES = {
-  mammothSlider: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/Mammoth-Slider-1.png",
+  mammothSlider: wpAsset("2026/02/Mammoth-Slider-1.png"),
 };
 
 // Single slide fallback - Mammoth only (no scrolling)

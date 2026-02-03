@@ -3,6 +3,7 @@
 // ============================================
 
 import type { ProductCategory } from "@/types/product";
+import { wpAsset, replaceWordPressBase } from "@/lib/config/wordpress";
 
 export interface CategoryWithCount extends ProductCategory {
   productCount: number;
@@ -14,15 +15,15 @@ export interface CategoryWithCount extends ProductCategory {
 // WORDPRESS CATEGORY IMAGE REFERENCES
 // ============================================
 const WP_CATEGORY_IMAGES = {
-  nfCategory: "https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg",
-  featuredProduct1: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-14.png",
-  featuredProduct2: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-15.png",
-  featuredProduct3: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-16.png",
-  featuredProduct4: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-17.png",
-  featuredProduct5: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-18.png",
-  featuredProduct6: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-19.png",
-  featuredProduct7: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-20.png",
-  featuredProduct8: "https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-21.png",
+  nfCategory: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg"),
+  featuredProduct1: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-14.png"),
+  featuredProduct2: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-15.png"),
+  featuredProduct3: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-16.png"),
+  featuredProduct4: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-17.png"),
+  featuredProduct5: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-18.png"),
+  featuredProduct6: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-19.png"),
+  featuredProduct7: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-20.png"),
+  featuredProduct8: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/11/Untitled-design-21.png"),
 };
 
 // ============================================
@@ -146,7 +147,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 156,
     description: "High-quality protein powders, bars, and drinks to fuel your gains.",
     image: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/perfect-sports-perfect-whey-4-4lb-triple-rich-dark-chocolate-mixed-source-whey-protein-11978618470479.png",
+      sourceUrl: wpAsset("2026/02/perfect-sports-perfect-whey-4-4lb-triple-rich-dark-chocolate-mixed-source-whey-protein-11978618470479.png"),
       altText: "Protein Supplements",
     },
     children: [
@@ -220,7 +221,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 67,
     description: "Thermogenic and metabolic support for weight management.",
     image: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/cherryslushy1_900x.webp",
+      sourceUrl: wpAsset("2026/02/cherryslushy1_900x.webp"),
       altText: "Fat Burner Supplements",
     },
     children: [
@@ -257,7 +258,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 94,
     description: "Optimize your recovery and reduce muscle soreness.",
     image: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/mammoth-bcaa-40-servings-white-grape-Naturally-Fit.webp",
+      sourceUrl: wpAsset("2026/02/mammoth-bcaa-40-servings-white-grape-Naturally-Fit.webp"),
       altText: "Recovery Supplements",
     },
     children: [
@@ -314,7 +315,7 @@ export const categories: CategoryWithCount[] = [
         description: "Creatine and muscle building supplements.",
         parent: { id: "cat-weightgainer", name: "Weight Gainer", slug: "weight-gainer" },
         image: {
-          sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp",
+          sourceUrl: wpAsset("2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp"),
           altText: "Muscle Builder Supplements",
         },
       },
@@ -393,7 +394,7 @@ export const categories: CategoryWithCount[] = [
     productCount: 112,
     description: "Vitamins, minerals, and wellness supplements for overall health.",
     image: {
-      sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/CAN-Multivitamin-scaled.png",
+      sourceUrl: wpAsset("2026/02/CAN-Multivitamin-scaled.png"),
       altText: "Health and Balance Supplements",
     },
     children: [
@@ -508,7 +509,7 @@ export const muscleBuildersCategory: CategoryWithCount = {
   productCount: 45,
   description: "Creatine and muscle building supplements.",
   image: {
-    sourceUrl: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp",
+    sourceUrl: wpAsset("2026/02/musclemeds-carnivor-4lb-vanilla-caramel-Naturally-Fit.webp"),
     altText: "Muscle Builder Supplements",
   },
 };

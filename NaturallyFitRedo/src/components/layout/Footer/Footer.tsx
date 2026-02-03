@@ -3,6 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Facebook, Instagram } from "lucide-react";
 import { contactInfo } from "@/lib/navigation";
+import { wpAsset } from "@/lib/config/wordpress";
 
 // ============================================
 // FOOTER COMPONENT
@@ -30,7 +31,7 @@ export default function Footer() {
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center">
               <Image
-                src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore_footer.png"
+                src={wpAsset("2026/02/canadassupplementstore_footer.png")}
                 alt="Naturally Fit - Canada's Supplement Store"
                 width={240}
                 height={102}
@@ -67,7 +68,7 @@ export default function Footer() {
           {/* Veteran Badge - 98px × 98px */}
           <div className="flex flex-col items-center lg:items-end">
             <Image
-              src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/veteran-owned-badge.png"
+              src={wpAsset("2026/02/veteran-owned-badge.png")}
               alt="Veteran Owned Business"
               width={98}
               height={98}
@@ -111,7 +112,7 @@ export default function Footer() {
               <span className="text-sm font-semibold text-white">We Accept</span>
               {/* Payment Icons - 183px × 28px */}
               <Image
-                src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/footer1_2026.png"
+                src={wpAsset("2026/02/footer1_2026.png")}
                 alt="Accepted payment methods"
                 width={183}
                 height={28}

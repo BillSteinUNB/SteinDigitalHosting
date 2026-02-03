@@ -1,6 +1,7 @@
 // WooCommerce GraphQL Queries
 import { fetchGraphQL } from './client';
 import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockStatus } from '@/types/product';
+import { replaceWordPressBase } from '@/lib/config/wordpress';
 
 // GraphQL response types
 interface WooProductNode {
@@ -212,13 +213,8 @@ const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x600/1a1a2e/ffffff?text=No+
 // Transform image URL from old domain to new domain
 function transformImageUrl(url: string | null | undefined): string {
   if (!url) return DEFAULT_PLACEHOLDER;
-  
-  // Replace old domain with new domain
-  if (url.includes('naturallyfit.ca')) {
-    return url.replace('https://naturallyfit.ca', 'https://nftest.dreamhosters.com');
-  }
-  
-  return url;
+
+  return replaceWordPressBase(url);
 }
 
 // Convert WooCommerce product to ProductCardData
@@ -257,7 +253,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
   
   // Process gallery images
   const galleryImages = wooProduct.galleryImages?.nodes.map(img => ({
-    sourceUrl: img.sourceUrl || DEFAULT_PLACEHOLDER,
+    sourceUrl: transformImageUrl(img.sourceUrl),
     altText: img.altText || wooProduct.name,
   })) || [];
   

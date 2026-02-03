@@ -3,15 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Award, Users, Clock, Heart, Shield, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // WORDPRESS IMAGE REFERENCES
 // ============================================
 const WP_IMAGES = {
   // Using community/store images from WordPress
-  communityImage: "https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg",
-  servingCommunity: "https://naturallyfit.ca/wp-content/uploads/2025/01/serving-the-community.png",
-  nfCategory: "https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg",
+  communityImage: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2024/03/288388789_5831383580222630_2687580129211060376_n.jpg"),
+  servingCommunity: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2025/01/serving-the-community.png"),
+  nfCategory: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2018/02/categories-nf.jpg"),
 };
 
 // ============================================

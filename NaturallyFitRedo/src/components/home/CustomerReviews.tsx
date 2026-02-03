@@ -8,6 +8,7 @@ import type { Swiper as SwiperType } from "swiper";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui";
+import { wpAsset } from "@/lib/config/wordpress";
 import type { ACFCustomerReview } from "@/lib/wordpress/acf/types";
 
 // Import Swiper styles
@@ -158,7 +159,7 @@ export default function CustomerReviews({
         {/* Google Reviews Badge */}
         <div className="flex justify-center mt-8">
           <Image
-            src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/google-reviews_logo.jpg"
+            src={wpAsset("2026/02/google-reviews_logo.jpg")}
             alt="Google Reviews"
             width={225}
             height={92}

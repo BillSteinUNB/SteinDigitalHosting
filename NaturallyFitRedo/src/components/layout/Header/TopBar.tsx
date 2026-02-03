@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Heart, Menu, Search } from "lucide-react";
 import { CountBadge } from "@/components/ui";
 import { contactInfo } from "@/lib/navigation";
+import { wpAsset } from "@/lib/config/wordpress";
 import MiniCart from "./MiniCart";
 
 interface TopBarProps {
@@ -57,7 +58,7 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
             <Link href="/" className="flex items-center gap-3 min-w-0">
               <div className="relative flex-shrink-0 w-[454px] h-[71px]">
                 <Image
-                  src="https://nftest.dreamhosters.com/wp-content/uploads/2026/02/canadassupplementstore.webp"
+                  src={wpAsset("2026/02/canadassupplementstore.webp")}
                   alt="Naturally Fit - Canada's Supplement Store"
                   fill
                   sizes="454px"

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { replaceWordPressBase } from "@/lib/config/wordpress";
 
 // ============================================
 // METADATA
@@ -18,8 +19,8 @@ export const metadata: Metadata = {
 
 const WP_IMAGES = {
   // Athletes page images from WordPress
-  athlete1: "https://naturallyfit.ca/wp-content/uploads/2018/09/IMG_0741.jpg",
-  athlete2: "https://naturallyfit.ca/wp-content/uploads/2018/09/IMG_1293.jpg",
+  athlete1: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2018/09/IMG_0741.jpg"),
+  athlete2: replaceWordPressBase("https://naturallyfit.ca/wp-content/uploads/2018/09/IMG_1293.jpg"),
 };
 
 // ============================================

@@ -9,6 +9,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'slategray-squirrel-389391.hostingersite.com',
+        pathname: '/wp-content/uploads/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'naturallyfit.ca',
         pathname: '/wp-content/uploads/**',
       },

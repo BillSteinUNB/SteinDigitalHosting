@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { wpAsset } from "@/lib/config/wordpress";
 
 // ============================================
 // PROMO BANNER COMPONENT
@@ -314,17 +315,17 @@ export interface ThreeBannerRowProps {
 // Default banners - fallback when no ACF data
 const defaultMiniBanners = [
   {
-    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/NF_3_for_99-2026.png",
+    image: wpAsset("2026/02/NF_3_for_99-2026.png"),
     alt: "Bundles 3 for $99",
     link: "/product/mix-and-match-for-99/",
   },
   {
-    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping-2.png",
+    image: wpAsset("2026/02/shipping-2.png"),
     alt: "Beat ANY Price by 10%",
     link: "/price-guarantee/",
   },
   {
-    image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/shipping.png",
+    image: wpAsset("2026/02/shipping.png"),
     alt: "Free Shipping / Free Hoodie / Free Shaker",
     link: "/shop/",
   },
@@ -385,7 +386,7 @@ export interface MediumBannerProps {
 
 // Default medium banner - fallback
 const defaultMediumBanner = {
-  image: "https://nftest.dreamhosters.com/wp-content/uploads/2026/02/BEST-CREATINE-PRICES-1.png",
+  image: wpAsset("2026/02/BEST-CREATINE-PRICES-1.png"),
   alt: "Best Creatine Prices",
   link: "/shop/creatine",
 };
