@@ -9,20 +9,18 @@ import {
   getHeroSlides, 
   getMiniBanners, 
   getMediumBanner,
+  getProductBanners,
   defaultHeroSlides,
   defaultMiniBanners,
   defaultMediumBanner,
   type Banner
 } from "@/lib/wordpress/banners";
 
-// Mock data (fallback for brands)
-import { featuredBrands } from "@/lib/mock/brands";
-
 // Home components
 import {
   Hero,
   CategoryGrid,
-  BrandLogos,
+  ProductBannerCarousel,
   ThreeBannerRow,
   MediumBanner,
   CustomerReviews,
@@ -42,10 +40,12 @@ export default async function HomePage() {
     wpHeroSlides,
     wpMiniBanners,
     wpMediumBanner,
+    wpProductBanners,
   ] = await Promise.all([
     getHeroSlides(),
     getMiniBanners(),
     getMediumBanner(),
+    getProductBanners(),
   ]);
   
   // Fetch data from WooCommerce GraphQL
@@ -100,10 +100,11 @@ export default async function HomePage() {
         viewAllLink="/shop?sort=popularity"
       />
 
-      {/* Shop by Brand */}
-      <BrandLogos
-        title="Discover Brands You'll Love"
-        brands={featuredBrands}
+      {/* Product Banners Carousel */}
+      <ProductBannerCarousel
+        title="Discover Products You'll Love"
+        banners={wpProductBanners}
+        viewAllLink="/shop"
       />
 
       {/* Customer Reviews */}

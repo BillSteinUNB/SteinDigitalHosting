@@ -255,11 +255,12 @@ add_action('manage_banners_posts_custom_column', 'steindigital_custom_banners_co
  */
 function steindigital_create_default_banner_types() {
     $banner_types = array(
-        'hero'    => __('Hero Slide', 'steindigital-banners'),
-        'mini-1'  => __('Mini Banner Left', 'steindigital-banners'),
-        'mini-2'  => __('Mini Banner Middle', 'steindigital-banners'),
-        'mini-3'  => __('Mini Banner Right', 'steindigital-banners'),
-        'mini-4'  => __('Medium Banner', 'steindigital-banners'),
+        'hero'            => __('Hero Slide', 'steindigital-banners'),
+        'mini-1'          => __('Mini Banner Left', 'steindigital-banners'),
+        'mini-2'          => __('Mini Banner Middle', 'steindigital-banners'),
+        'mini-3'          => __('Mini Banner Right', 'steindigital-banners'),
+        'mini-4'          => __('Medium Banner', 'steindigital-banners'),
+        'product-banner'  => __('Product Banner', 'steindigital-banners'),
     );
 
     foreach ($banner_types as $slug => $name) {
@@ -334,6 +335,7 @@ function steindigital_add_banner_help_tab() {
                 '<li><strong>' . __('Hero Slide', 'steindigital-banners') . '</strong> - ' . __('Full-width carousel slides at the top of the page', 'steindigital-banners') . '</li>' .
                 '<li><strong>' . __('Mini Banner 1-3', 'steindigital-banners') . '</strong> - ' . __('Three small promotional banners', 'steindigital-banners') . '</li>' .
                 '<li><strong>' . __('Medium Banner', 'steindigital-banners') . '</strong> - ' . __('Large featured banner section', 'steindigital-banners') . '</li>' .
+                '<li><strong>' . __('Product Banner', 'steindigital-banners') . '</strong> - ' . __('Carousel of product/category banners', 'steindigital-banners') . '</li>' .
                 '</ul>' .
                 '<h4>' . __('Tips:', 'steindigital-banners') . '</h4>' .
                 '<ul>' .

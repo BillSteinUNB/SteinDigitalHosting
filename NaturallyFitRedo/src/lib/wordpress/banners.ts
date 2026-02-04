@@ -7,7 +7,7 @@ import { fetchREST } from './rest/client';
 import { wpAsset } from '@/lib/config/wordpress';
 
 // Banner types matching WordPress categories (your actual slugs)
-export type BannerType = 'hero-slide' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4';
+export type BannerType = 'hero-slide' | 'mini-banner-1' | 'mini-banner-2' | 'mini-banner-3' | 'mini-banner-4' | 'product-banner';
 
 export interface Banner {
   id: number;
@@ -160,6 +160,14 @@ export async function getMiniBanners(): Promise<Banner[]> {
 export async function getMediumBanner(): Promise<Banner | null> {
   const banners = await getBannersByType('mini-banner-4');
   return banners[0] || null;
+}
+
+/**
+ * Get product banners (for Discover Products carousel)
+ * Returns all banners of type 'product-banner' sorted by order
+ */
+export async function getProductBanners(): Promise<Banner[]> {
+  return getBannersByType('product-banner');
 }
 
 // Default banner as fallback - MAMMOTH ONLY (for testing)

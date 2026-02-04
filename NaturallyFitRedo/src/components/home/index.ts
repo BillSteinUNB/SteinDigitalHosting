@@ -8,6 +8,9 @@ export type { CategoryGridProps, FeaturedCategoriesProps } from "./CategoryGrid"
 export { default as BrandLogos, BrandGrid } from "./BrandLogos";
 export type { BrandLogosProps, BrandGridProps } from "./BrandLogos";
 
+export { default as ProductBannerCarousel } from "./ProductBannerCarousel";
+export type { ProductBannerCarouselProps } from "./ProductBannerCarousel";
+
 export { default as PromoBanner, SaleBanner, SplitPromo, FeaturesBar, ThreeBannerRow, MediumBanner } from "./PromoBanner";
 export type { PromoBannerProps, SaleBannerProps, SplitPromoProps, FeatureItem, FeaturesBarProps, ThreeBannerRowProps, MediumBannerProps } from "./PromoBanner";
 
