@@ -5,6 +5,9 @@ export type { HeroSlide } from "./Hero";
 export { default as CategoryGrid, FeaturedCategories, CategoryCardSkeleton } from "./CategoryGrid";
 export type { CategoryGridProps, FeaturedCategoriesProps } from "./CategoryGrid";
 
+export { default as CategoryBannerGrid } from "./CategoryBannerGrid";
+export type { CategoryBannerGridProps } from "./CategoryBannerGrid";
+
 export { default as BrandLogos, BrandGrid } from "./BrandLogos";
 export type { BrandLogosProps, BrandGridProps } from "./BrandLogos";
 

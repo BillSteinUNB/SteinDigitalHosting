@@ -2,7 +2,6 @@
 
 // GraphQL data fetching
 import { getFeaturedProducts, getBestSellers } from "@/lib/graphql/products";
-import { getFeaturedCategories } from "@/lib/graphql/categories";
 
 // Banner fetching from WordPress
 import { 
@@ -10,6 +9,7 @@ import {
   getMiniBanners, 
   getMediumBanner,
   getProductBanners,
+  getQuickProductBanners,
   defaultHeroSlides,
   defaultMiniBanners,
   defaultMediumBanner,
@@ -19,7 +19,7 @@ import {
 // Home components
 import {
   Hero,
-  CategoryGrid,
+  CategoryBannerGrid,
   ProductBannerCarousel,
   ThreeBannerRow,
   MediumBanner,
@@ -43,22 +43,22 @@ export default async function HomePage() {
     wpMiniBanners,
     wpMediumBanner,
     wpProductBanners,
+    wpQuickProductBanners,
   ] = await Promise.all([
     getHeroSlides(),
     getMiniBanners(),
     getMediumBanner(),
     getProductBanners(),
+    getQuickProductBanners(),
   ]);
   
   // Fetch data from WooCommerce GraphQL
   const [
     featuredProducts,
     bestSellers,
-    featuredCategories,
   ] = await Promise.all([
     getFeaturedProducts(8),
     getBestSellers(8),
-    getFeaturedCategories(5),
   ]);
 
   // Transform WordPress banners to component format
@@ -81,10 +81,10 @@ export default async function HomePage() {
         link={mediumBanner.link}
       />
 
-      {/* Shop by Category */}
-      <CategoryGrid
+      {/* Popular Categories */}
+      <CategoryBannerGrid
         title="Popular Categories"
-        categories={featuredCategories}
+        banners={wpQuickProductBanners}
         columns={5}
       />
 

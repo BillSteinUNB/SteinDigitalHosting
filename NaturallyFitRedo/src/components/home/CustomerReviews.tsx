@@ -87,13 +87,54 @@ export default function CustomerReviews({
   return (
     <section className={cn("py-12 bg-white", className)}>
       <div className="container mx-auto px-4">
+        {/* Google Reviews Badge */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src={wpAsset("Google-reviews-logo.jpg")}
+            alt="Google Reviews"
+            width={225}
+            height={92}
+            className="w-[225px] h-[92px] object-contain"
+          />
+        </div>
+
         {/* Header */}
-        <div className="text-center mb-10">
-          <SectionHeading centered>{title}</SectionHeading>
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <SectionHeading>{title}</SectionHeading>
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => swiperRef.current?.slidePrev()}
+              className={cn(
+                "w-10 h-10 min-w-[44px] min-h-[44px]",
+                "flex items-center justify-center",
+                "bg-red-primary text-white border border-red-primary",
+                "hover:bg-red-hover hover:border-red-hover",
+                "transition-all duration-200"
+              )}
+              aria-label="Previous review"
+            >
+              <ChevronLeft size={18} strokeWidth={1.75} />
+            </button>
+            <button
+              type="button"
+              onClick={() => swiperRef.current?.slideNext()}
+              className={cn(
+                "w-10 h-10 min-w-[44px] min-h-[44px]",
+                "flex items-center justify-center",
+                "bg-red-primary text-white border border-red-primary",
+                "hover:bg-red-hover hover:border-red-hover",
+                "transition-all duration-200"
+              )}
+              aria-label="Next review"
+            >
+              <ChevronRight size={18} strokeWidth={1.75} />
+            </button>
+          </div>
         </div>
 
         {/* Reviews Carousel */}
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-5xl mx-auto">
           <Swiper
             modules={[Navigation, Autoplay]}
             onSwiper={(swiper) => {
@@ -119,52 +160,6 @@ export default function CustomerReviews({
               </SwiperSlide>
             ))}
           </Swiper>
-
-          {/* Navigation Arrows */}
-          <button
-            type="button"
-            onClick={() => swiperRef.current?.slidePrev()}
-            className={cn(
-              "absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10",
-              "w-10 h-10 min-w-[44px] min-h-[44px]",
-              "flex items-center justify-center",
-              "bg-white shadow-md border border-gray-border",
-              "text-black hover:bg-red-primary hover:text-white hover:border-red-primary",
-              "transition-all duration-200",
-              "hidden md:flex"
-            )}
-            aria-label="Previous review"
-          >
-            <ChevronLeft size={20} strokeWidth={1.5} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => swiperRef.current?.slideNext()}
-            className={cn(
-              "absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10",
-              "w-10 h-10 min-w-[44px] min-h-[44px]",
-              "flex items-center justify-center",
-              "bg-white shadow-md border border-gray-border",
-              "text-black hover:bg-red-primary hover:text-white hover:border-red-primary",
-              "transition-all duration-200",
-              "hidden md:flex"
-            )}
-            aria-label="Next review"
-          >
-            <ChevronRight size={20} strokeWidth={1.5} />
-          </button>
-        </div>
-
-        {/* Google Reviews Badge */}
-        <div className="flex justify-center mt-8">
-          <Image
-            src={wpAsset("Google-reviews-logo.jpg")}
-            alt="Google Reviews"
-            width={225}
-            height={92}
-            className="w-[225px] h-[92px] object-contain"
-          />
         </div>
       </div>
     </section>
@@ -185,7 +180,7 @@ function ReviewCard({ review, isACF = false }: ReviewCardProps) {
   if (isACF) {
     const acfReview = review as ACFCustomerReview;
     return (
-      <div className="bg-white p-6 border border-gray-border h-full">
+      <div className="bg-white p-6 border border-gray-border shadow-md h-full">
         {/* Stars */}
         <div className="flex gap-1 mb-4">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -202,7 +197,7 @@ function ReviewCard({ review, isACF = false }: ReviewCardProps) {
         </div>
 
         {/* Review Text */}
-        <blockquote className="text-gray-dark mb-4 line-clamp-4">
+        <blockquote className="text-gray-dark mb-4 italic">
           &ldquo;{acfReview.text}&rdquo;
         </blockquote>
 
@@ -217,7 +212,7 @@ function ReviewCard({ review, isACF = false }: ReviewCardProps) {
   // Handle default format
   const defaultReview = review as Review;
   return (
-    <div className="bg-white p-6 border border-gray-border h-full">
+    <div className="bg-white p-6 border border-gray-border shadow-md h-full">
       {/* Stars */}
       <div className="flex gap-1 mb-4">
         {Array.from({ length: 5 }).map((_, i) => (
@@ -234,7 +229,7 @@ function ReviewCard({ review, isACF = false }: ReviewCardProps) {
       </div>
 
       {/* Review Text */}
-      <blockquote className="text-gray-dark mb-4 line-clamp-4">
+      <blockquote className="text-gray-dark mb-4 italic">
         &ldquo;{defaultReview.text}&rdquo;
       </blockquote>
 

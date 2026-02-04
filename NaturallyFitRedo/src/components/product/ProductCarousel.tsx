@@ -75,8 +75,8 @@ export default function ProductCarousel({
     <section className={cn("py-12", className)}>
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-          <SectionHeading>{title}</SectionHeading>
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8 text-left">
+          <SectionHeading className="text-left">{title}</SectionHeading>
 
           {viewAllLink && (
             <Link

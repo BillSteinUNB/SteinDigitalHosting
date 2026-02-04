@@ -25,6 +25,7 @@ export interface ProductBannerCarouselProps {
   autoplay?: boolean;
   viewAllLink?: string;
   className?: string;
+  showLabel?: boolean;
 }
 
 /**
@@ -41,6 +42,7 @@ export default function ProductBannerCarousel({
   autoplay = true,
   viewAllLink = "/shop",
   className,
+  showLabel = false,
 }: ProductBannerCarouselProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -109,7 +111,7 @@ export default function ProductBannerCarousel({
           >
             {banners.map((banner) => (
               <SwiperSlide key={banner.id}>
-                <ProductBannerItem banner={banner} />
+                <ProductBannerItem banner={banner} showLabel={showLabel} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -183,23 +185,24 @@ export default function ProductBannerCarousel({
 
 interface ProductBannerItemProps {
   banner: Banner;
+  showLabel?: boolean;
 }
 
-function ProductBannerItem({ banner }: ProductBannerItemProps) {
+function ProductBannerItem({ banner, showLabel = false }: ProductBannerItemProps) {
   return (
     <Link
       href={banner.link || "/shop"}
       className={cn(
         "group",
-        "flex items-center justify-center",
-        "w-full aspect-square max-w-[200px] mx-auto",
+        "flex flex-col items-center justify-center",
+        "w-full max-w-[200px] mx-auto",
         "transition-all duration-300",
         "focus-ring"
       )}
       title={banner.title}
     >
       {banner.imageUrl ? (
-        <div className="relative w-full h-full">
+        <div className="relative w-full aspect-square">
           <Image
             src={banner.imageUrl}
             alt={banner.alt || banner.title}
@@ -216,6 +219,12 @@ function ProductBannerItem({ banner }: ProductBannerItemProps) {
         </div>
       ) : (
         <span className="font-heading text-sm uppercase text-gray-dark opacity-60 group-hover:opacity-100 transition-opacity">
+          {banner.title}
+        </span>
+      )}
+
+      {showLabel && banner.title && (
+        <span className="mt-3 font-heading text-xs uppercase tracking-wide text-black group-hover:text-red-primary transition-colors">
           {banner.title}
         </span>
       )}
