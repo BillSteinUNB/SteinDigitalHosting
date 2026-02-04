@@ -159,7 +159,7 @@ export default function CustomerReviews({
         {/* Google Reviews Badge */}
         <div className="flex justify-center mt-8">
           <Image
-            src={wpAsset("google-reviews_logo.jpg")}
+            src={wpAsset("Google-reviews-logo.jpg")}
             alt="Google Reviews"
             width={225}
             height={92}
