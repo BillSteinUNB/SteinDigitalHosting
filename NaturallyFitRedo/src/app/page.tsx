@@ -38,6 +38,8 @@ export const dynamic = 'force-dynamic';
 // ============================================
 
 export default async function HomePage() {
+  console.log('[Page] Starting banner fetch...');
+  
   // Fetch banners from WordPress
   const [
     wpHeroSlides,
@@ -50,6 +52,12 @@ export default async function HomePage() {
     getMediumBanner(),
     getProductBanners(),
   ]);
+  
+  console.log('[Page] Banners fetched:');
+  console.log('  Hero slides:', wpHeroSlides.length);
+  console.log('  Mini banners:', wpMiniBanners.length);
+  console.log('  Medium banner:', wpMediumBanner ? 'yes' : 'no');
+  console.log('  Product banners:', wpProductBanners.length);
   
   // Fetch data from WooCommerce GraphQL
   const [
