@@ -30,6 +30,9 @@ import {
 // Product components
 import { ProductCarousel } from "@/components/product";
 
+// Force dynamic rendering to fetch fresh data on each request
+export const dynamic = 'force-dynamic';
+
 // ============================================
 // HOMEPAGE - Server Component
 // ============================================
