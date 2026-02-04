@@ -5,7 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Container, SectionHeading, SearchInput } from "@/components/ui";
-import { alphabeticalBrands, type BrandWithDetails } from "@/lib/mock/brands";
+import { useQuery } from "@tanstack/react-query";
+import { getWooBrands } from "@/lib/woocommerce/brands";
+import type { BrandWithDetails } from "@/lib/mock/brands";
 
 // ============================================
 // BRAND CARD COMPONENT
@@ -17,6 +19,7 @@ interface BrandCardProps {
 
 function BrandCard({ brand }: BrandCardProps) {
   const [imageError, setImageError] = useState(false);
+  const [showLogo, setShowLogo] = useState(false);
 
   return (
     <Link
@@ -30,14 +33,17 @@ function BrandCard({ brand }: BrandCardProps) {
     >
       {/* Brand Logo */}
       <div className="relative w-full aspect-[3/2] mb-4 flex items-center justify-center">
-        {brand.logo && !imageError ? (
+        {showLogo && brand.logo && !imageError ? (
           <Image
             src={brand.logo.sourceUrl}
             alt={brand.logo.altText || brand.name}
             fill
             className="object-contain p-2 grayscale group-hover:grayscale-0 transition-all duration-200"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-            onError={() => setImageError(true)}
+            onError={() => {
+              setImageError(true);
+              setShowLogo(false);
+            }}
           />
         ) : (
           <span className="font-heading text-lg uppercase text-gray-medium group-hover:text-red-primary transition-colors">
@@ -137,9 +143,27 @@ export default function BrandsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLetter, setActiveLetter] = useState<string | null>(null);
 
+  const { data: wooBrands } = useQuery({
+    queryKey: ["woo-brands"],
+    queryFn: getWooBrands,
+  });
+
+  const brandList = useMemo<BrandWithDetails[]>(() => {
+    if (!wooBrands) return [];
+    return [...wooBrands]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((brand) => ({
+        id: String(brand.id),
+        name: brand.name,
+        slug: brand.slug,
+        productCount: brand.count ?? 0,
+        featured: false,
+      }));
+  }, [wooBrands]);
+
   // Filter brands
   const filteredBrands = useMemo(() => {
-    let result = alphabeticalBrands;
+    let result = brandList;
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -207,7 +231,7 @@ export default function BrandsPage() {
         {/* Alphabet Filter */}
         {!searchQuery && (
           <AlphabetFilter
-            brands={alphabeticalBrands}
+            brands={brandList}
             activeLetter={activeLetter}
             onLetterClick={setActiveLetter}
           />

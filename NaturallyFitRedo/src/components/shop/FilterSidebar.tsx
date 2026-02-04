@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button, Input, Drawer } from "@/components/ui";
 import type { CategoryWithCount } from "@/lib/graphql/categories";
 import { buildAllowedCategoryTree, type CategoryTreeNode } from "@/lib/shop-categories";
-import { brands, type BrandWithDetails } from "@/lib/mock/brands";
+import type { BrandWithDetails } from "@/lib/mock/brands";
 import { getPriceRange } from "@/lib/mock";
 import type { ProductFilters } from "@/types/product";
 
@@ -20,6 +20,7 @@ export interface FilterSidebarProps {
   onClearFilters: () => void;
   className?: string;
   categories?: CategoryWithCount[];
+  brands?: BrandWithDetails[];
 }
 
 export interface MobileFilterDrawerProps extends FilterSidebarProps {
@@ -225,7 +226,11 @@ interface BrandFilterProps {
 
 function BrandFilter({ brands: brandList, selectedBrand, onSelect }: BrandFilterProps) {
   const [showAll, setShowAll] = useState(false);
-  const displayedBrands = showAll ? brandList : brandList.slice(0, 8);
+  const sortedBrands = useMemo(
+    () => [...brandList].sort((a, b) => a.name.localeCompare(b.name)),
+    [brandList]
+  );
+  const displayedBrands = showAll ? sortedBrands : sortedBrands.slice(0, 8);
 
   return (
     <div className="space-y-1">
@@ -376,6 +381,7 @@ export default function FilterSidebar({
   onClearFilters,
   className,
   categories = [],
+  brands = [],
 }: FilterSidebarProps) {
   const priceRange = useMemo(() => getPriceRange(), []);
   const allowedCategoryTree = useMemo(
@@ -493,6 +499,7 @@ export function MobileFilterDrawer({
   onFilterChange,
   onClearFilters,
   categories = [],
+  brands = [],
 }: MobileFilterDrawerProps) {
   const priceRange = useMemo(() => getPriceRange(), []);
   const allowedCategoryTree = useMemo(

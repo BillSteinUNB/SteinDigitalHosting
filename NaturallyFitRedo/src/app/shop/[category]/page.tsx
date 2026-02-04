@@ -20,6 +20,8 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getCategoryBySlug, getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
+import type { BrandWithDetails } from "@/lib/mock/brands";
+import { getWooBrands } from "@/lib/woocommerce/brands";
 import { filterAllowedCategories, isAllowedCategorySlug } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
@@ -129,6 +131,22 @@ export default function CategoryPage() {
     queryKey: ["categories"],
     queryFn: getCategories,
   });
+  const { data: wooBrands } = useQuery({
+    queryKey: ["woo-brands"],
+    queryFn: getWooBrands,
+  });
+  const brandFilters = useMemo<BrandWithDetails[]>(() => {
+    if (!wooBrands) return [];
+    return [...wooBrands]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((brand) => ({
+        id: String(brand.id),
+        name: brand.name,
+        slug: brand.slug,
+        productCount: brand.count ?? 0,
+        featured: false,
+      }));
+  }, [wooBrands]);
   const allowedCategories = useMemo(
     () => (allCategories ? filterAllowedCategories(allCategories) : []),
     [allCategories]
@@ -349,6 +367,7 @@ export default function CategoryPage() {
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
               categories={allCategories || []}
+              brands={brandFilters}
             />
           </aside>
 
@@ -492,6 +511,7 @@ export default function CategoryPage() {
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
         categories={allCategories || []}
+        brands={brandFilters}
       />
     </main>
   );

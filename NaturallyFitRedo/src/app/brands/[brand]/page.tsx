@@ -22,6 +22,7 @@ import {
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getBrandBySlug, type BrandWithDetails } from "@/lib/mock/brands";
 import { getCategories } from "@/lib/graphql/categories";
+import { getWooBrands } from "@/lib/woocommerce/brands";
 import { filterAllowedCategories } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
@@ -159,10 +160,26 @@ export default function BrandPage() {
     queryKey: ["categories"],
     queryFn: getCategories,
   });
+  const { data: wooBrands } = useQuery({
+    queryKey: ["woo-brands"],
+    queryFn: getWooBrands,
+  });
   const allowedCategories = useMemo(
     () => (categories ? filterAllowedCategories(categories) : []),
     [categories]
   );
+  const brandFilters = useMemo<BrandWithDetails[]>(() => {
+    if (!wooBrands) return [];
+    return [...wooBrands]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((wooBrand) => ({
+        id: String(wooBrand.id),
+        name: wooBrand.name,
+        slug: wooBrand.slug,
+        productCount: wooBrand.count ?? 0,
+        featured: false,
+      }));
+  }, [wooBrands]);
 
   // Fetch products from GraphQL using React Query
   const { data, isLoading, error } = useQuery({
@@ -304,6 +321,7 @@ export default function BrandPage() {
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
               categories={categories || []}
+              brands={brandFilters}
             />
           </aside>
 
@@ -447,6 +465,7 @@ export default function BrandPage() {
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
         categories={categories || []}
+        brands={brandFilters}
       />
     </main>
   );

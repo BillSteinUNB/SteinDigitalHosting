@@ -5,7 +5,7 @@ import { replaceWordPressBase } from '@/lib/config/wordpress';
 import { formatPrice } from "@/lib/utils";
 import { WHOLESALEX_PRICE_META } from "@/lib/wholesalex/integration";
 import { getAllowedCategoryLabel, isAllowedCategorySlug } from "@/lib/shop-categories";
-import { getBrandBySlug } from "@/lib/mock/brands";
+import { getWooBrandBySlug, getWooBrandProductSlugs } from "@/lib/woocommerce/brands";
 
 // GraphQL response types
 interface WooProductNode {
@@ -271,33 +271,14 @@ function parsePriceNumber(value: unknown): number {
   return Number.isNaN(parsed) ? NaN : parsed;
 }
 
-const normalizeBrandKey = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, "")
-    .replace(/&/g, " ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-const extractBrandFromName = (name: string): string | null => {
-  const [first] = name.split("|");
-  const cleaned = first?.trim();
-  return cleaned ? cleaned : null;
-};
-
-function matchesBrandFilter(product: WooProduct, brandSlug: string): boolean {
-  const brand = getBrandBySlug(brandSlug);
+async function getBrandSlugSet(brandSlug: string): Promise<Set<string>> {
+  const brand = await getWooBrandBySlug(brandSlug);
   if (!brand) {
-    return false;
+    return new Set<string>();
   }
 
-  const productBrand = extractBrandFromName(product.name);
-  if (!productBrand) {
-    return false;
-  }
-
-  return normalizeBrandKey(productBrand) === normalizeBrandKey(brand.name);
+  const slugs = await getWooBrandProductSlugs(brand.id);
+  return new Set(slugs);
 }
 
 function matchesAllowedCategories(
@@ -619,13 +600,19 @@ export async function getPaginatedProductsGraphQL(
     }
   `;
 
-  const data = await fetchGraphQL<ProductsResponse>(query, { first });
+  const [data, brandSlugSet] = await Promise.all([
+    fetchGraphQL<ProductsResponse>(query, { first }),
+    filters.brand ? getBrandSlugSet(filters.brand) : Promise.resolve(null),
+  ]);
   
   const allProducts = data.products.nodes
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
-    .filter((product) =>
-      filters.brand ? matchesBrandFilter(product, filters.brand) : true
-    )
+    .filter((product) => {
+      if (!filters.brand || !brandSlugSet) {
+        return true;
+      }
+      return brandSlugSet.has(product.slug);
+    })
     .map(transformToCardData);
   
   // Apply client-side pagination since WooGraphQL doesn't support skip
