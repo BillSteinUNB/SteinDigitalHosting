@@ -66,11 +66,14 @@ function decodeHtmlEntities(text: string): string {
  * Fetch banner type taxonomy terms to build ID -> slug mapping
  */
 async function getBannerTypeMapping(): Promise<Map<number, string>> {
+  // DEBUG: Log cache state
   if (bannerTypeCache) {
+    console.log('[Banners] Using cached banner types:', Array.from(bannerTypeCache.entries()));
     return bannerTypeCache;
   }
 
   try {
+    console.log('[Banners] Fetching banner types from API...');
     const response = await fetchREST<Array<{
       id: number;
       slug: string;
@@ -79,15 +82,18 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
       hide_empty: false, // Include banner types even if they have no banners
     });
 
+    console.log('[Banners] Banner types fetched:', response.length);
+    
     const mapping = new Map<number, string>();
     for (const term of response) {
       mapping.set(term.id, term.slug);
+      console.log(`[Banners] Mapping: ${term.id} -> ${term.slug}`);
     }
 
     bannerTypeCache = mapping;
     return mapping;
   } catch (error) {
-    console.error('Failed to fetch banner types:', error);
+    console.error('[Banners] Failed to fetch banner types:', error);
     return new Map<number, string>();
   }
 }
@@ -97,8 +103,12 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
  */
 export async function getBanners(): Promise<Banner[]> {
   try {
+    // Clear cache for debugging (remove in production)
+    bannerTypeCache = null;
+    
     // Get banner type mapping first
     const typeMapping = await getBannerTypeMapping();
+    console.log('[Banners] Type mapping size:', typeMapping.size);
 
     // Fetch from custom post type "banners"
     const response = await fetchREST<Array<{
@@ -118,10 +128,17 @@ export async function getBanners(): Promise<Banner[]> {
       status: 'publish',
     });
 
+    console.log('[Banners] Fetched', response.length, 'banners from WordPress');
+    
     return response.map((banner) => {
       // Get banner type ID and convert to slug
       const typeId = banner.banner_type?.[0];
       const typeSlug = typeId ? typeMapping.get(typeId) : '';
+      
+      // DEBUG
+      if (!typeSlug) {
+        console.log(`[Banners] Warning: No slug for typeId=${typeId} on banner ${banner.id}`);
+      }
       
       // Decode HTML entities in title
       const decodedTitle = decodeHtmlEntities(banner.title.rendered);
@@ -150,10 +167,18 @@ export async function getBanners(): Promise<Banner[]> {
  * Get banners by type
  */
 export async function getBannersByType(type: BannerType): Promise<Banner[]> {
+  console.log(`[Banners] Getting banners by type: ${type}`);
   const allBanners = await getBanners();
-  return allBanners
+  console.log(`[Banners] Total banners: ${allBanners.length}`);
+  
+  const filtered = allBanners
     .filter(banner => banner.type === type)
     .sort((a, b) => a.order - b.order);
+  
+  console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
+  filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
+  
+  return filtered;
 }
 
 /**
