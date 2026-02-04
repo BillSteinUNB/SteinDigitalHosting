@@ -1,7 +1,5 @@
 import { getWordPressBaseUrl } from "@/lib/config/wordpress";
 
-import { getWordPressBaseUrl } from "@/lib/config/wordpress";
-
 export interface WooBrand {
   id: number;
   name: string;

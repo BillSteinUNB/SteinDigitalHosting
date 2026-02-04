@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { wooFetch } from "@/lib/woocommerce/rest";
 
+export const dynamic = "force-dynamic";
+
 interface WooCustomer {
   id: number;
 }
