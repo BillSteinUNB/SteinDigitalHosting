@@ -250,7 +250,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
           className="object-cover"
           priority
           sizes="100vw"
-          onError={(e) => {
+          onError={() => {
             console.error('Hero image failed to load:', slide.image.src);
           }}
         />
