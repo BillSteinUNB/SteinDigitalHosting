@@ -41,16 +41,25 @@ export default async function HomePage() {
   console.log('[Page] Starting banner fetch...');
   
   // Fetch banners from WordPress
+  console.log('[Page] Calling banner functions...');
+  
+  const wpHeroSlidesPromise = getHeroSlides();
+  const wpMiniBannersPromise = getMiniBanners();
+  const wpMediumBannerPromise = getMediumBanner();
+  const wpProductBannersPromise = getProductBanners();
+  
+  console.log('[Page] Waiting for banner promises...');
+  
   const [
     wpHeroSlides,
     wpMiniBanners,
     wpMediumBanner,
     wpProductBanners,
   ] = await Promise.all([
-    getHeroSlides(),
-    getMiniBanners(),
-    getMediumBanner(),
-    getProductBanners(),
+    wpHeroSlidesPromise,
+    wpMiniBannersPromise,
+    wpMediumBannerPromise,
+    wpProductBannersPromise,
   ]);
   
   console.log('[Page] Banners fetched:');
