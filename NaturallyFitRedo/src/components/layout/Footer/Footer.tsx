@@ -68,7 +68,7 @@ export default function Footer() {
           {/* Veteran Badge - 98px × 98px */}
           <div className="flex flex-col items-center lg:items-end">
             <Image
-              src={wpAsset("veteran-owned-badge.png")}
+              src={wpAsset("veteran_owned_badge.png")}
               alt="Veteran Owned Business"
               width={98}
               height={98}
