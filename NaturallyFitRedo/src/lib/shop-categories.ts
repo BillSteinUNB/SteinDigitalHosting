@@ -25,6 +25,8 @@ const slugifyCategory = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+const stripNumericSuffix = (slug: string) => slug.replace(/-\d+$/, "");
+
 interface AllowedChildEntry {
   name: string;
   nameKey: string;
@@ -61,23 +63,35 @@ const allowedLabelBySlug = new Map<string, string>();
 
 for (const parentEntry of allowedParentEntries) {
   allowedLabelBySlug.set(parentEntry.slug, parentEntry.name);
+  allowedLabelBySlug.set(parentEntry.nameKey, parentEntry.name);
   for (const childEntry of parentEntry.children) {
     allowedLabelBySlug.set(childEntry.slug, childEntry.name);
     allowedLabelBySlug.set(childEntry.combinedSlug, childEntry.name);
+    allowedLabelBySlug.set(childEntry.nameKey, childEntry.name);
   }
 }
 
 function matchesParentEntry(category: CategoryWithCount, entry: AllowedParentEntry): boolean {
   const nameKey = normalizeCategoryName(category.name);
   const slugKey = slugifyCategory(category.slug);
-  return nameKey === entry.nameKey || slugKey === entry.slug;
+  const baseSlugKey = stripNumericSuffix(slugKey);
+  return (
+    nameKey === entry.nameKey ||
+    slugKey === entry.slug ||
+    baseSlugKey === entry.slug
+  );
 }
 
 function matchesChildEntry(category: CategoryWithCount, entry: AllowedChildEntry): boolean {
   const nameKey = normalizeCategoryName(category.name);
   const slugKey = slugifyCategory(category.slug);
+  const baseSlugKey = stripNumericSuffix(slugKey);
   return (
-    nameKey === entry.nameKey || slugKey === entry.slug || slugKey === entry.combinedSlug
+    nameKey === entry.nameKey ||
+    slugKey === entry.slug ||
+    slugKey === entry.combinedSlug ||
+    baseSlugKey === entry.slug ||
+    baseSlugKey === entry.combinedSlug
   );
 }
 
@@ -88,9 +102,11 @@ function matchesParentReference(
   if (!parent) return false;
   const parentNameKey = normalizeCategoryName(parent.name);
   const parentSlugKey = slugifyCategory(parent.slug);
+  const parentSlugBase = stripNumericSuffix(parentSlugKey);
   return (
     parentNameKey === normalizeCategoryName(reference.name) ||
-    parentSlugKey === slugifyCategory(reference.slug)
+    parentSlugKey === slugifyCategory(reference.slug) ||
+    parentSlugBase === slugifyCategory(reference.slug)
   );
 }
 
@@ -102,7 +118,12 @@ export function isAllowedCategory(category: CategoryWithCount): boolean {
   const parentEntry = allowedParentEntries.find((entry) => {
     const parentNameKey = normalizeCategoryName(category.parent?.name || "");
     const parentSlugKey = slugifyCategory(category.parent?.slug || "");
-    return parentNameKey === entry.nameKey || parentSlugKey === entry.slug;
+    const parentSlugBase = stripNumericSuffix(parentSlugKey);
+    return (
+      parentNameKey === entry.nameKey ||
+      parentSlugKey === entry.slug ||
+      parentSlugBase === entry.slug
+    );
   });
 
   if (!parentEntry) {
@@ -163,5 +184,19 @@ export function buildAllowedCategoryTree(
 }
 
 export function getAllowedCategoryLabel(slug: string): string | undefined {
-  return allowedLabelBySlug.get(slug);
+  const normalizedSlug = slugifyCategory(slug);
+  const normalizedKey = normalizeCategoryName(slug);
+  return (
+    allowedLabelBySlug.get(normalizedSlug) ||
+    allowedLabelBySlug.get(stripNumericSuffix(normalizedSlug)) ||
+    allowedLabelBySlug.get(normalizedKey)
+  );
+}
+
+export function isAllowedCategorySlug(slug: string): boolean {
+  const normalizedSlug = slugifyCategory(slug);
+  return (
+    allowedLabelBySlug.has(normalizedSlug) ||
+    allowedLabelBySlug.has(stripNumericSuffix(normalizedSlug))
+  );
 }

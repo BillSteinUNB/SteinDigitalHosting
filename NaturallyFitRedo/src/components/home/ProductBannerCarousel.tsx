@@ -62,13 +62,15 @@ export default function ProductBannerCarousel({
       <div className="container">
         {/* Header */}
         {showTitle && (
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-            <SectionHeading>{title}</SectionHeading>
+          <div className="relative mb-8">
+            <SectionHeading centered className="text-center">
+              {title}
+            </SectionHeading>
 
             {viewAllLink && (
               <Link
                 href={viewAllLink}
-                className="text-small font-heading uppercase tracking-wide text-red-primary hover:text-red-hover transition-colors"
+                className="mt-2 inline-block text-small font-heading uppercase tracking-wide text-red-primary hover:text-red-hover transition-colors md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 md:mt-0"
               >
                 View All →
               </Link>

@@ -20,7 +20,7 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
-import { filterAllowedCategories } from "@/lib/shop-categories";
+import { filterAllowedCategories, isAllowedCategorySlug } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -140,6 +140,19 @@ export default function ShopPageContent() {
     (searchParams.get("view") as "grid" | "list") || "grid"
   );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!filters.category || allowedCategories.length === 0) {
+      return;
+    }
+
+    const isAllowed = isAllowedCategorySlug(filters.category);
+
+    if (!isAllowed) {
+      setFilters((prev) => ({ ...prev, category: undefined }));
+      setCurrentPage(1);
+    }
+  }, [allowedCategories, filters.category]);
 
   // Fetch products from GraphQL using React Query
   const { data, isLoading, error } = useQuery({

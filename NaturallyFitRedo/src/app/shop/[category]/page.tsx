@@ -20,7 +20,7 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getCategoryBySlug, getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
-import { filterAllowedCategories } from "@/lib/shop-categories";
+import { filterAllowedCategories, isAllowedCategorySlug } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -300,8 +300,8 @@ export default function CategoryPage() {
     );
   }
 
-  // 404 for unknown category
-  if (!category || categoryError) {
+  // 404 for unknown/unsupported category
+  if (!category || categoryError || !isAllowedCategorySlug(categorySlug)) {
     return (
       <main className="min-h-screen bg-white">
         <Container className="py-16">

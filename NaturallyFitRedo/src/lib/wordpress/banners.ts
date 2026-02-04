@@ -92,10 +92,6 @@ function mapBanner(
   const typeId = banner.banner_type?.[0];
   const typeSlug = typeId ? typeMapping.get(typeId) : '';
 
-  if (!typeSlug && typeId) {
-    console.log(`[Banners] Warning: No slug for typeId=${typeId} on banner ${banner.id}`);
-  }
-
   const decodedTitle = decodeHtmlEntities(banner.title.rendered);
   const imageUrl = rewriteImageUrl(banner.featured_image_url || '');
 
@@ -118,14 +114,11 @@ function mapBanner(
  * Fetch banner type taxonomy terms to build ID -> slug mapping
  */
 async function getBannerTypeMapping(): Promise<Map<number, string>> {
-  // DEBUG: Log cache state
   if (bannerTypeCache) {
-    console.log('[Banners] Using cached banner types:', Array.from(bannerTypeCache.entries()));
     return bannerTypeCache;
   }
 
   try {
-    console.log('[Banners] Fetching banner types from API...');
     const response = await fetchREST<Array<{
       id: number;
       slug: string;
@@ -133,19 +126,15 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
       per_page: 100,
       hide_empty: false, // Include banner types even if they have no banners
     });
-
-    console.log('[Banners] Banner types fetched:', response.length);
     
     const mapping = new Map<number, string>();
     for (const term of response) {
       mapping.set(term.id, term.slug);
-      console.log(`[Banners] Mapping: ${term.id} -> ${term.slug}`);
     }
 
     bannerTypeCache = mapping;
     return mapping;
-  } catch (error) {
-    console.error('[Banners] Failed to fetch banner types:', error);
+  } catch {
     return new Map<number, string>();
   }
 }
@@ -160,7 +149,6 @@ export async function getBanners(): Promise<Banner[]> {
     
     // Get banner type mapping first
     const typeMapping = await getBannerTypeMapping();
-    console.log('[Banners] Type mapping size:', typeMapping.size);
 
     // Fetch from custom post type "banners"
     const response = await fetchREST<RawBanner[]>('/banners', {
@@ -170,14 +158,11 @@ export async function getBanners(): Promise<Banner[]> {
       status: 'publish',
     });
 
-    console.log('[Banners] Fetched', response.length, 'banners from WordPress');
-
     return response
       .map((banner) => mapBanner(banner, typeMapping))
       .filter((banner): banner is Banner => banner !== null);
 
-  } catch (error) {
-    console.error('Failed to fetch banners:', error);
+  } catch {
     return [];
   }
 }
@@ -186,13 +171,11 @@ export async function getBanners(): Promise<Banner[]> {
  * Get banners by type
  */
 export async function getBannersByType(type: BannerType): Promise<Banner[]> {
-  console.log(`[Banners] Getting banners by type: ${type}`);
   try {
     const typeMapping = await getBannerTypeMapping();
     const typeId = getBannerTypeId(typeMapping, type);
 
     if (typeId) {
-      console.log(`[Banners] Fetching banners with banner_type=${typeId}`);
       const response = await fetchREST<RawBanner[]>('/banners', {
         per_page: 100,
         orderby: 'date',
@@ -206,25 +189,16 @@ export async function getBannersByType(type: BannerType): Promise<Banner[]> {
         .filter((banner): banner is Banner => banner !== null)
         .sort((a, b) => a.order - b.order);
 
-      console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
-      filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
       return filtered;
     }
-
-    console.log(`[Banners] No type ID found for ${type}; falling back to full banner fetch`);
     const allBanners = await getBanners();
-    console.log(`[Banners] Total banners: ${allBanners.length}`);
 
     const filtered = allBanners
       .filter(banner => banner.type === type)
       .sort((a, b) => a.order - b.order);
 
-    console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
-    filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
-
     return filtered;
-  } catch (error) {
-    console.error(`[Banners] Failed to fetch banners of type ${type}:`, error);
+  } catch {
     return [];
   }
 }
@@ -233,15 +207,7 @@ export async function getBannersByType(type: BannerType): Promise<Banner[]> {
  * Get hero slides (multiple hero banners)
  */
 export async function getHeroSlides(): Promise<Banner[]> {
-  console.log('[Banners] getHeroSlides() called');
-  try {
-    const banners = await getBannersByType('hero-slide');
-    console.log('[Banners] getHeroSlides() returning', banners.length, 'banners');
-    return banners;
-  } catch (error) {
-    console.error('[Banners] getHeroSlides() ERROR:', error);
-    return [];
-  }
+  return getBannersByType('hero-slide');
 }
 
 /**
@@ -269,15 +235,7 @@ export async function getMediumBanner(): Promise<Banner | null> {
  * Returns all banners of type 'discover-product' sorted by order
  */
 export async function getProductBanners(): Promise<Banner[]> {
-  console.log('[Banners] getProductBanners() called');
-  try {
-    const banners = await getBannersByType('discover-product');
-    console.log('[Banners] getProductBanners() returning', banners.length, 'banners');
-    return banners;
-  } catch (error) {
-    console.error('[Banners] getProductBanners() ERROR:', error);
-    return [];
-  }
+  return getBannersByType('discover-product');
 }
 
 // Default banner as fallback - MAMMOTH ONLY (for testing)

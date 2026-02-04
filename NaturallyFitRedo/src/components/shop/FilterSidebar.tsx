@@ -139,45 +139,62 @@ function CategoryFilter({
 
   const renderCategory = (category: CategoryTreeNode, level: number = 0) => {
     const hasChildren = Boolean(category.children && category.children.length > 0);
-    const isExpanded = expandedCategories.includes(category.slug);
-    const isSelected = selectedCategory === category.slug;
     const isInActivePath = activeCategoryPath.has(category.slug);
+    const isExpanded = expandedCategories.includes(category.slug) || isInActivePath;
+    const isSelected = selectedCategory === category.slug;
+    const isSelectable = !hasChildren;
 
     return (
       <div key={category.id} className={cn(level > 0 && "ml-4")}>
         <div className="flex items-center">
           {hasChildren && (
-          <button
-            type="button"
-            onClick={() => toggleExpanded(category.slug)}
-            className="p-1 mr-1 hover:bg-gray-light transition-colors min-w-[28px] min-h-[28px] flex items-center justify-center"
-            aria-label={isExpanded ? "Collapse" : "Expand"}
-          >
-            {isExpanded ? (
-              <ChevronUp size={16} strokeWidth={1.5} />
-            ) : (
-              <ChevronDown size={16} strokeWidth={1.5} />
-            )}
-          </button>
-        )}
+            <button
+              type="button"
+              onClick={() => toggleExpanded(category.slug)}
+              disabled={isInActivePath}
+              className="p-1 mr-1 hover:bg-gray-light transition-colors min-w-[28px] min-h-[28px] flex items-center justify-center"
+              aria-label={isExpanded ? "Collapse" : "Expand"}
+            >
+              {isExpanded ? (
+                <ChevronUp size={16} strokeWidth={1.5} />
+              ) : (
+                <ChevronDown size={16} strokeWidth={1.5} />
+              )}
+            </button>
+          )}
           
-          <button
-            type="button"
-            onClick={() => onSelect(isSelected ? undefined : category.slug)}
-            className={cn(
-              "flex-1 flex items-center justify-between py-1.5 text-left min-h-[36px]",
-              "text-small transition-colors",
-              isSelected
-                ? "text-red-primary font-semibold"
-                : "text-gray-dark hover:text-black",
-              !hasChildren && "ml-7"
-            )}
-          >
-            <span className="truncate">{category.name}</span>
-            <span className="text-tiny text-gray-medium ml-2">
-              ({category.productCount})
-            </span>
-          </button>
+          {isSelectable ? (
+            <button
+              type="button"
+              onClick={() => onSelect(isSelected ? undefined : category.slug)}
+              className={cn(
+                "flex-1 flex items-center justify-between py-1.5 text-left min-h-[36px]",
+                "text-small transition-colors",
+                isSelected
+                  ? "text-red-primary font-semibold"
+                  : "text-gray-dark hover:text-black",
+                !hasChildren && "ml-7"
+              )}
+            >
+              <span className="truncate">{category.name}</span>
+              <span className="text-tiny text-gray-medium ml-2">
+                ({category.productCount})
+              </span>
+            </button>
+          ) : (
+            <div
+              className={cn(
+                "flex-1 flex items-center justify-between py-1.5 text-left min-h-[36px]",
+                "text-small",
+                isSelected ? "text-red-primary font-semibold" : "text-gray-dark"
+              )}
+            >
+              <span className="truncate">{category.name}</span>
+              <span className="text-tiny text-gray-medium ml-2">
+                ({category.productCount})
+              </span>
+            </div>
+          )}
         </div>
 
         {hasChildren && (isExpanded || isInActivePath) && category.children && (
@@ -367,11 +384,19 @@ export default function FilterSidebar({
   );
   const activeCategoryPath = useMemo(() => {
     const path = new Set<string>();
+    const selected = filters.category;
+    if (!selected) {
+      return path;
+    }
+
+    const matches = (node: CategoryTreeNode) =>
+      node.slug === selected ||
+      Boolean(node.children?.some((child) => child.slug === selected));
 
     const traverse = (nodes: CategoryTreeNode[], ancestors: string[] = []) => {
       for (const node of nodes) {
         const nextAncestors = [...ancestors, node.slug];
-        if (node.slug === filters.category) {
+        if (matches(node)) {
           nextAncestors.forEach((slug) => path.add(slug));
           return true;
         }
@@ -382,10 +407,7 @@ export default function FilterSidebar({
       return false;
     };
 
-    if (filters.category) {
-      traverse(allowedCategoryTree);
-    }
-
+    traverse(allowedCategoryTree);
     return path;
   }, [allowedCategoryTree, filters.category]);
 
@@ -479,11 +501,19 @@ export function MobileFilterDrawer({
   );
   const activeCategoryPath = useMemo(() => {
     const path = new Set<string>();
+    const selected = filters.category;
+    if (!selected) {
+      return path;
+    }
+
+    const matches = (node: CategoryTreeNode) =>
+      node.slug === selected ||
+      Boolean(node.children?.some((child) => child.slug === selected));
 
     const traverse = (nodes: CategoryTreeNode[], ancestors: string[] = []) => {
       for (const node of nodes) {
         const nextAncestors = [...ancestors, node.slug];
-        if (node.slug === filters.category) {
+        if (matches(node)) {
           nextAncestors.forEach((slug) => path.add(slug));
           return true;
         }
@@ -494,10 +524,7 @@ export function MobileFilterDrawer({
       return false;
     };
 
-    if (filters.category) {
-      traverse(allowedCategoryTree);
-    }
-
+    traverse(allowedCategoryTree);
     return path;
   }, [allowedCategoryTree, filters.category]);
 

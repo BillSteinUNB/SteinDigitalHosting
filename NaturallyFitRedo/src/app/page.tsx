@@ -38,57 +38,17 @@ export const dynamic = 'force-dynamic';
 // ============================================
 
 export default async function HomePage() {
-  console.log('========================================');
-  console.log('=== HOMEPAGE RENDER START ===');
-  console.log('========================================');
-  console.log('[Page] Starting banner fetch...');
-  
-  // Fetch banners from WordPress
-  console.log('[Page] Calling banner functions...');
-  
-  // Call individually to catch errors
-  let wpHeroSlides: Banner[] = [];
-  let wpMiniBanners: Banner[] = [];
-  let wpMediumBanner: Banner | null = null;
-  let wpProductBanners: Banner[] = [];
-  
-  try {
-    console.log('[Page] Calling getHeroSlides...');
-    wpHeroSlides = await getHeroSlides();
-    console.log('[Page] getHeroSlides returned:', wpHeroSlides.length);
-  } catch (e) {
-    console.error('[Page] getHeroSlides FAILED:', e);
-  }
-  
-  try {
-    console.log('[Page] Calling getMiniBanners...');
-    wpMiniBanners = await getMiniBanners();
-    console.log('[Page] getMiniBanners returned:', wpMiniBanners.length);
-  } catch (e) {
-    console.error('[Page] getMiniBanners FAILED:', e);
-  }
-  
-  try {
-    console.log('[Page] Calling getMediumBanner...');
-    wpMediumBanner = await getMediumBanner();
-    console.log('[Page] getMediumBanner returned:', wpMediumBanner ? 'yes' : 'no');
-  } catch (e) {
-    console.error('[Page] getMediumBanner FAILED:', e);
-  }
-  
-  try {
-    console.log('[Page] Calling getProductBanners...');
-    wpProductBanners = await getProductBanners();
-    console.log('[Page] getProductBanners returned:', wpProductBanners.length);
-  } catch (e) {
-    console.error('[Page] getProductBanners FAILED:', e);
-  }
-  
-  console.log('[Page] Banners fetched:');
-  console.log('  Hero slides:', wpHeroSlides.length);
-  console.log('  Mini banners:', wpMiniBanners.length);
-  console.log('  Medium banner:', wpMediumBanner ? 'yes' : 'no');
-  console.log('  Product banners:', wpProductBanners.length);
+  const [
+    wpHeroSlides,
+    wpMiniBanners,
+    wpMediumBanner,
+    wpProductBanners,
+  ] = await Promise.all([
+    getHeroSlides(),
+    getMiniBanners(),
+    getMediumBanner(),
+    getProductBanners(),
+  ]);
   
   // Fetch data from WooCommerce GraphQL
   const [
@@ -114,13 +74,6 @@ export default async function HomePage() {
       {/* Three Promotional Banners */}
       <ThreeBannerRow banners={miniBanners} />
 
-      {/* Latest Deals Carousel */}
-      <ProductCarousel
-        title="Latest Deals"
-        products={featuredProducts}
-        viewAllLink="/shop?featured=true"
-      />
-
       {/* Medium Banner */}
       <MediumBanner 
         image={mediumBanner.imageUrl}
@@ -133,6 +86,13 @@ export default async function HomePage() {
         title="Popular Categories"
         categories={featuredCategories}
         columns={5}
+      />
+
+      {/* Latest Deals Carousel */}
+      <ProductCarousel
+        title="Latest Deals"
+        products={featuredProducts}
+        viewAllLink="/shop?featured=true"
       />
 
       {/* Recommended Products */}

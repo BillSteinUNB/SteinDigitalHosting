@@ -4,6 +4,7 @@ import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockSta
 import { replaceWordPressBase } from '@/lib/config/wordpress';
 import { formatPrice } from "@/lib/utils";
 import { WHOLESALEX_PRICE_META } from "@/lib/wholesalex/integration";
+import { getAllowedCategoryLabel, isAllowedCategorySlug } from "@/lib/shop-categories";
 
 // GraphQL response types
 interface WooProductNode {
@@ -267,6 +268,21 @@ function parseWholesaleMetaPrice(
 function parsePriceNumber(value: unknown): number {
   const parsed = parseFloat(String(value).replace(/[^0-9.]/g, ""));
   return Number.isNaN(parsed) ? NaN : parsed;
+}
+
+function matchesAllowedCategories(
+  categories: Array<{ slug: string; name: string }>
+): boolean {
+  if (!categories.length) {
+    return false;
+  }
+
+  return categories.some((category) => {
+    return (
+      isAllowedCategorySlug(category.slug) ||
+      Boolean(getAllowedCategoryLabel(category.name))
+    );
+  });
 }
 
 // Convert WooCommerce product to ProductCardData
@@ -575,7 +591,9 @@ export async function getPaginatedProductsGraphQL(
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first });
   
-  const allProducts = data.products.nodes.map(transformToCardData);
+  const allProducts = data.products.nodes
+    .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
+    .map(transformToCardData);
   
   // Apply client-side pagination since WooGraphQL doesn't support skip
   const startIndex = (page - 1) * perPage;

@@ -24,8 +24,6 @@ export async function fetchREST<T>(
     });
   }
 
-  console.log('[REST] Fetching:', url.toString());
-
   const response = await fetch(url.toString(), {
     method: 'GET',
     headers: {
@@ -34,8 +32,6 @@ export async function fetchREST<T>(
     cache: 'no-store', // Disable caching for debugging
   });
 
-  console.log('[REST] Response status:', response.status);
-
   if (!response.ok) {
     const errorText = await response.text();
     console.error(`[REST] API Error (${response.status}):`, errorText);
@@ -43,7 +39,6 @@ export async function fetchREST<T>(
   }
 
   const data = await response.json();
-  console.log('[REST] Fetched', Array.isArray(data) ? data.length + ' items' : 'data');
   return data;
 }
 
