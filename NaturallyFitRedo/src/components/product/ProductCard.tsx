@@ -88,7 +88,7 @@ export default function ProductCard({
       userRole: wholesaleRole,
     });
     return computed ?? undefined;
-  }, [isWholesale, hasRange, regularPrice, salePrice, wholesalePrice]);
+  }, [isWholesale, hasRange, regularPrice, salePrice, wholesalePrice, wholesaleRole]);
 
   // Handle quick view
   const handleQuickView = (e: React.MouseEvent) => {

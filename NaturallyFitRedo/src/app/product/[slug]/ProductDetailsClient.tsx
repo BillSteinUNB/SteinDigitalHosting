@@ -188,7 +188,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
       userRole: wholesaleRole,
     });
     return computed ?? undefined;
-  }, [isWholesale, selectedVariation, product]);
+  }, [isWholesale, selectedVariation, product, wholesaleRole]);
 
   const wholesalePriceDisplay =
     typeof wholesalePriceValue === "number" ? formatPrice(wholesalePriceValue) : undefined;

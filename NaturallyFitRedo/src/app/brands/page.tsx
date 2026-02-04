@@ -181,7 +181,7 @@ export default function BrandsPage() {
     }
 
     return result;
-  }, [searchQuery, activeLetter]);
+  }, [brandList, searchQuery, activeLetter]);
 
   // Group brands by first letter
   const groupedBrands = useMemo(() => {

@@ -61,23 +61,12 @@ for (const entry of ALLOWED_CATEGORY_TREE) {
   }
 }
 
-const matchesParentName = (category: CategoryWithCount, parentName: string) =>
-  normalizeCategoryName(category.name) === normalizeCategoryName(parentName);
-
 const matchesChildName = (category: CategoryWithCount, childName: string) =>
   normalizeCategoryName(category.name) === normalizeCategoryName(childName);
 
 const matchesChildSlug = (category: CategoryWithCount, childName: string, parentName: string) => {
   const slugKey = stripNumericSuffix(slugifyCategory(category.slug));
   return buildSlugVariants(parentName, childName).includes(slugKey);
-};
-
-const hasAllowedParentReference = (category: CategoryWithCount, parentName: string) => {
-  if (!category.parent) return false;
-  return (
-    normalizeCategoryName(category.parent.name) === normalizeCategoryName(parentName) ||
-    stripNumericSuffix(slugifyCategory(category.parent.slug)) === slugifyCategory(parentName)
-  );
 };
 
 const matchesAllowedParent = (category: CategoryWithCount, parentName: string) => {

@@ -23,7 +23,6 @@ import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getBrandBySlug, type BrandWithDetails } from "@/lib/mock/brands";
 import { getCategories } from "@/lib/graphql/categories";
 import { getWooBrands } from "@/lib/woocommerce/brands";
-import { filterAllowedCategories } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -164,10 +163,6 @@ export default function BrandPage() {
     queryKey: ["woo-brands"],
     queryFn: getWooBrands,
   });
-  const allowedCategories = useMemo(
-    () => (categories ? filterAllowedCategories(categories) : []),
-    [categories]
-  );
   const brandFilters = useMemo<BrandWithDetails[]>(() => {
     if (!wooBrands) return [];
     return [...wooBrands]
