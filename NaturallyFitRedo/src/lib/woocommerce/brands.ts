@@ -1,5 +1,7 @@
 import { getWordPressBaseUrl } from "@/lib/config/wordpress";
 
+import { getWordPressBaseUrl } from "@/lib/config/wordpress";
+
 export interface WooBrand {
   id: number;
   name: string;
@@ -98,6 +100,7 @@ export async function getWooBrandBySlug(slug: string): Promise<WooBrand | undefi
 export async function getWooBrandProductSlugs(brandId: number): Promise<string[]> {
   const products = await fetchPaged<{ slug?: string }>(PRODUCT_ENDPOINT, {
     product_brand: brandId,
+    status: "publish",
     _fields: "slug",
   });
 

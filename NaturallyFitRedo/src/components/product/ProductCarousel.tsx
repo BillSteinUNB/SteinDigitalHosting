@@ -26,6 +26,8 @@ export interface ProductCarouselProps {
   viewAllLink?: string;
   viewAllText?: string;
   isLoading?: boolean;
+  cardLayout?: "vertical" | "horizontal";
+  cardClassName?: string;
   slidesPerView?: {
     mobile?: number;
     tablet?: number;
@@ -50,6 +52,8 @@ export default function ProductCarousel({
   viewAllLink,
   viewAllText = "View All",
   isLoading = false,
+  cardLayout = "vertical",
+  cardClassName,
   slidesPerView = {},
   onQuickView,
   onAddToWishlist,
@@ -95,12 +99,12 @@ export default function ProductCarousel({
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
-            spaceBetween={16}
+            spaceBetween={20}
             slidesPerView={mobile}
             breakpoints={{
-              640: { slidesPerView: tablet, spaceBetween: 20 },
-              1024: { slidesPerView: desktop, spaceBetween: 24 },
-              1280: { slidesPerView: wide, spaceBetween: 24 },
+              640: { slidesPerView: tablet, spaceBetween: 24 },
+              1024: { slidesPerView: desktop, spaceBetween: 28 },
+              1280: { slidesPerView: wide, spaceBetween: 28 },
             }}
             pagination={{
               clickable: true,
@@ -113,7 +117,7 @@ export default function ProductCarousel({
               ? // Loading skeletons
                 Array.from({ length: 5 }).map((_, index) => (
                   <SwiperSlide key={`skeleton-${index}`}>
-                    <ProductCardSkeleton />
+                    <ProductCardSkeleton layout={cardLayout} />
                   </SwiperSlide>
                 ))
               : // Actual products
@@ -121,6 +125,8 @@ export default function ProductCarousel({
                   <SwiperSlide key={product.id}>
                     <ProductCard
                       product={product}
+                      layout={cardLayout}
+                      className={cardClassName}
                       onQuickView={onQuickView}
                       onAddToWishlist={onAddToWishlist}
                       onAddToCart={onAddToCart}

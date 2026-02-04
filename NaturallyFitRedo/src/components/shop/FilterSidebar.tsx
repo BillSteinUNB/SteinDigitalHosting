@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, Input, Drawer } from "@/components/ui";
@@ -118,14 +119,12 @@ function FilterCheckbox({ label, count, checked, onChange }: FilterCheckboxProps
 interface CategoryFilterProps {
   categories: CategoryTreeNode[];
   selectedCategory?: string;
-  onSelect: (slug: string | undefined) => void;
   activeCategoryPath: Set<string>;
 }
 
 function CategoryFilter({
   categories: cats,
   selectedCategory,
-  onSelect,
   activeCategoryPath,
 }: CategoryFilterProps) {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -143,7 +142,8 @@ function CategoryFilter({
     const isInActivePath = activeCategoryPath.has(category.slug);
     const isExpanded = expandedCategories.includes(category.slug) || isInActivePath;
     const isSelected = selectedCategory === category.slug;
-    const isSelectable = !hasChildren;
+    const isVirtual = category.id.startsWith("virtual-");
+    const isNavigable = !isVirtual;
 
     return (
       <div key={category.id} className={cn(level > 0 && "ml-4")}>
@@ -164,30 +164,32 @@ function CategoryFilter({
             </button>
           )}
           
-          {isSelectable ? (
-            <button
-              type="button"
-              onClick={() => onSelect(isSelected ? undefined : category.slug)}
+          {isNavigable ? (
+            <Link
+              href={`/shop/${category.slug}`}
+              aria-current={isSelected ? "page" : undefined}
               className={cn(
                 "flex-1 flex items-center justify-between py-1.5 text-left min-h-[36px]",
                 "text-small transition-colors",
                 isSelected
                   ? "text-red-primary font-semibold"
                   : "text-gray-dark hover:text-black",
-                !hasChildren && "ml-7"
+                !hasChildren && "ml-7",
+                hasChildren && "font-medium"
               )}
             >
               <span className="truncate">{category.name}</span>
               <span className="text-tiny text-gray-medium ml-2">
                 ({category.productCount})
               </span>
-            </button>
+            </Link>
           ) : (
             <div
               className={cn(
                 "flex-1 flex items-center justify-between py-1.5 text-left min-h-[36px]",
-                "text-small",
-                isSelected ? "text-red-primary font-semibold" : "text-gray-dark"
+                "text-small text-gray-dark",
+                !hasChildren && "ml-7",
+                hasChildren && "font-medium"
               )}
             >
               <span className="truncate">{category.name}</span>
@@ -447,7 +449,6 @@ export default function FilterSidebar({
           categories={allowedCategoryTree}
           selectedCategory={filters.category}
           activeCategoryPath={activeCategoryPath}
-          onSelect={(slug) => onFilterChange({ category: slug })}
         />
       </FilterSection>
 
@@ -565,7 +566,6 @@ export function MobileFilterDrawer({
               categories={allowedCategoryTree}
               selectedCategory={filters.category}
               activeCategoryPath={activeCategoryPath}
-              onSelect={(slug) => onFilterChange({ category: slug })}
             />
           </FilterSection>
 

@@ -10,8 +10,18 @@
  * formatPrice(30, false) // "$30"
  * formatPrice(0) // "$0.00"
  */
+function parseNumericPrice(value: string): number {
+  const withoutTags = value.replace(/<[^>]*>/g, " ");
+  const withoutEntities = withoutTags.replace(/&(#\d+|#x[a-fA-F0-9]+|\w+);/g, " ");
+  const numericMatch = withoutEntities
+    .replace(/[^0-9.-]+/g, " ")
+    .match(/-?\d+(?:\.\d+)?/);
+
+  return numericMatch ? Number(numericMatch[0]) : NaN;
+}
+
 export function formatPrice(price: number | string, showCents: boolean = true): string {
-  const numericPrice = typeof price === "string" ? parseFloat(price) : price;
+  const numericPrice = typeof price === "string" ? parseNumericPrice(price) : price;
 
   if (isNaN(numericPrice)) {
     return "$0.00";

@@ -22,6 +22,7 @@ import { getEffectiveWholesalePrice } from "@/lib/wholesalex/integration";
 
 export interface ProductCardProps {
   product: ProductCardData;
+  layout?: "vertical" | "horizontal";
   showQuickView?: boolean;
   showWishlist?: boolean;
   showAddToCart?: boolean;
@@ -45,6 +46,7 @@ export interface ProductCardProps {
  */
 export default function ProductCard({
   product,
+  layout = "vertical",
   showQuickView = true,
   showWishlist = true,
   showAddToCart = true,
@@ -58,6 +60,7 @@ export default function ProductCard({
   const wholesaleRole = session?.user?.role;
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const isHorizontal = layout === "horizontal";
 
   const {
     id,
@@ -114,7 +117,8 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex flex-col bg-white",
+        "group relative bg-white",
+        isHorizontal ? "flex" : "flex flex-col",
         "border border-gray-border",
         "transition-shadow duration-200 hover:shadow-lg",
         className
@@ -125,8 +129,12 @@ export default function ProductCard({
       {/* Image Container - 260px × 300px display size */}
       <Link
         href={`/product/${slug}`}
-        className="relative overflow-hidden bg-gray-light"
-        style={{ width: '260px', height: '300px' }}
+        className={cn(
+          "relative overflow-hidden bg-gray-light",
+          isHorizontal
+            ? "aspect-square w-40 sm:w-48 lg:w-56 flex-shrink-0"
+            : "aspect-[4/5] w-full"
+        )}
       >
         {/* Product Image */}
         {image && !imageError ? (
@@ -138,7 +146,11 @@ export default function ProductCard({
               "object-cover transition-transform duration-300",
               "group-hover:scale-105"
             )}
-            sizes="260px"
+            sizes={
+              isHorizontal
+                ? "(min-width: 1024px) 224px, (min-width: 640px) 192px, 160px"
+                : "(min-width: 1280px) 240px, (min-width: 1024px) 220px, (min-width: 640px) 200px, 60vw"
+            }
             onError={() => setImageError(true)}
           />
         ) : (
@@ -254,14 +266,25 @@ export default function ProductCard({
 // PRODUCT CARD SKELETON
 // ============================================
 
-export function ProductCardSkeleton() {
+export function ProductCardSkeleton({ layout = "vertical" }: { layout?: "vertical" | "horizontal" }) {
+  const isHorizontal = layout === "horizontal";
   return (
-    <div className="flex flex-col bg-white border border-gray-border animate-pulse">
-      {/* Image skeleton - 260px × 300px */}
-      <div className="bg-gray-200" style={{ width: '260px', height: '300px' }} />
+    <div
+      className={cn(
+        "bg-white border border-gray-border animate-pulse",
+        isHorizontal ? "flex" : "flex flex-col"
+      )}
+    >
+      {/* Image skeleton */}
+      <div
+        className={cn(
+          "bg-gray-200",
+          isHorizontal ? "aspect-square w-40 sm:w-48 lg:w-56 flex-shrink-0" : "aspect-[4/5] w-full"
+        )}
+      />
 
       {/* Content skeleton */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 flex-1">
         {/* Brand */}
         <div className="h-3 w-16 bg-gray-200 rounded" />
         {/* Name */}

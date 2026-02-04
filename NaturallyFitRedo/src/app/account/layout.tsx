@@ -13,8 +13,6 @@ import {
   MapPin,
   Settings,
   LogOut,
-  Heart,
-  CreditCard,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -57,18 +55,6 @@ const navItems: NavItem[] = [
     href: "/account/addresses",
     icon: <MapPin size={20} strokeWidth={1.5} />,
     description: "Manage shipping & billing",
-  },
-  {
-    label: "Wishlist",
-    href: "/account/wishlist",
-    icon: <Heart size={20} strokeWidth={1.5} />,
-    description: "Your saved products",
-  },
-  {
-    label: "Payment Methods",
-    href: "/account/payment",
-    icon: <CreditCard size={20} strokeWidth={1.5} />,
-    description: "Manage payment options",
   },
   {
     label: "Settings",

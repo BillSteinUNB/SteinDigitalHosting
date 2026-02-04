@@ -271,15 +271,16 @@ function parsePriceNumber(value: unknown): number {
   return Number.isNaN(parsed) ? NaN : parsed;
 }
 
-async function getBrandSlugSet(brandSlug: string): Promise<Set<string>> {
-  const brand = await getWooBrandBySlug(brandSlug);
-  if (!brand) {
-    return new Set<string>();
-  }
-
-  const slugs = await getWooBrandProductSlugs(brand.id);
-  return new Set(slugs);
-}
+const buildEmptyPaginatedResult = (page: number): PaginatedProducts => ({
+  products: [],
+  pageInfo: {
+    total: 0,
+    totalPages: 0,
+    currentPage: page,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  },
+});
 
 function matchesAllowedCategories(
   categories: Array<{ slug: string; name: string }>
@@ -538,6 +539,20 @@ export async function getPaginatedProductsGraphQL(
   page: number = 1,
   perPage: number = 12
 ): Promise<PaginatedProducts> {
+  let brandSlugs: string[] | null = null;
+
+  if (filters.brand) {
+    const brand = await getWooBrandBySlug(filters.brand);
+    if (!brand) {
+      return buildEmptyPaginatedResult(page);
+    }
+
+    brandSlugs = await getWooBrandProductSlugs(brand.id);
+    if (brandSlugs.length === 0) {
+      return buildEmptyPaginatedResult(page);
+    }
+  }
+
   // Build where clause based on filters
   const whereConditions: string[] = [];
   
@@ -551,6 +566,10 @@ export async function getPaginatedProductsGraphQL(
   
   if (filters.search) {
     whereConditions.push(`search: "${filters.search}"`);
+  }
+
+  if (brandSlugs) {
+    whereConditions.push("slugIn: __brandSlugs__");
   }
 
   const whereClause = whereConditions.length > 0 
@@ -582,11 +601,19 @@ export async function getPaginatedProductsGraphQL(
 
   // WooGraphQL doesn't support "skip" - we need to fetch more products to cover the page
   // For small catalogs, fetch all; for larger ones, we'll need cursor-based pagination
-  const first = page * perPage; // Fetch enough to cover up to current page
+  const requestedFirst = page * perPage; // Fetch enough to cover up to current page
+  const first = brandSlugs ? Math.min(requestedFirst, brandSlugs.length) : requestedFirst;
+
+  const resolvedWhereClause = brandSlugs
+    ? whereClause.replace(
+        "__brandSlugs__",
+        `[${brandSlugs.map((slug) => `"${slug}"`).join(", ")}]`
+      )
+    : whereClause;
 
   const query = `
     query GetPaginatedProducts($first: Int!) {
-      products(first: $first${whereClause}${orderbyClause}) {
+      products(first: $first${resolvedWhereClause}${orderbyClause}) {
         nodes {
           ${PRODUCT_CARD_FIELDS}
         }
@@ -600,19 +627,10 @@ export async function getPaginatedProductsGraphQL(
     }
   `;
 
-  const [data, brandSlugSet] = await Promise.all([
-    fetchGraphQL<ProductsResponse>(query, { first }),
-    filters.brand ? getBrandSlugSet(filters.brand) : Promise.resolve(null),
-  ]);
+  const data = await fetchGraphQL<ProductsResponse>(query, { first });
   
   const allProducts = data.products.nodes
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
-    .filter((product) => {
-      if (!filters.brand || !brandSlugSet) {
-        return true;
-      }
-      return brandSlugSet.has(product.slug);
-    })
     .map(transformToCardData);
   
   // Apply client-side pagination since WooGraphQL doesn't support skip

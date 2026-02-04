@@ -93,6 +93,13 @@ export default async function HomePage() {
         title="Latest Deals"
         products={featuredProducts}
         viewAllLink="/shop?featured=true"
+        cardLayout="horizontal"
+        slidesPerView={{
+          mobile: 1.1,
+          tablet: 1.8,
+          desktop: 2.5,
+          wide: 3,
+        }}
       />
 
       {/* Recommended Products */}
@@ -100,6 +107,12 @@ export default async function HomePage() {
         title="Recommended"
         products={bestSellers}
         viewAllLink="/shop?sort=popularity"
+        slidesPerView={{
+          mobile: 1.2,
+          tablet: 2.2,
+          desktop: 3.5,
+          wide: 4.2,
+        }}
       />
 
       {/* Product Banners Carousel */}
