@@ -43,24 +43,43 @@ export default async function HomePage() {
   // Fetch banners from WordPress
   console.log('[Page] Calling banner functions...');
   
-  const wpHeroSlidesPromise = getHeroSlides();
-  const wpMiniBannersPromise = getMiniBanners();
-  const wpMediumBannerPromise = getMediumBanner();
-  const wpProductBannersPromise = getProductBanners();
+  // Call individually to catch errors
+  let wpHeroSlides: Banner[] = [];
+  let wpMiniBanners: Banner[] = [];
+  let wpMediumBanner: Banner | null = null;
+  let wpProductBanners: Banner[] = [];
   
-  console.log('[Page] Waiting for banner promises...');
+  try {
+    console.log('[Page] Calling getHeroSlides...');
+    wpHeroSlides = await getHeroSlides();
+    console.log('[Page] getHeroSlides returned:', wpHeroSlides.length);
+  } catch (e) {
+    console.error('[Page] getHeroSlides FAILED:', e);
+  }
   
-  const [
-    wpHeroSlides,
-    wpMiniBanners,
-    wpMediumBanner,
-    wpProductBanners,
-  ] = await Promise.all([
-    wpHeroSlidesPromise,
-    wpMiniBannersPromise,
-    wpMediumBannerPromise,
-    wpProductBannersPromise,
-  ]);
+  try {
+    console.log('[Page] Calling getMiniBanners...');
+    wpMiniBanners = await getMiniBanners();
+    console.log('[Page] getMiniBanners returned:', wpMiniBanners.length);
+  } catch (e) {
+    console.error('[Page] getMiniBanners FAILED:', e);
+  }
+  
+  try {
+    console.log('[Page] Calling getMediumBanner...');
+    wpMediumBanner = await getMediumBanner();
+    console.log('[Page] getMediumBanner returned:', wpMediumBanner ? 'yes' : 'no');
+  } catch (e) {
+    console.error('[Page] getMediumBanner FAILED:', e);
+  }
+  
+  try {
+    console.log('[Page] Calling getProductBanners...');
+    wpProductBanners = await getProductBanners();
+    console.log('[Page] getProductBanners returned:', wpProductBanners.length);
+  } catch (e) {
+    console.error('[Page] getProductBanners FAILED:', e);
+  }
   
   console.log('[Page] Banners fetched:');
   console.log('  Hero slides:', wpHeroSlides.length);
