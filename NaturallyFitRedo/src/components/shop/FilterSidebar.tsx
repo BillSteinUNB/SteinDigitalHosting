@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, Input, Drawer } from "@/components/ui";
-import { categories, type CategoryWithCount } from "@/lib/mock/categories";
+import type { CategoryWithCount } from "@/lib/graphql/categories";
+import { buildAllowedCategoryTree, type CategoryTreeNode } from "@/lib/shop-categories";
 import { brands, type BrandWithDetails } from "@/lib/mock/brands";
 import { getPriceRange } from "@/lib/mock";
 import type { ProductFilters } from "@/types/product";
@@ -18,6 +19,7 @@ export interface FilterSidebarProps {
   onFilterChange: (filters: Partial<ProductFilters>) => void;
   onClearFilters: () => void;
   className?: string;
+  categories?: CategoryWithCount[];
 }
 
 export interface MobileFilterDrawerProps extends FilterSidebarProps {
@@ -113,12 +115,18 @@ function FilterCheckbox({ label, count, checked, onChange }: FilterCheckboxProps
 // ============================================
 
 interface CategoryFilterProps {
-  categories: CategoryWithCount[];
+  categories: CategoryTreeNode[];
   selectedCategory?: string;
   onSelect: (slug: string | undefined) => void;
+  activeCategoryPath: Set<string>;
 }
 
-function CategoryFilter({ categories: cats, selectedCategory, onSelect }: CategoryFilterProps) {
+function CategoryFilter({
+  categories: cats,
+  selectedCategory,
+  onSelect,
+  activeCategoryPath,
+}: CategoryFilterProps) {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const toggleExpanded = (slug: string) => {
@@ -129,28 +137,29 @@ function CategoryFilter({ categories: cats, selectedCategory, onSelect }: Catego
     );
   };
 
-  const renderCategory = (category: CategoryWithCount, level: number = 0) => {
-    const hasChildren = category.children && category.children.length > 0;
+  const renderCategory = (category: CategoryTreeNode, level: number = 0) => {
+    const hasChildren = Boolean(category.children && category.children.length > 0);
     const isExpanded = expandedCategories.includes(category.slug);
     const isSelected = selectedCategory === category.slug;
+    const isInActivePath = activeCategoryPath.has(category.slug);
 
     return (
       <div key={category.id} className={cn(level > 0 && "ml-4")}>
         <div className="flex items-center">
           {hasChildren && (
-            <button
-              type="button"
-              onClick={() => toggleExpanded(category.slug)}
-              className="p-1 mr-1 hover:bg-gray-light transition-colors min-w-[28px] min-h-[28px] flex items-center justify-center"
-              aria-label={isExpanded ? "Collapse" : "Expand"}
-            >
-              {isExpanded ? (
-                <ChevronUp size={16} strokeWidth={1.5} />
-              ) : (
-                <ChevronDown size={16} strokeWidth={1.5} />
-              )}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => toggleExpanded(category.slug)}
+            className="p-1 mr-1 hover:bg-gray-light transition-colors min-w-[28px] min-h-[28px] flex items-center justify-center"
+            aria-label={isExpanded ? "Collapse" : "Expand"}
+          >
+            {isExpanded ? (
+              <ChevronUp size={16} strokeWidth={1.5} />
+            ) : (
+              <ChevronDown size={16} strokeWidth={1.5} />
+            )}
+          </button>
+        )}
           
           <button
             type="button"
@@ -171,9 +180,9 @@ function CategoryFilter({ categories: cats, selectedCategory, onSelect }: Catego
           </button>
         </div>
 
-        {hasChildren && isExpanded && (
+        {hasChildren && (isExpanded || isInActivePath) && category.children && (
           <div className="mt-1">
-            {category.children!.map((child) => renderCategory(child, level + 1))}
+            {category.children.map((child) => renderCategory(child, level + 1))}
           </div>
         )}
       </div>
@@ -349,8 +358,36 @@ export default function FilterSidebar({
   onFilterChange,
   onClearFilters,
   className,
+  categories = [],
 }: FilterSidebarProps) {
   const priceRange = useMemo(() => getPriceRange(), []);
+  const allowedCategoryTree = useMemo(
+    () => buildAllowedCategoryTree(categories),
+    [categories]
+  );
+  const activeCategoryPath = useMemo(() => {
+    const path = new Set<string>();
+
+    const traverse = (nodes: CategoryTreeNode[], ancestors: string[] = []) => {
+      for (const node of nodes) {
+        const nextAncestors = [...ancestors, node.slug];
+        if (node.slug === filters.category) {
+          nextAncestors.forEach((slug) => path.add(slug));
+          return true;
+        }
+        if (node.children && traverse(node.children, nextAncestors)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (filters.category) {
+      traverse(allowedCategoryTree);
+    }
+
+    return path;
+  }, [allowedCategoryTree, filters.category]);
 
   const hasActiveFilters =
     filters.category ||
@@ -379,8 +416,9 @@ export default function FilterSidebar({
       {/* Category Filter */}
       <FilterSection title="Category">
         <CategoryFilter
-          categories={categories}
+          categories={allowedCategoryTree}
           selectedCategory={filters.category}
+          activeCategoryPath={activeCategoryPath}
           onSelect={(slug) => onFilterChange({ category: slug })}
         />
       </FilterSection>
@@ -432,8 +470,36 @@ export function MobileFilterDrawer({
   filters,
   onFilterChange,
   onClearFilters,
+  categories = [],
 }: MobileFilterDrawerProps) {
   const priceRange = useMemo(() => getPriceRange(), []);
+  const allowedCategoryTree = useMemo(
+    () => buildAllowedCategoryTree(categories),
+    [categories]
+  );
+  const activeCategoryPath = useMemo(() => {
+    const path = new Set<string>();
+
+    const traverse = (nodes: CategoryTreeNode[], ancestors: string[] = []) => {
+      for (const node of nodes) {
+        const nextAncestors = [...ancestors, node.slug];
+        if (node.slug === filters.category) {
+          nextAncestors.forEach((slug) => path.add(slug));
+          return true;
+        }
+        if (node.children && traverse(node.children, nextAncestors)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (filters.category) {
+      traverse(allowedCategoryTree);
+    }
+
+    return path;
+  }, [allowedCategoryTree, filters.category]);
 
   const hasActiveFilters =
     filters.category ||
@@ -462,8 +528,9 @@ export function MobileFilterDrawer({
           {/* Category Filter */}
           <FilterSection title="Category">
             <CategoryFilter
-              categories={categories}
+              categories={allowedCategoryTree}
               selectedCategory={filters.category}
+              activeCategoryPath={activeCategoryPath}
               onSelect={(slug) => onFilterChange({ category: slug })}
             />
           </FilterSection>

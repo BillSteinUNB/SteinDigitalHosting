@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useParams, useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
@@ -20,6 +20,7 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getCategoryBySlug, getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
+import { filterAllowedCategories } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -128,11 +129,15 @@ export default function CategoryPage() {
     queryKey: ["categories"],
     queryFn: getCategories,
   });
+  const allowedCategories = useMemo(
+    () => (allCategories ? filterAllowedCategories(allCategories) : []),
+    [allCategories]
+  );
 
   // Derive subcategories from all categories
-  const subcategories = allCategories?.filter(
-    (cat) => cat.parent?.slug === categorySlug
-  ) || [];
+  const subcategories = allowedCategories.filter(
+    (cat: CategoryWithCount) => cat.parent?.slug === categorySlug
+  );
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<ProductFilters>(() => {
@@ -334,7 +339,7 @@ export default function CategoryPage() {
       {/* Main Content */}
       <Container className="py-8 md:py-12">
         {/* Subcategories */}
-        <Subcategories subcategories={subcategories} currentSlug={categorySlug} />
+          <Subcategories subcategories={subcategories} currentSlug={categorySlug} />
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Desktop Filter Sidebar */}
@@ -343,6 +348,7 @@ export default function CategoryPage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
+              categories={allowedCategories}
             />
           </aside>
 
@@ -485,6 +491,7 @@ export default function CategoryPage() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
+        categories={allowedCategories}
       />
     </main>
   );

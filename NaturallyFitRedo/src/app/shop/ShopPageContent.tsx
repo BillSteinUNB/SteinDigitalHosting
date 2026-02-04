@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
@@ -20,6 +20,7 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
+import { filterAllowedCategories } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -101,6 +102,10 @@ export default function ShopPageContent() {
     queryKey: ["categories"],
     queryFn: getCategories,
   });
+  const allowedCategories = useMemo(
+    () => (categories ? filterAllowedCategories(categories) : []),
+    [categories]
+  );
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<ProductFilters>(() => {
@@ -254,8 +259,8 @@ export default function ShopPageContent() {
       {/* Main Content */}
       <Container className="py-8 md:py-12">
         {/* Popular Categories */}
-        {categories && categories.length > 0 && !hasActiveFilters && (
-          <PopularCategories categories={categories} />
+        {allowedCategories.length > 0 && !hasActiveFilters && (
+          <PopularCategories categories={allowedCategories} />
         )}
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -265,6 +270,7 @@ export default function ShopPageContent() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
+              categories={allowedCategories}
             />
           </aside>
 
@@ -407,6 +413,7 @@ export default function ShopPageContent() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
+        categories={allowedCategories}
       />
     </main>
   );

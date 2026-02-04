@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 import type { ProductFilters as ProductFiltersType } from "@/types/product";
 import { getCategoryBySlug } from "@/lib/mock/categories";
+import { getAllowedCategoryLabel } from "@/lib/shop-categories";
 import { getBrandBySlug } from "@/lib/mock/brands";
 import { formatPrice } from "@/lib/utils";
 
@@ -70,9 +71,10 @@ export default function ActiveFilters({
   // Category filter
   if (filters.category) {
     const category = getCategoryBySlug(filters.category);
+    const allowedLabel = getAllowedCategoryLabel(filters.category);
     tags.push({
       key: "category",
-      label: `Category: ${category?.name || filters.category}`,
+      label: `Category: ${category?.name || allowedLabel || filters.category}`,
     });
   }
 

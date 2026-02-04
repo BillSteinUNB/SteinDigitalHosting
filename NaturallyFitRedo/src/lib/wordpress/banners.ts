@@ -19,6 +19,18 @@ export interface Banner {
   order: number;
 }
 
+type RawBanner = {
+  id: number;
+  title: { rendered: string };
+  link: string;
+  meta?: {
+    banner_link?: string;
+  };
+  banner_type?: number[];
+  menu_order: number;
+  featured_image_url?: string;
+};
+
 // Cache for banner type ID to slug mapping
 let bannerTypeCache: Map<number, string> | null = null;
 
@@ -60,6 +72,46 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#038;/g, '&')
     .replace(/&#039;/g, "'");
+}
+
+function getBannerTypeId(typeMapping: Map<number, string>, type: BannerType): number | undefined {
+  let found: number | undefined;
+  typeMapping.forEach((slug, id) => {
+    if (slug === type) {
+      found = id;
+    }
+  });
+  return found;
+}
+
+function mapBanner(
+  banner: RawBanner,
+  typeMapping: Map<number, string>,
+  fallbackType?: BannerType
+): Banner | null {
+  const typeId = banner.banner_type?.[0];
+  const typeSlug = typeId ? typeMapping.get(typeId) : '';
+
+  if (!typeSlug && typeId) {
+    console.log(`[Banners] Warning: No slug for typeId=${typeId} on banner ${banner.id}`);
+  }
+
+  const decodedTitle = decodeHtmlEntities(banner.title.rendered);
+  const imageUrl = rewriteImageUrl(banner.featured_image_url || '');
+
+  if (!imageUrl) {
+    return null;
+  }
+
+  return {
+    id: banner.id,
+    title: decodedTitle,
+    imageUrl: imageUrl,
+    link: banner.meta?.banner_link || '/shop',
+    alt: decodedTitle,
+    type: (typeSlug as BannerType) || fallbackType || 'hero-slide',
+    order: banner.menu_order || 0,
+  };
 }
 
 /**
@@ -111,17 +163,7 @@ export async function getBanners(): Promise<Banner[]> {
     console.log('[Banners] Type mapping size:', typeMapping.size);
 
     // Fetch from custom post type "banners"
-    const response = await fetchREST<Array<{
-      id: number;
-      title: { rendered: string };
-      link: string;
-      meta?: {
-        banner_link?: string;
-      };
-      banner_type?: number[];
-      menu_order: number;
-      featured_image_url?: string;
-    }>>('/banners', {
+    const response = await fetchREST<RawBanner[]>('/banners', {
       per_page: 100, // Increased to get all banners
       orderby: 'date',
       order: 'desc',
@@ -129,33 +171,10 @@ export async function getBanners(): Promise<Banner[]> {
     });
 
     console.log('[Banners] Fetched', response.length, 'banners from WordPress');
-    
-    return response.map((banner) => {
-      // Get banner type ID and convert to slug
-      const typeId = banner.banner_type?.[0];
-      const typeSlug = typeId ? typeMapping.get(typeId) : '';
-      
-      // DEBUG
-      if (!typeSlug) {
-        console.log(`[Banners] Warning: No slug for typeId=${typeId} on banner ${banner.id}`);
-      }
-      
-      // Decode HTML entities in title
-      const decodedTitle = decodeHtmlEntities(banner.title.rendered);
-      
-      // Rewrite image URL to flat structure
-      const imageUrl = rewriteImageUrl(banner.featured_image_url || '');
-      
-      return {
-        id: banner.id,
-        title: decodedTitle,
-        imageUrl: imageUrl,
-        link: banner.meta?.banner_link || '/shop',
-        alt: decodedTitle,
-        type: (typeSlug as BannerType) || 'hero-slide',
-        order: banner.menu_order || 0,
-      };
-    }).filter(banner => banner.imageUrl);
+
+    return response
+      .map((banner) => mapBanner(banner, typeMapping))
+      .filter((banner): banner is Banner => banner !== null);
 
   } catch (error) {
     console.error('Failed to fetch banners:', error);
@@ -168,17 +187,46 @@ export async function getBanners(): Promise<Banner[]> {
  */
 export async function getBannersByType(type: BannerType): Promise<Banner[]> {
   console.log(`[Banners] Getting banners by type: ${type}`);
-  const allBanners = await getBanners();
-  console.log(`[Banners] Total banners: ${allBanners.length}`);
-  
-  const filtered = allBanners
-    .filter(banner => banner.type === type)
-    .sort((a, b) => a.order - b.order);
-  
-  console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
-  filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
-  
-  return filtered;
+  try {
+    const typeMapping = await getBannerTypeMapping();
+    const typeId = getBannerTypeId(typeMapping, type);
+
+    if (typeId) {
+      console.log(`[Banners] Fetching banners with banner_type=${typeId}`);
+      const response = await fetchREST<RawBanner[]>('/banners', {
+        per_page: 100,
+        orderby: 'date',
+        order: 'desc',
+        status: 'publish',
+        banner_type: typeId,
+      });
+
+      const filtered = response
+        .map((banner) => mapBanner(banner, typeMapping, type))
+        .filter((banner): banner is Banner => banner !== null)
+        .sort((a, b) => a.order - b.order);
+
+      console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
+      filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
+      return filtered;
+    }
+
+    console.log(`[Banners] No type ID found for ${type}; falling back to full banner fetch`);
+    const allBanners = await getBanners();
+    console.log(`[Banners] Total banners: ${allBanners.length}`);
+
+    const filtered = allBanners
+      .filter(banner => banner.type === type)
+      .sort((a, b) => a.order - b.order);
+
+    console.log(`[Banners] Found ${filtered.length} banners of type ${type}`);
+    filtered.forEach(b => console.log(`  - ${b.title} (${b.imageUrl})`));
+
+    return filtered;
+  } catch (error) {
+    console.error(`[Banners] Failed to fetch banners of type ${type}:`, error);
+    return [];
+  }
 }
 
 /**

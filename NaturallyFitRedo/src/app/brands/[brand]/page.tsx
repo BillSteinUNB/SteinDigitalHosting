@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useParams, useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,6 +21,8 @@ import {
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
 import { getBrandBySlug, type BrandWithDetails } from "@/lib/mock/brands";
+import { getCategories } from "@/lib/graphql/categories";
+import { filterAllowedCategories } from "@/lib/shop-categories";
 import type { ProductFilters, ProductSortOption } from "@/types/product";
 
 // ============================================
@@ -152,6 +154,15 @@ export default function BrandPage() {
     (searchParams.get("view") as "grid" | "list") || "grid"
   );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
+  const allowedCategories = useMemo(
+    () => (categories ? filterAllowedCategories(categories) : []),
+    [categories]
+  );
 
   // Fetch products from GraphQL using React Query
   const { data, isLoading, error } = useQuery({
@@ -292,6 +303,7 @@ export default function BrandPage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
+              categories={allowedCategories}
             />
           </aside>
 
@@ -434,6 +446,7 @@ export default function BrandPage() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
+        categories={allowedCategories}
       />
     </main>
   );
