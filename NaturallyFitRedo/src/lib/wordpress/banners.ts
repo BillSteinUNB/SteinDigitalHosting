@@ -122,9 +122,9 @@ export async function getBanners(): Promise<Banner[]> {
       menu_order: number;
       featured_image_url?: string;
     }>>('/banners', {
-      per_page: 20,
-      orderby: 'menu_order',
-      order: 'asc',
+      per_page: 100, // Increased to get all banners
+      orderby: 'date',
+      order: 'desc',
       status: 'publish',
     });
 
