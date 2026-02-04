@@ -38,6 +38,9 @@ export const dynamic = 'force-dynamic';
 // ============================================
 
 export default async function HomePage() {
+  console.log('========================================');
+  console.log('=== HOMEPAGE RENDER START ===');
+  console.log('========================================');
   console.log('[Page] Starting banner fetch...');
   
   // Fetch banners from WordPress
