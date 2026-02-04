@@ -158,9 +158,6 @@ async function fetchBannerTypeIdBySlug(type: BannerType): Promise<number | undef
  */
 export async function getBanners(): Promise<Banner[]> {
   try {
-    // Clear cache for debugging (remove in production)
-    bannerTypeCache = null;
-    
     // Get banner type mapping first
     const typeMapping = await getBannerTypeMapping();
 

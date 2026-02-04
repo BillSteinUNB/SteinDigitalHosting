@@ -43,14 +43,14 @@ export default async function HomePage() {
     wpMiniBanners,
     wpMediumBanner,
     wpProductBanners,
-    wpQuickProductBanners,
   ] = await Promise.all([
     getHeroSlides(),
     getMiniBanners(),
     getMediumBanner(),
     getProductBanners(),
-    getQuickProductBanners(),
   ]);
+
+  const wpQuickProductBanners = await getQuickProductBanners();
   
   // Fetch data from WooCommerce GraphQL
   const [
