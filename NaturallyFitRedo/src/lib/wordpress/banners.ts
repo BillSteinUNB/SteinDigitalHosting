@@ -221,7 +221,15 @@ export async function getMediumBanner(): Promise<Banner | null> {
  * Returns all banners of type 'discover-product' sorted by order
  */
 export async function getProductBanners(): Promise<Banner[]> {
-  return getBannersByType('discover-product');
+  console.log('[Banners] getProductBanners() called');
+  try {
+    const banners = await getBannersByType('discover-product');
+    console.log('[Banners] getProductBanners() returning', banners.length, 'banners');
+    return banners;
+  } catch (error) {
+    console.error('[Banners] getProductBanners() ERROR:', error);
+    return [];
+  }
 }
 
 // Default banner as fallback - MAMMOTH ONLY (for testing)
