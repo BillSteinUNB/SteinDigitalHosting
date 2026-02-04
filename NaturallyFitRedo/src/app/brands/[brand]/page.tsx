@@ -303,7 +303,7 @@ export default function BrandPage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
-              categories={allowedCategories}
+              categories={categories || []}
             />
           </aside>
 
@@ -446,7 +446,7 @@ export default function BrandPage() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
-        categories={allowedCategories}
+        categories={categories || []}
       />
     </main>
   );

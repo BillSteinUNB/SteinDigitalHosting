@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { wholesaleInquirySchema } from "@/lib/wholesale/schema";
 import { upsertWholesaleInquiry } from "@/lib/woocommerce/wholesale";
+import { WooCommerceApiError } from "@/lib/woocommerce/rest";
 
 export const runtime = "nodejs";
 
@@ -38,11 +39,19 @@ export async function POST(request: Request) {
     }
 
     console.error("Wholesale inquiry submission error:", err);
+    const fallback =
+      "We couldn’t submit your request right now. Please try again in a moment, or email wholesale@naturallyfit.ca.";
+    const message =
+      err instanceof Error && err.message ? err.message : fallback;
+    const details =
+      err instanceof WooCommerceApiError
+        ? { status: err.status, code: err.code }
+        : undefined;
     return NextResponse.json(
       {
         ok: false,
-        error:
-          "We couldn’t submit your request right now. Please try again in a moment, or email wholesale@naturallyfit.ca.",
+        error: message || fallback,
+        details,
       },
       { status: 500 }
     );

@@ -139,6 +139,20 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
   }
 }
 
+async function fetchBannerTypeIdBySlug(type: BannerType): Promise<number | undefined> {
+  try {
+    const response = await fetchREST<Array<{ id: number }>>('/banner_type', {
+      per_page: 100,
+      hide_empty: false,
+      slug: type,
+    });
+
+    return response[0]?.id;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Fetch all published banners from WordPress
  */
@@ -173,7 +187,11 @@ export async function getBanners(): Promise<Banner[]> {
 export async function getBannersByType(type: BannerType): Promise<Banner[]> {
   try {
     const typeMapping = await getBannerTypeMapping();
-    const typeId = getBannerTypeId(typeMapping, type);
+    let typeId = getBannerTypeId(typeMapping, type);
+
+    if (!typeId) {
+      typeId = await fetchBannerTypeIdBySlug(type);
+    }
 
     if (typeId) {
       const response = await fetchREST<RawBanner[]>('/banners', {

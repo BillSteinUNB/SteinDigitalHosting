@@ -5,6 +5,7 @@ import { replaceWordPressBase } from '@/lib/config/wordpress';
 import { formatPrice } from "@/lib/utils";
 import { WHOLESALEX_PRICE_META } from "@/lib/wholesalex/integration";
 import { getAllowedCategoryLabel, isAllowedCategorySlug } from "@/lib/shop-categories";
+import { getBrandBySlug } from "@/lib/mock/brands";
 
 // GraphQL response types
 interface WooProductNode {
@@ -268,6 +269,35 @@ function parseWholesaleMetaPrice(
 function parsePriceNumber(value: unknown): number {
   const parsed = parseFloat(String(value).replace(/[^0-9.]/g, ""));
   return Number.isNaN(parsed) ? NaN : parsed;
+}
+
+const normalizeBrandKey = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, "")
+    .replace(/&/g, " ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const extractBrandFromName = (name: string): string | null => {
+  const [first] = name.split("|");
+  const cleaned = first?.trim();
+  return cleaned ? cleaned : null;
+};
+
+function matchesBrandFilter(product: WooProduct, brandSlug: string): boolean {
+  const brand = getBrandBySlug(brandSlug);
+  if (!brand) {
+    return false;
+  }
+
+  const productBrand = extractBrandFromName(product.name);
+  if (!productBrand) {
+    return false;
+  }
+
+  return normalizeBrandKey(productBrand) === normalizeBrandKey(brand.name);
 }
 
 function matchesAllowedCategories(
@@ -593,6 +623,9 @@ export async function getPaginatedProductsGraphQL(
   
   const allProducts = data.products.nodes
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
+    .filter((product) =>
+      filters.brand ? matchesBrandFilter(product, filters.brand) : true
+    )
     .map(transformToCardData);
   
   // Apply client-side pagination since WooGraphQL doesn't support skip

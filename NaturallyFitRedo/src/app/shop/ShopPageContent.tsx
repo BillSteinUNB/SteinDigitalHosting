@@ -283,7 +283,7 @@ export default function ShopPageContent() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
-              categories={allowedCategories}
+              categories={categories || []}
             />
           </aside>
 
@@ -426,7 +426,7 @@ export default function ShopPageContent() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
-        categories={allowedCategories}
+        categories={categories || []}
       />
     </main>
   );

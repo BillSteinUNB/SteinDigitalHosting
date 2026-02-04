@@ -348,7 +348,7 @@ export default function CategoryPage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
-              categories={allowedCategories}
+              categories={allCategories || []}
             />
           </aside>
 
@@ -491,7 +491,7 @@ export default function CategoryPage() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onClearFilters={handleClearFilters}
-        categories={allowedCategories}
+        categories={allCategories || []}
       />
     </main>
   );
