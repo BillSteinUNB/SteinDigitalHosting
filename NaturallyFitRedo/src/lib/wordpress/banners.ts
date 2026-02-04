@@ -185,7 +185,15 @@ export async function getBannersByType(type: BannerType): Promise<Banner[]> {
  * Get hero slides (multiple hero banners)
  */
 export async function getHeroSlides(): Promise<Banner[]> {
-  return getBannersByType('hero-slide');
+  console.log('[Banners] getHeroSlides() called');
+  try {
+    const banners = await getBannersByType('hero-slide');
+    console.log('[Banners] getHeroSlides() returning', banners.length, 'banners');
+    return banners;
+  } catch (error) {
+    console.error('[Banners] getHeroSlides() ERROR:', error);
+    return [];
+  }
 }
 
 /**
