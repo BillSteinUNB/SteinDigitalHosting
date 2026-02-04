@@ -23,6 +23,13 @@ export interface Banner {
 let bannerTypeCache: Map<number, string> | null = null;
 
 /**
+ * Clear the banner type cache (useful when new types are added)
+ */
+export function clearBannerTypeCache(): void {
+  bannerTypeCache = null;
+}
+
+/**
  * Decode HTML entities in text
  * e.g., "Alani Nu &#8211; Hero Banner" -> "Alani Nu - Hero Banner"
  */
@@ -59,6 +66,7 @@ async function getBannerTypeMapping(): Promise<Map<number, string>> {
       slug: string;
     }>>('/banner_type', {
       per_page: 100,
+      hide_empty: false, // Include banner types even if they have no banners
     });
 
     const mapping = new Map<number, string>();
