@@ -22,7 +22,7 @@ export const brands: BrandWithDetails[] = [
     name: "Alani Nu",
     slug: "alani-nu",
     logo: {
-      sourceUrl: wpAsset("2026/02/alani-nu.png"),
+      sourceUrl: wpAsset("alani-nu.png"),
       altText: "Alani Nu Logo",
     },
     description: "Premium supplements designed with women in mind.",
@@ -35,7 +35,7 @@ export const brands: BrandWithDetails[] = [
     name: "Cellucor",
     slug: "cellucor",
     logo: {
-      sourceUrl: wpAsset("2026/02/Cellucor.png"),
+      sourceUrl: wpAsset("Cellucor.png"),
       altText: "Cellucor Logo",
     },
     description: "Maker of America's #1 selling pre-workout, C4.",
@@ -48,7 +48,7 @@ export const brands: BrandWithDetails[] = [
     name: "Believe Supplements",
     slug: "believe-supplements",
     logo: {
-      sourceUrl: wpAsset("2026/02/Believe-1.png"),
+      sourceUrl: wpAsset("Believe-1.png"),
       altText: "Believe Supplements Logo",
     },
     description: "High-quality Canadian supplements for athletes.",
@@ -61,7 +61,7 @@ export const brands: BrandWithDetails[] = [
     name: "Nutraphase",
     slug: "nutraphase",
     logo: {
-      sourceUrl: wpAsset("2026/02/nutraphase.png"),
+      sourceUrl: wpAsset("nutraphase.png"),
       altText: "Nutraphase Logo",
     },
     description: "Clean, effective supplements for everyday athletes.",
@@ -74,7 +74,7 @@ export const brands: BrandWithDetails[] = [
     name: "Ghost",
     slug: "ghost",
     logo: {
-      sourceUrl: wpAsset("2026/02/Ghost_Logo.png"),
+      sourceUrl: wpAsset("Ghost_Logo.png"),
       altText: "Ghost Logo",
     },
     description: "Be seen® - Premium lifestyle supplements.",
@@ -87,7 +87,7 @@ export const brands: BrandWithDetails[] = [
     name: "Grenade",
     slug: "grenade",
     logo: {
-      sourceUrl: wpAsset("2026/02/Grenade_Logo.png"),
+      sourceUrl: wpAsset("Grenade_Logo.png"),
       altText: "Grenade Logo",
     },
     description: "High-protein snacks and supplements.",
@@ -100,7 +100,7 @@ export const brands: BrandWithDetails[] = [
     name: "Anabar",
     slug: "anabar",
     logo: {
-      sourceUrl: wpAsset("2026/02/Anabar.png"),
+      sourceUrl: wpAsset("Anabar.png"),
       altText: "Anabar Logo",
     },
     description: "Protein bars that taste like candy.",
@@ -113,7 +113,7 @@ export const brands: BrandWithDetails[] = [
     name: "Advanced Genetics",
     slug: "advanced-genetics",
     logo: {
-      sourceUrl: wpAsset("2026/02/Advanced-Genetics.png"),
+      sourceUrl: wpAsset("Advanced-Genetics.png"),
       altText: "Advanced Genetics Logo",
     },
     description: "Hardcore bodybuilding supplements for serious athletes.",
@@ -126,7 +126,7 @@ export const brands: BrandWithDetails[] = [
     name: "Quest Nutrition",
     slug: "quest",
     logo: {
-      sourceUrl: wpAsset("2026/02/Quest.png"),
+      sourceUrl: wpAsset("Quest.png"),
       altText: "Quest Nutrition Logo",
     },
     description: "High-protein snacks and supplements for fitness enthusiasts.",
@@ -139,7 +139,7 @@ export const brands: BrandWithDetails[] = [
     name: "TC Nutrition",
     slug: "tc-nutrition",
     logo: {
-      sourceUrl: wpAsset("2026/02/TC-Nutrition.png"),
+      sourceUrl: wpAsset("TC-Nutrition.png"),
       altText: "TC Nutrition Logo",
     },
     description: "Premium Canadian sports nutrition supplements.",
@@ -152,7 +152,7 @@ export const brands: BrandWithDetails[] = [
     name: "Work Water",
     slug: "work-water",
     logo: {
-      sourceUrl: wpAsset("2026/02/Work-Water.png"),
+      sourceUrl: wpAsset("Work-Water.png"),
       altText: "Work Water Logo",
     },
     description: "Hydration products for active lifestyles.",
@@ -165,7 +165,7 @@ export const brands: BrandWithDetails[] = [
     name: "Yummy Sports",
     slug: "yummy-sports",
     logo: {
-      sourceUrl: wpAsset("2026/02/YummySports.png"),
+      sourceUrl: wpAsset("YummySports.png"),
       altText: "Yummy Sports Logo",
     },
     description: "Delicious tasting sports nutrition supplements.",
@@ -178,7 +178,7 @@ export const brands: BrandWithDetails[] = [
     name: "VNDL Project",
     slug: "vndl",
     logo: {
-      sourceUrl: wpAsset("2026/02/VNDL.png"),
+      sourceUrl: wpAsset("VNDL.png"),
       altText: "VNDL Project Logo",
     },
     description: "Performance driven supplements for serious athletes.",
