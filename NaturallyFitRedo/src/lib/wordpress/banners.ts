@@ -30,6 +30,16 @@ export function clearBannerTypeCache(): void {
 }
 
 /**
+ * Rewrite old image URLs (with year/month) to flat structure (root uploads)
+ * e.g., "https://.../2026/02/image.png" -> "https://.../image.png"
+ */
+function rewriteImageUrl(url: string): string {
+  if (!url) return url;
+  // Remove year/month pattern: /YYYY/MM/ or /2026/02/
+  return url.replace(/\/\d{4}\/\d{2}\//g, '/');
+}
+
+/**
  * Decode HTML entities in text
  * e.g., "Alani Nu &#8211; Hero Banner" -> "Alani Nu - Hero Banner"
  */
@@ -116,10 +126,13 @@ export async function getBanners(): Promise<Banner[]> {
       // Decode HTML entities in title
       const decodedTitle = decodeHtmlEntities(banner.title.rendered);
       
+      // Rewrite image URL to flat structure
+      const imageUrl = rewriteImageUrl(banner.featured_image_url || '');
+      
       return {
         id: banner.id,
         title: decodedTitle,
-        imageUrl: banner.featured_image_url || '',
+        imageUrl: imageUrl,
         link: banner.meta?.banner_link || '/shop',
         alt: decodedTitle,
         type: (typeSlug as BannerType) || 'hero-slide',
