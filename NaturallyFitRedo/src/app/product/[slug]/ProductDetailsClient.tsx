@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Container, Divider } from "@/components/ui";
 import {
   ProductGallery,
@@ -16,6 +17,8 @@ import {
 import { getRelatedProducts } from "@/lib/mock";
 import { getMockReviewsByProductId } from "@/lib/mock/users";
 import type { Product, ProductVariation, ProductImage } from "@/types/product";
+import { formatPrice } from "@/lib/utils";
+import { getEffectiveWholesalePrice } from "@/lib/wholesalex/integration";
 
 // ============================================
 // BREADCRUMB COMPONENT
@@ -94,6 +97,9 @@ interface ProductDetailsClientProps {
 }
 
 export default function ProductDetailsClient({ product }: ProductDetailsClientProps) {
+  const { data: session } = useSession();
+  const isWholesale = Boolean(session?.user?.isWholesale);
+  const wholesaleRole = session?.user?.role;
   // State for variable products
   const [selectedAttributes, setSelectedAttributes] = useState<
     Record<string, string>
@@ -165,6 +171,27 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
       stockQuantity: product.stockQuantity,
     };
   }, [product, selectedVariation]);
+
+  const wholesalePriceValue = useMemo(() => {
+    if (!isWholesale) return undefined;
+    const override =
+      selectedVariation?.wholesalePrice ||
+      (product.type === "SIMPLE" ? product.wholesalePrice : undefined);
+    const regular = selectedVariation?.regularPrice ?? product.regularPrice;
+    const sale =
+      selectedVariation?.salePrice ||
+      (product.type === "SIMPLE" ? product.salePrice : undefined);
+    const computed = getEffectiveWholesalePrice({
+      regularPrice: regular,
+      salePrice: sale,
+      wholesaleOverride: override,
+      userRole: wholesaleRole,
+    });
+    return computed ?? undefined;
+  }, [isWholesale, selectedVariation, product]);
+
+  const wholesalePriceDisplay =
+    typeof wholesalePriceValue === "number" ? formatPrice(wholesalePriceValue) : undefined;
 
   // Get gallery images
   const galleryImages: ProductImage[] = useMemo(() => {
@@ -247,9 +274,9 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
                 price={priceInfo.price}
                 regularPrice={priceInfo.regularPrice}
                 salePrice={priceInfo.salePrice}
-                wholesalePrice={
-                  product.type === "SIMPLE" ? product.wholesalePrice : undefined
-                }
+                wholesalePrice={wholesalePriceDisplay}
+                isWholesale={isWholesale}
+                showWholesalePrice={isWholesale}
                 averageRating={product.averageRating}
                 reviewCount={product.reviewCount}
                 shortDescription={product.shortDescription}
@@ -281,6 +308,8 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
                 price={parsedPrice}
                 regularPrice={parsedRegularPrice}
                 salePrice={parsedSalePrice}
+                wholesalePrice={wholesalePriceValue}
+                isWholesale={isWholesale}
                 stockStatus={priceInfo.stockStatus}
                 stockQuantity={priceInfo.stockQuantity}
                 variation={selectedVariation}

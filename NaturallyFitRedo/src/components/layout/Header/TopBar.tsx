@@ -58,7 +58,7 @@ export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
             <Link href="/" className="flex items-center gap-3 min-w-0">
               <div className="relative flex-shrink-0 w-[454px] h-[71px]">
                 <Image
-                  src={wpAsset("2026/02/canadassupplementstore.webp")}
+                  src={wpAsset("canadassupplementstore.webp")}
                   alt="Naturally Fit - Canada's Supplement Store"
                   fill
                   sizes="454px"

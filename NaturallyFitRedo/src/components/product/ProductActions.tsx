@@ -19,6 +19,8 @@ export interface ProductActionsProps {
   price: number;
   regularPrice: number;
   salePrice?: number;
+  wholesalePrice?: number;
+  isWholesale?: boolean;
   stockStatus: "IN_STOCK" | "OUT_OF_STOCK" | "ON_BACKORDER";
   stockQuantity?: number;
   variation?: ProductVariation;
@@ -46,6 +48,8 @@ export default function ProductActions({
   price,
   regularPrice,
   salePrice,
+  wholesalePrice,
+  isWholesale = false,
   stockStatus,
   stockQuantity,
   variation,
@@ -82,7 +86,7 @@ export default function ProductActions({
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const effectivePrice = variation 
+      const effectivePrice = variation
         ? parseFloat(variation.price.replace(/[^0-9.]/g, ""))
         : price;
       const effectiveRegularPrice = variation
@@ -91,6 +95,10 @@ export default function ProductActions({
       const effectiveSalePrice = variation?.salePrice
         ? parseFloat(variation.salePrice.replace(/[^0-9.]/g, ""))
         : salePrice;
+      const effectiveWholesalePrice =
+        isWholesale && typeof wholesalePrice === "number"
+          ? wholesalePrice
+          : undefined;
 
       addItem({
         productId,
@@ -102,7 +110,7 @@ export default function ProductActions({
           name: variation ? `${productName} - ${variation.name}` : productName,
           slug: productSlug,
           image: variation?.image || productImage,
-          price: effectivePrice,
+          price: effectiveWholesalePrice ?? effectivePrice,
           regularPrice: effectiveRegularPrice,
           salePrice: effectiveSalePrice,
           variation: variation

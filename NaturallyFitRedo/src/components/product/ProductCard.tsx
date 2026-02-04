@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   SaleBadge,
@@ -13,6 +14,7 @@ import {
   IconButton,
 } from "@/components/ui";
 import type { ProductCardData } from "@/types/product";
+import { getEffectiveWholesalePrice } from "@/lib/wholesalex/integration";
 
 // ============================================
 // PRODUCT CARD COMPONENT
@@ -51,6 +53,9 @@ export default function ProductCard({
   onAddToCart,
   className,
 }: ProductCardProps) {
+  const { data: session } = useSession();
+  const isWholesale = Boolean(session?.user?.isWholesale);
+  const wholesaleRole = session?.user?.role;
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -67,10 +72,23 @@ export default function ProductCard({
     productBrands,
     onSale,
     stockStatus,
+    wholesalePrice,
   } = product;
 
   const brandName = productBrands[0]?.name;
   const isOutOfStock = stockStatus === "OUT_OF_STOCK";
+  const hasRange = `${price}`.includes("-") || `${regularPrice}`.includes("-");
+
+  const effectiveWholesalePrice = useMemo(() => {
+    if (!isWholesale || hasRange) return undefined;
+    const computed = getEffectiveWholesalePrice({
+      regularPrice,
+      salePrice,
+      wholesaleOverride: wholesalePrice,
+      userRole: wholesaleRole,
+    });
+    return computed ?? undefined;
+  }, [isWholesale, hasRange, regularPrice, salePrice, wholesalePrice]);
 
   // Handle quick view
   const handleQuickView = (e: React.MouseEvent) => {
@@ -222,6 +240,8 @@ export default function ProductCard({
             price={price}
             regularPrice={regularPrice}
             salePrice={salePrice}
+            wholesalePrice={effectiveWholesalePrice}
+            isWholesale={isWholesale}
             size="md"
           />
         </div>

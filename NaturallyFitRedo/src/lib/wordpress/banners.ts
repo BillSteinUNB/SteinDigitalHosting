@@ -163,10 +163,11 @@ export async function getMediumBanner(): Promise<Banner | null> {
 }
 
 // Default banner as fallback - MAMMOTH ONLY (for testing)
+// Using flat URL structure (wp-content/uploads/filename.jpg - no year/month subfolders)
 export const defaultHeroSlides: Omit<Banner, 'id' | 'type' | 'order'>[] = [
   {
     title: 'Mammoth Supplements',
-    imageUrl: wpAsset('2026/02/Mammoth-Slider-1.png'),
+    imageUrl: wpAsset('Mammoth-Slider-1.png'),
     link: '/brands/mammoth',
     alt: 'Mammoth Supplements',
   },
@@ -175,19 +176,19 @@ export const defaultHeroSlides: Omit<Banner, 'id' | 'type' | 'order'>[] = [
 export const defaultMiniBanners: Omit<Banner, 'id' | 'type' | 'order'>[] = [
   {
     title: '3 for $99',
-    imageUrl: wpAsset('2026/02/NF_3_for_99-2026.png'),
+    imageUrl: wpAsset('NF_3_for_99-2026.png'),
     link: '/product/mix-and-match-for-99/',
     alt: 'Bundles 3 for $99',
   },
   {
     title: 'Beat Any Price',
-    imageUrl: wpAsset('2026/02/shipping-2.png'),
+    imageUrl: wpAsset('shipping-2.png'),
     link: '/price-guarantee/',
     alt: 'Beat ANY Price by 10%',
   },
   {
     title: 'Free Shipping',
-    imageUrl: wpAsset('2026/02/shipping.png'),
+    imageUrl: wpAsset('shipping.png'),
     link: '/shop/',
     alt: 'Free Shipping / Free Hoodie / Free Shaker',
   },
@@ -195,7 +196,7 @@ export const defaultMiniBanners: Omit<Banner, 'id' | 'type' | 'order'>[] = [
 
 export const defaultMediumBanner: Omit<Banner, 'id' | 'type' | 'order'> = {
   title: 'Best Creatine Prices',
-  imageUrl: wpAsset('2026/02/BEST-CREATINE-PRICES-1.png'),
+  imageUrl: wpAsset('BEST-CREATINE-PRICES-1.png'),
   link: '/shop/creatine',
   alt: 'Best Creatine Prices',
 };

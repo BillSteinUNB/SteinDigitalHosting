@@ -16,6 +16,7 @@ export interface ProductInfoProps {
   regularPrice: string;
   salePrice?: string;
   wholesalePrice?: string;
+  isWholesale?: boolean;
   averageRating: number;
   reviewCount: number;
   shortDescription?: string;
@@ -46,6 +47,7 @@ export default function ProductInfo({
   regularPrice,
   salePrice,
   wholesalePrice,
+  isWholesale = false,
   averageRating,
   reviewCount,
   shortDescription,
@@ -130,6 +132,8 @@ export default function ProductInfo({
           price={price}
           regularPrice={regularPrice}
           salePrice={salePrice}
+          wholesalePrice={wholesalePrice}
+          isWholesale={isWholesale}
           size="lg"
         />
 

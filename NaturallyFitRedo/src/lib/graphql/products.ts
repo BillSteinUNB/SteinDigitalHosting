@@ -2,6 +2,8 @@
 import { fetchGraphQL } from './client';
 import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockStatus } from '@/types/product';
 import { replaceWordPressBase } from '@/lib/config/wordpress';
+import { formatPrice } from "@/lib/utils";
+import { WHOLESALEX_PRICE_META } from "@/lib/wholesalex/integration";
 
 // GraphQL response types
 interface WooProductNode {
@@ -32,6 +34,10 @@ interface WooProductNode {
       slug: string;
     }>;
   };
+  metaData?: Array<{
+    key: string;
+    value: unknown;
+  }>;
 }
 
 interface SimpleProductNode extends WooProductNode {
@@ -59,6 +65,10 @@ interface VariableProductNode extends WooProductNode {
       regularPrice: string | null;
       salePrice: string | null;
       stockStatus: string;
+      metaData?: Array<{
+        key: string;
+        value: unknown;
+      }>;
       attributes: {
         nodes: Array<{
           name: string;
@@ -112,6 +122,10 @@ const PRODUCT_CARD_FIELDS = `
       slug
     }
   }
+  metaData {
+    key
+    value
+  }
   ... on SimpleProduct {
     price
     regularPrice
@@ -154,6 +168,10 @@ const FULL_PRODUCT_FIELDS = `
       slug
     }
   }
+  metaData {
+    key
+    value
+  }
   ... on SimpleProduct {
     price
     regularPrice
@@ -176,6 +194,10 @@ const FULL_PRODUCT_FIELDS = `
         regularPrice
         salePrice
         stockStatus
+        metaData {
+          key
+          value
+        }
         attributes {
           nodes {
             name
@@ -217,10 +239,41 @@ function transformImageUrl(url: string | null | undefined): string {
   return replaceWordPressBase(url);
 }
 
+function extractMetaValue(
+  metaData: Array<{ key: string; value: unknown }> | undefined,
+  key: string
+): string | undefined {
+  if (!metaData?.length) return undefined;
+  const match = metaData.find((item) => item.key === key);
+  if (!match) return undefined;
+  const raw = match.value;
+  if (raw === null || raw === undefined) return undefined;
+  if (typeof raw === "string" || typeof raw === "number") {
+    return String(raw);
+  }
+  return undefined;
+}
+
+function parseWholesaleMetaPrice(
+  metaData: Array<{ key: string; value: unknown }> | undefined
+): string | undefined {
+  const rawValue = extractMetaValue(metaData, WHOLESALEX_PRICE_META);
+  if (!rawValue) return undefined;
+  const parsed = parsePriceNumber(rawValue);
+  if (Number.isNaN(parsed)) return undefined;
+  return formatPrice(parsed);
+}
+
+function parsePriceNumber(value: unknown): number {
+  const parsed = parseFloat(String(value).replace(/[^0-9.]/g, ""));
+  return Number.isNaN(parsed) ? NaN : parsed;
+}
+
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
   // Use WordPress image if available, transform URL, otherwise use placeholder
   const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
+  const wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
   
   return {
     id: wooProduct.id,
@@ -243,6 +296,7 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
     productBrands: [], // WooCommerce doesn't have brands by default
     onSale: wooProduct.onSale,
     stockStatus: convertStockStatus(wooProduct.stockStatus || 'OUT_OF_STOCK'),
+    wholesalePrice,
   };
 }
 
@@ -289,6 +343,22 @@ function transformToProduct(wooProduct: WooProduct): Product {
 
   if (wooProduct.__typename === 'VariableProduct') {
     const variableProduct = wooProduct as VariableProductNode;
+    const variationWholesaleValues = variableProduct.variations?.nodes
+      .map((variation) => {
+        const rawValue = extractMetaValue(variation.metaData, WHOLESALEX_PRICE_META);
+        const parsed = rawValue ? parsePriceNumber(rawValue) : NaN;
+        return Number.isNaN(parsed) ? undefined : parsed;
+      })
+      .filter((value): value is number => typeof value === "number");
+
+    const wholesalePriceRange =
+      variationWholesaleValues && variationWholesaleValues.length > 0
+        ? {
+            min: formatPrice(Math.min(...variationWholesaleValues)),
+            max: formatPrice(Math.max(...variationWholesaleValues)),
+          }
+        : undefined;
+
     return {
       ...baseProduct,
       type: 'VARIABLE',
@@ -302,6 +372,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
         price: v.price || '$0.00',
         regularPrice: v.regularPrice || '$0.00',
         salePrice: v.salePrice || undefined,
+        wholesalePrice: parseWholesaleMetaPrice(v.metaData),
         stockStatus: convertStockStatus(v.stockStatus || 'OUT_OF_STOCK'),
         attributes: v.attributes.nodes.map(a => ({
           name: a.name,
@@ -313,6 +384,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
         options: a.options,
         variation: true,
       })) || [],
+      wholesalePriceRange,
     } as VariableProduct;
   }
 
@@ -322,6 +394,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
     price: wooProduct.price || '$0.00',
     regularPrice: wooProduct.regularPrice || '$0.00',
     salePrice: wooProduct.salePrice || undefined,
+    wholesalePrice: parseWholesaleMetaPrice(wooProduct.metaData),
   } as SimpleProduct;
 }
 

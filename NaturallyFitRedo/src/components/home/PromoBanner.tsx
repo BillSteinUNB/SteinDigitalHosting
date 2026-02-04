@@ -313,19 +313,20 @@ export interface ThreeBannerRowProps {
 }
 
 // Default banners - fallback when no ACF data
+// Default banners - fallback when no WordPress data (flat URL structure)
 const defaultMiniBanners = [
   {
-    image: wpAsset("2026/02/NF_3_for_99-2026.png"),
+    image: wpAsset("NF_3_for_99-2026.png"),
     alt: "Bundles 3 for $99",
     link: "/product/mix-and-match-for-99/",
   },
   {
-    image: wpAsset("2026/02/shipping-2.png"),
+    image: wpAsset("shipping-2.png"),
     alt: "Beat ANY Price by 10%",
     link: "/price-guarantee/",
   },
   {
-    image: wpAsset("2026/02/shipping.png"),
+    image: wpAsset("shipping.png"),
     alt: "Free Shipping / Free Hoodie / Free Shaker",
     link: "/shop/",
   },
@@ -385,8 +386,9 @@ export interface MediumBannerProps {
 }
 
 // Default medium banner - fallback
+// Default medium banner - fallback (flat URL structure)
 const defaultMediumBanner = {
-  image: wpAsset("2026/02/BEST-CREATINE-PRICES-1.png"),
+  image: wpAsset("BEST-CREATINE-PRICES-1.png"),
   alt: "Best Creatine Prices",
   link: "/shop/creatine",
 };

@@ -6,6 +6,7 @@ import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { UserRole } from "@/types/user";
+import { fetchGraphQL, fetchGraphQLAuth } from "@/lib/graphql/client";
 
 // ============================================
 // TYPES
@@ -58,49 +59,83 @@ declare module "next-auth/jwt" {
 }
 
 // ============================================
-// MOCK USER DATABASE (for development)
-// Will be replaced with WooCommerce GraphQL auth
+// GRAPHQL AUTH CONFIG
 // ============================================
 
-interface MockUser {
+const WHOLESALEX_ROLE = process.env.WHOLESALEX_ROLE_NAME || "wholesale_customer";
+
+const LOGIN_MUTATION = `
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+      authToken
+      refreshToken
+      user {
+        databaseId
+        email
+        firstName
+        lastName
+        roles {
+          nodes {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+const VIEWER_QUERY = `
+  query Viewer {
+    viewer {
+      databaseId
+      email
+      firstName
+      lastName
+      roles {
+        nodes {
+          name
+        }
+      }
+    }
+  }
+`;
+
+type GraphqlRoleNode = { name?: string | null };
+
+interface GraphqlLoginResponse {
+  login: {
+    authToken: string;
+    refreshToken?: string | null;
+    user: {
+      databaseId: number;
+      email: string;
+      firstName?: string | null;
+      lastName?: string | null;
+      roles?: { nodes?: GraphqlRoleNode[] | null } | null;
+    };
+  };
+}
+
+interface GraphqlViewerResponse {
+  viewer: {
+    databaseId: number;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    roles?: { nodes?: GraphqlRoleNode[] | null } | null;
+  };
+}
+
+interface AuthUser {
   id: string;
   email: string;
-  password: string;
   firstName: string;
   lastName: string;
   role: UserRole;
   isWholesale: boolean;
+  accessToken?: string;
+  refreshToken?: string;
 }
-
-const mockUsers: MockUser[] = [
-  {
-    id: "1",
-    email: "customer@example.com",
-    password: "password123",
-    firstName: "John",
-    lastName: "Doe",
-    role: "customer",
-    isWholesale: false,
-  },
-  {
-    id: "2",
-    email: "wholesale@example.com",
-    password: "password123",
-    firstName: "Jane",
-    lastName: "Smith",
-    role: "wholesale_customer",
-    isWholesale: true,
-  },
-  {
-    id: "3",
-    email: "admin@example.com",
-    password: "admin123",
-    firstName: "Admin",
-    lastName: "User",
-    role: "administrator",
-    isWholesale: false,
-  },
-];
 
 // ============================================
 // AUTH HELPER FUNCTIONS
@@ -110,24 +145,61 @@ const mockUsers: MockUser[] = [
  * Authenticate user with credentials
  * In production, this would call WooCommerce GraphQL API
  */
+function normalizeRole(roleName: string | undefined | null): UserRole {
+  const normalized = (roleName || "").toLowerCase().trim().replace(/\s+/g, "_");
+  switch (normalized) {
+    case "administrator":
+    case "shop_manager":
+    case "wholesale_customer":
+    case "customer":
+      return normalized;
+    default:
+      return "customer";
+  }
+}
+
+function extractRoles(nodes?: GraphqlRoleNode[] | null): string[] {
+  return (nodes || [])
+    .map((node) => node.name || "")
+    .map((name) => name.toLowerCase().trim())
+    .filter(Boolean);
+}
+
 async function authenticateUser(
   email: string,
   password: string
-): Promise<MockUser | null> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+): Promise<AuthUser | null> {
+  const loginData = await fetchGraphQL<GraphqlLoginResponse>(LOGIN_MUTATION, {
+    input: {
+      username: email,
+      password,
+    },
+  });
 
-  // Find user by email
-  const user = mockUsers.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase()
+  const accessToken = loginData.login.authToken;
+  const refreshToken = loginData.login.refreshToken || undefined;
+
+  const viewerData = await fetchGraphQLAuth<GraphqlViewerResponse>(
+    VIEWER_QUERY,
+    undefined,
+    accessToken
   );
 
-  // Check password
-  if (user && user.password === password) {
-    return user;
-  }
+  const roleNames = extractRoles(viewerData.viewer.roles?.nodes);
+  const primaryRole = roleNames[0];
+  const role = normalizeRole(primaryRole);
+  const isWholesale = roleNames.includes(WHOLESALEX_ROLE.toLowerCase());
 
-  return null;
+  return {
+    id: String(viewerData.viewer.databaseId),
+    email: viewerData.viewer.email,
+    firstName: viewerData.viewer.firstName || "",
+    lastName: viewerData.viewer.lastName || "",
+    role,
+    isWholesale,
+    accessToken,
+    refreshToken,
+  };
 }
 
 /**
@@ -136,8 +208,13 @@ async function authenticateUser(
  */
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    // In production: call WooCommerce refresh token endpoint
-    // For now, just return the existing token
+    if (!token.refreshToken) {
+      return {
+        ...token,
+        error: "RefreshAccessTokenError",
+      };
+    }
+    // TODO: implement refresh token mutation if enabled in WPGraphQL JWT Auth
     return {
       ...token,
       accessTokenExpires: Date.now() + 60 * 60 * 1000, // 1 hour

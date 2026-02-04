@@ -39,9 +39,10 @@ export interface HeroSlide {
 
 // ============================================
 // FALLBACK - ONLY MAMMOTH (for testing)
+// Using flat URL structure (wp-content/uploads/filename.jpg)
 // ============================================
 const WP_HERO_IMAGES = {
-  mammothSlider: wpAsset("2026/02/Mammoth-Slider-1.png"),
+  mammothSlider: wpAsset("Mammoth-Slider-1.png"),
 };
 
 // Single slide fallback - Mammoth only (no scrolling)
@@ -241,14 +242,17 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
   return (
     <div className="relative w-full h-full">
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bg-gray-100">
         <Image
           src={slide.image.src}
           alt={slide.image.alt}
           fill
-          className="object-contain"
+          className="object-cover"
           priority
           sizes="100vw"
+          onError={(e) => {
+            console.error('Hero image failed to load:', slide.image.src);
+          }}
         />
         {/* Overlay - removed grey gradient */}
       </div>

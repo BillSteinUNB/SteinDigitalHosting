@@ -22,6 +22,8 @@
  * 2. Or check WholesaleX settings
  */
 export const WHOLESALEX_ROLE = process.env.WHOLESALEX_ROLE_NAME || "wholesale_customer";
+export const WHOLESALEX_PLATINUM_ROLE =
+  process.env.WHOLESALEX_PLATINUM_ROLE_NAME || "wholesale_platinum";
 
 /**
  * WholesaleX pricing meta key
@@ -34,6 +36,22 @@ export const WHOLESALEX_ROLE = process.env.WHOLESALEX_ROLE_NAME || "wholesale_cu
  */
 export const WHOLESALEX_PRICE_META = process.env.WHOLESALEX_PRICE_META_KEY || "_wholesale_price";
 
+/**
+ * Wholesale discount percent (flat) fallback when no per-product price exists.
+ * Use NEXT_PUBLIC_ for client-side access.
+ */
+export const WHOLESALE_DISCOUNT_PERCENT_DEFAULT = Number(
+  process.env.NEXT_PUBLIC_WHOLESALE_DISCOUNT_PERCENT ||
+    process.env.WHOLESALE_DISCOUNT_PERCENT ||
+    0
+);
+
+export const WHOLESALE_DISCOUNT_PERCENT_PLATINUM = Number(
+  process.env.NEXT_PUBLIC_WHOLESALE_PLATINUM_DISCOUNT_PERCENT ||
+    process.env.WHOLESALE_PLATINUM_DISCOUNT_PERCENT ||
+    0
+);
+
 // ============================================
 // USER ROLE CHECKING
 // ============================================
@@ -43,6 +61,21 @@ export const WHOLESALEX_PRICE_META = process.env.WHOLESALEX_PRICE_META_KEY || "_
  */
 export function isWholesaleXUser(userRole: string): boolean {
   return userRole === WHOLESALEX_ROLE || userRole === "wholesale_customer";
+}
+
+function normalizeRole(role?: string): string {
+  return (role || "").toLowerCase().trim().replace(/\s+/g, "_");
+}
+
+export function getWholesaleDiscountPercent(userRole?: string): number {
+  const normalized = normalizeRole(userRole);
+  if (normalized === normalizeRole(WHOLESALEX_PLATINUM_ROLE)) {
+    return WHOLESALE_DISCOUNT_PERCENT_PLATINUM;
+  }
+  if (normalized === normalizeRole(WHOLESALEX_ROLE)) {
+    return WHOLESALE_DISCOUNT_PERCENT_DEFAULT;
+  }
+  return 0;
 }
 
 /**
@@ -91,6 +124,53 @@ export function calculateWholesaleDiscount(
 ): number {
   if (regularPrice === 0) return 0;
   return Math.round(((regularPrice - wholesalePrice) / regularPrice) * 100);
+}
+
+function parsePriceNumber(value: number | string | undefined): number | null {
+  if (value === undefined) return null;
+  const parsed =
+    typeof value === "number"
+      ? value
+      : parseFloat(String(value).replace(/[^0-9.]/g, ""));
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+/**
+ * Calculate effective wholesale price:
+ * - Use WholesaleX per-product price if provided
+ * - Otherwise apply flat % discount to regular price
+ * - If a sale price is lower, use the sale price
+ */
+export function getEffectiveWholesalePrice(params: {
+  regularPrice: number | string;
+  salePrice?: number | string;
+  wholesaleOverride?: number | string;
+  discountPercent?: number;
+  userRole?: string;
+}): number | null {
+  const regular = parsePriceNumber(params.regularPrice);
+  if (regular === null) return null;
+
+  const override = parsePriceNumber(params.wholesaleOverride);
+  const sale = parsePriceNumber(params.salePrice);
+  const discountPercent =
+    typeof params.discountPercent === "number"
+      ? params.discountPercent
+      : getWholesaleDiscountPercent(params.userRole);
+
+  let candidate = regular;
+
+  if (typeof override === "number") {
+    candidate = override;
+  } else if (discountPercent > 0) {
+    candidate = regular * (1 - discountPercent / 100);
+  }
+
+  if (typeof sale === "number" && sale < candidate) {
+    candidate = sale;
+  }
+
+  return candidate;
 }
 
 // ============================================

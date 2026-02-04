@@ -31,7 +31,7 @@ export default function Footer() {
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center">
               <Image
-                src={wpAsset("2026/02/canadassupplementstore_footer.png")}
+                src={wpAsset("canadassupplementstore_footer.png")}
                 alt="Naturally Fit - Canada's Supplement Store"
                 width={240}
                 height={102}
@@ -68,7 +68,7 @@ export default function Footer() {
           {/* Veteran Badge - 98px × 98px */}
           <div className="flex flex-col items-center lg:items-end">
             <Image
-              src={wpAsset("2026/02/veteran-owned-badge.png")}
+              src={wpAsset("veteran-owned-badge.png")}
               alt="Veteran Owned Business"
               width={98}
               height={98}
@@ -112,7 +112,7 @@ export default function Footer() {
               <span className="text-sm font-semibold text-white">We Accept</span>
               {/* Payment Icons - 183px × 28px */}
               <Image
-                src={wpAsset("2026/02/footer1_2026.png")}
+                src={wpAsset("footer1_2026.png")}
                 alt="Accepted payment methods"
                 width={183}
                 height={28}
