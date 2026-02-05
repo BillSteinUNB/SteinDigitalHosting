@@ -7,7 +7,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRight, ArrowLeft, Truck } from "lucide-react";
+import { ArrowRight, ArrowLeft, Truck, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
 import { Input } from "@/components/ui/Input";
@@ -150,7 +150,7 @@ export function CheckoutShipping() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = useForm<ShippingFormData>({
     resolver: zodResolver(shippingSchema),
     defaultValues: {
@@ -184,8 +184,28 @@ export function CheckoutShipping() {
     goToNextStep();
   };
 
+  // Debug: log validation errors
+  const onError = (formErrors: typeof errors) => {
+    console.error("Shipping form validation errors:", formErrors);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-8">
+      {/* Validation Error Summary */}
+      {isSubmitted && Object.keys(errors).length > 0 && (
+        <div className="flex items-start gap-3 p-4 bg-error/10 border border-error">
+          <AlertCircle size={20} strokeWidth={1.5} className="text-error flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-error">Please fix the following errors:</p>
+            <ul className="text-small text-error mt-1 list-disc list-inside">
+              {errors.shippingAddress && <li>Shipping address has missing fields</li>}
+              {errors.billingAddress && <li>Billing address has missing fields</li>}
+              {errors.shippingMethod && <li>Please select a shipping method</li>}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* Shipping Address */}
       <div>
         <h2 className="font-heading font-bold uppercase text-xl mb-6">
