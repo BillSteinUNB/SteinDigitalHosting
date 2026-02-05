@@ -24,6 +24,20 @@ import { useCheckoutStore } from "@/stores/checkout-store";
 import { useCartStore } from "@/stores/cart-store";
 
 // ============================================
+// API TYPES
+// ============================================
+
+interface CreateOrderResponse {
+  success: boolean;
+  orderId?: number;
+  orderNumber?: string;
+  orderKey?: string;
+  total?: string;
+  status?: string;
+  error?: string;
+}
+
+// ============================================
 // REVIEW SECTION COMPONENT
 // ============================================
 
@@ -71,7 +85,9 @@ export function CheckoutReview() {
     paymentInfo,
     isProcessing,
     orderError,
-    processOrder,
+    setProcessing,
+    setOrderResult,
+    setOrderError,
     setStep,
     goToPreviousStep,
   } = useCheckoutStore();
@@ -105,11 +121,52 @@ export function CheckoutReview() {
     }
 
     setTermsError(false);
-    const success = await processOrder();
+    setProcessing(true);
+    setOrderError(null);
 
-    if (success) {
+    try {
+      // Build order payload
+      const billingAddress = shippingInfo.sameAsShipping
+        ? shippingInfo.shippingAddress
+        : shippingInfo.billingAddress;
+
+      const orderPayload = {
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        billingAddress,
+        shippingAddress: shippingInfo.shippingAddress,
+        items: cart.items,
+        shippingMethodId: cart.selectedShippingMethod,
+        shippingTotal: cart.shippingTotal,
+        couponCodes: cart.appliedCoupons.map((c) => c.code),
+        paymentMethod: paymentInfo.paymentMethod,
+        paymentMethodTitle: paymentMethodLabels[paymentInfo.paymentMethod],
+        customerNote: shippingInfo.shippingNotes,
+      };
+
+      // Call the API to create the order in WooCommerce
+      const response = await fetch("/api/checkout/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      const result: CreateOrderResponse = await response.json();
+
+      if (!result.success || !result.orderId) {
+        throw new Error(result.error || "Failed to create order");
+      }
+
+      // Order created successfully
+      setOrderResult(String(result.orderId), result.orderNumber || String(result.orderId));
       clearCart();
       router.push("/checkout/confirmation");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "An error occurred processing your order";
+      setOrderError(message);
+      setProcessing(false);
     }
   };
 

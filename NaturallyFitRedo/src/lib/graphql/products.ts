@@ -36,6 +36,12 @@ interface WooProductNode {
       slug: string;
     }>;
   };
+  productTags?: {
+    nodes: Array<{
+      name: string;
+      slug: string;
+    }>;
+  };
   metaData?: Array<{
     key: string;
     value: unknown;
@@ -124,6 +130,12 @@ const PRODUCT_CARD_FIELDS = `
       slug
     }
   }
+  productTags {
+    nodes {
+      name
+      slug
+    }
+  }
   metaData {
     key
     value
@@ -166,6 +178,12 @@ const FULL_PRODUCT_FIELDS = `
   productCategories {
     nodes {
       id
+      name
+      slug
+    }
+  }
+  productTags {
+    nodes {
       name
       slug
     }
@@ -294,6 +312,15 @@ function matchesAllowedCategories(
       isAllowedCategorySlug(category.slug) ||
       Boolean(getAllowedCategoryLabel(category.name))
     );
+  });
+}
+
+function hasHiddenTag(wooProduct: WooProduct): boolean {
+  const tags = wooProduct.productTags?.nodes || [];
+  return tags.some((tag) => {
+    const name = tag.name?.trim().toLowerCase();
+    const slug = tag.slug?.trim().toLowerCase();
+    return name === "hidden" || slug === "hidden";
   });
 }
 
@@ -455,7 +482,9 @@ export async function getProducts(
   const data = await fetchGraphQL<ProductsResponse>(query, { first, after });
 
   return {
-    products: data.products.nodes.map(transformToCardData),
+    products: data.products.nodes
+      .filter((product) => !hasHiddenTag(product))
+      .map(transformToCardData),
     hasNextPage: data.products.pageInfo.hasNextPage,
     endCursor: data.products.pageInfo.endCursor,
   };
@@ -477,6 +506,10 @@ export async function getProductBySlugGraphQL(slug: string): Promise<Product | n
     return null;
   }
 
+  if (hasHiddenTag(data.product)) {
+    return null;
+  }
+
   return transformToProduct(data.product);
 }
 
@@ -493,7 +526,9 @@ export async function getFeaturedProducts(limit: number = 8): Promise<ProductCar
   `;
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-  return data.products.nodes.map(transformToCardData);
+  return data.products.nodes
+    .filter((product) => !hasHiddenTag(product))
+    .map(transformToCardData);
 }
 
 // Fetch sale products
@@ -509,7 +544,9 @@ export async function getSaleProducts(limit: number = 8): Promise<ProductCardDat
   `;
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-  return data.products.nodes.map(transformToCardData);
+  return data.products.nodes
+    .filter((product) => !hasHiddenTag(product))
+    .map(transformToCardData);
 }
 
 // Fetch best sellers
@@ -526,7 +563,9 @@ export async function getBestSellers(limit: number = 8): Promise<ProductCardData
   `;
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
-  return data.products.nodes.map(transformToCardData);
+  return data.products.nodes
+    .filter((product) => !hasHiddenTag(product))
+    .map(transformToCardData);
 }
 
 // Import types for paginated function
@@ -630,6 +669,7 @@ export async function getPaginatedProductsGraphQL(
   const data = await fetchGraphQL<ProductsResponse>(query, { first });
   
   const allProducts = data.products.nodes
+    .filter((product) => !hasHiddenTag(product))
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
     .map(transformToCardData);
   

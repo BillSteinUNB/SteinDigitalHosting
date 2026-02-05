@@ -76,6 +76,17 @@ const matchesAllowedParent = (category: CategoryWithCount, parentName: string) =
   return nameKey === normalizeCategoryName(parentName) || slugKey === parentSlug;
 };
 
+const matchesParentRef = (
+  parent: { name: string; slug: string } | undefined,
+  parentName: string
+) => {
+  if (!parent) return false;
+  const nameKey = normalizeCategoryName(parent.name);
+  const slugKey = stripNumericSuffix(slugifyCategory(parent.slug));
+  const parentSlug = slugifyCategory(parentName);
+  return nameKey === normalizeCategoryName(parentName) || slugKey === parentSlug;
+};
+
 const matchesAllowedChild = (
   category: CategoryWithCount,
   childName: string,
@@ -141,9 +152,13 @@ export function buildAllowedCategoryTree(
 
     const children: CategoryTreeNode[] = entry.children
       .map((childName) => {
-        const childCategory = categories.find((category) =>
+        const matchingChildren = categories.filter((category) =>
           matchesAllowedChild(category, childName, entry.name)
         );
+        const childCategory =
+          matchingChildren.find((category) =>
+            matchesParentRef(category.parent, entry.name)
+          ) || matchingChildren[0];
 
         if (childCategory) {
           return { ...childCategory };
@@ -172,7 +187,16 @@ export function buildAllowedCategoryTree(
       return true;
     });
 
-    tree.push({ ...parentNode, children: uniqueChildren });
+    const summedCount = uniqueChildren.reduce(
+      (total, child) => total + (child.productCount || 0),
+      0
+    );
+    const parentWithCount =
+      parentNode.productCount === 0 && summedCount > 0
+        ? { ...parentNode, productCount: summedCount }
+        : parentNode;
+
+    tree.push({ ...parentWithCount, children: uniqueChildren });
   }
 
   return tree;

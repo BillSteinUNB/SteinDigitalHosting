@@ -28,10 +28,18 @@ interface MegaMenuProps {
  * MegaMenu Component
  *
  * Full-width dropdown for SHOP navigation.
- * Two rows of 5 columns each showing categories and subcategories.
+ * Rows of category columns showing categories and subcategories.
  * Includes promotional images from WordPress.
  */
 export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
+  const getColumnsClass = (count: number) => {
+    if (count >= 5) return "grid-cols-5";
+    if (count === 4) return "grid-cols-4";
+    if (count === 3) return "grid-cols-3";
+    if (count === 2) return "grid-cols-2";
+    return "grid-cols-1";
+  };
+
   return (
     <div
       className={cn(
@@ -48,7 +56,8 @@ export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
           <div
             key={rowIndex}
             className={cn(
-              "grid grid-cols-5 gap-8",
+              "grid gap-8",
+              getColumnsClass(row.length),
               rowIndex < categories.length - 1 && "mb-8 pb-8 border-b border-gray-border"
             )}
           >

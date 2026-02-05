@@ -21,9 +21,9 @@ import {
 import { IconButton } from "@/components/ui/Button";
 import {
   mainNavItems,
-  megaMenuCategories,
   contactInfo,
 } from "@/lib/navigation";
+import useMegaMenuCategories from "./useMegaMenuCategories";
 
 // ============================================
 // MOBILE MENU COMPONENT
@@ -49,6 +49,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const menuCategories = useMegaMenuCategories();
 
   // Handle client-side mounting for portal
   useEffect(() => {
@@ -140,7 +141,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               onToggle={() => toggleExpanded("Shop")}
               onClose={onClose}
             >
-              {megaMenuCategories.flat().map((category) => (
+              {menuCategories.flat().map((category) => (
                 <div key={category.title} className="mb-4">
                   <Link
                     href={category.href}

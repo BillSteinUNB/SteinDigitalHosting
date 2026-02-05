@@ -51,6 +51,7 @@ export interface CheckoutState {
   isProcessing: boolean;
   orderError: string | null;
   orderId: string | null;
+  orderNumber: string | null;
 
   // Actions
   setStep: (step: CheckoutStep) => void;
@@ -65,6 +66,8 @@ export interface CheckoutState {
 
   // Order processing
   processOrder: () => Promise<boolean>;
+  setProcessing: (isProcessing: boolean) => void;
+  setOrderResult: (orderId: string, orderNumber: string) => void;
   setOrderError: (error: string | null) => void;
 
   // Reset
@@ -127,6 +130,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
   isProcessing: false,
   orderError: null,
   orderId: null,
+  orderNumber: null,
 
   // Set current step
   setStep: (step) => {
@@ -232,6 +236,16 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
     set({ orderError: error });
   },
 
+  // Set processing state
+  setProcessing: (isProcessing) => {
+    set({ isProcessing });
+  },
+
+  // Set order result after successful creation
+  setOrderResult: (orderId, orderNumber) => {
+    set({ orderId, orderNumber, isProcessing: false, orderError: null });
+  },
+
   // Reset checkout
   resetCheckout: () => {
     set({
@@ -243,6 +257,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
       isProcessing: false,
       orderError: null,
       orderId: null,
+      orderNumber: null,
     });
   },
 }));

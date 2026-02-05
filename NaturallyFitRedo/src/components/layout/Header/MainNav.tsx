@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { ChevronDown, User, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mainNavItems, megaMenuCategories } from "@/lib/navigation";
+import { mainNavItems } from "@/lib/navigation";
 import MegaMenu from "./MegaMenu";
+import useMegaMenuCategories from "./useMegaMenuCategories";
 
 /**
  * MainNav Component
@@ -21,6 +22,7 @@ export default function MainNav() {
   const { data: session, status } = useSession();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuCategories = useMegaMenuCategories();
 
   const handleMouseEnter = (label: string) => {
     setActiveDropdown(label);
@@ -81,7 +83,7 @@ export default function MainNav() {
                   {/* Mega Menu (SHOP only) */}
                   {isShop && isActive && (
                     <MegaMenu
-                      categories={megaMenuCategories}
+                      categories={menuCategories}
                       onClose={() => setActiveDropdown(null)}
                     />
                   )}

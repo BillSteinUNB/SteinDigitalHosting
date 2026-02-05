@@ -85,6 +85,40 @@ function transformCategory(wooCategory: WooCategory): CategoryWithCount {
   };
 }
 
+function applyParentCounts(categories: CategoryWithCount[]): CategoryWithCount[] {
+  const childrenByParent = new Map<string, CategoryWithCount[]>();
+
+  for (const category of categories) {
+    if (category.parent) {
+      const list = childrenByParent.get(category.parent.slug) || [];
+      list.push(category);
+      childrenByParent.set(category.parent.slug, list);
+    }
+  }
+
+  return categories.map((category) => {
+    if (category.parent) {
+      return category;
+    }
+
+    const children = childrenByParent.get(category.slug);
+    if (!children || children.length === 0) {
+      return category;
+    }
+
+    const summedCount = children.reduce(
+      (total, child) => total + (child.productCount || 0),
+      0
+    );
+
+    if (category.productCount === 0 && summedCount > 0) {
+      return { ...category, productCount: summedCount };
+    }
+
+    return category;
+  });
+}
+
 // Fetch all categories
 export async function getCategories(): Promise<CategoryWithCount[]> {
   const query = `
@@ -98,7 +132,8 @@ export async function getCategories(): Promise<CategoryWithCount[]> {
   `;
 
   const data = await fetchGraphQL<CategoriesResponse>(query);
-  return data.productCategories.nodes.map(transformCategory);
+  const categories = data.productCategories.nodes.map(transformCategory);
+  return applyParentCounts(categories);
 }
 
 // Fetch single category by slug
