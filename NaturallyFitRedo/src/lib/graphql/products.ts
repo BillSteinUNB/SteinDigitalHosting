@@ -1,7 +1,7 @@
 // WooCommerce GraphQL Queries
 import { fetchGraphQL } from './client';
 import type { ProductCardData, Product, SimpleProduct, VariableProduct, StockStatus } from '@/types/product';
-import { getWordPressBaseUrl, replaceWordPressBase } from '@/lib/config/wordpress';
+import { replaceWordPressBase } from '@/lib/config/wordpress';
 import { formatPrice } from "@/lib/utils";
 import { WHOLESALEX_PRICE_META } from "@/lib/wholesalex/integration";
 import { getAllowedCategoryLabel, isAllowedCategorySlug } from "@/lib/shop-categories";
@@ -64,14 +64,6 @@ interface VariableProductNode extends WooProductNode {
   salePrice: string | null;
   stockStatus: string;
   stockQuantity: number | null;
-  variationImages?: {
-    nodes: Array<{
-      image?: {
-        sourceUrl: string;
-        altText: string;
-      } | null;
-    }>;
-  };
   variations: {
     nodes: Array<{
       id: string;
@@ -137,12 +129,6 @@ const PRODUCT_CARD_FIELDS = `
     sourceUrl
     altText
   }
-  galleryImages {
-    nodes {
-      sourceUrl
-      altText
-    }
-  }
   productCategories {
     nodes {
       name
@@ -170,14 +156,6 @@ const PRODUCT_CARD_FIELDS = `
     regularPrice
     salePrice
     stockStatus
-    variationImages: variations(first: 50) {
-      nodes {
-        image {
-          sourceUrl
-          altText
-        }
-      }
-    }
   }
 `;
 
@@ -287,24 +265,7 @@ const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x600/1a1a2e/ffffff?text=No+
 // Transform image URL from old domain to new domain
 function transformImageUrl(url: string | null | undefined): string {
   if (!url) return DEFAULT_PLACEHOLDER;
-  const trimmed = url.trim();
-  const wpBase = getWordPressBaseUrl();
-
-  // Protocol-relative URLs from WordPress (e.g. //example.com/wp-content/...)
-  // must be normalized before generic "/" handling.
-  if (trimmed.startsWith("//")) {
-    return replaceWordPressBase(`https:${trimmed}`);
-  }
-
-  if (trimmed.startsWith("/")) {
-    return `${wpBase}${trimmed}`;
-  }
-
-  if (trimmed.startsWith("wp-content/")) {
-    return `${wpBase}/${trimmed}`;
-  }
-
-  return replaceWordPressBase(trimmed);
+  return replaceWordPressBase(url);
 }
 
 function extractMetaValue(
@@ -425,21 +386,8 @@ function isVariableWooProduct(wooProduct: WooProduct): wooProduct is VariablePro
 
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
-  // Prefer featured image; fall back to first gallery image before placeholder.
-  const fallbackGalleryImage = wooProduct.galleryImages?.nodes?.[0];
-  const fallbackVariationImage =
-    wooProduct.__typename === "VariableProduct"
-      ? wooProduct.variationImages?.nodes
-          ?.map((node) => node.image || undefined)
-          .find((image): image is { sourceUrl: string; altText: string } =>
-            Boolean(image?.sourceUrl)
-          )
-      : undefined;
-  const imageUrl = transformImageUrl(
-    wooProduct.image?.sourceUrl ||
-      fallbackGalleryImage?.sourceUrl ||
-      fallbackVariationImage?.sourceUrl
-  );
+  // Storefront cards should use the product's default image.
+  const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
   const wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
   
   return {
@@ -449,11 +397,7 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
     name: wooProduct.name,
     image: {
       sourceUrl: imageUrl,
-      altText:
-        wooProduct.image?.altText ||
-        fallbackGalleryImage?.altText ||
-        fallbackVariationImage?.altText ||
-        wooProduct.name,
+      altText: wooProduct.image?.altText || wooProduct.name,
     },
     price: wooProduct.price || '$0.00',
     regularPrice: wooProduct.regularPrice || '$0.00',
@@ -473,23 +417,14 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
 
 // Convert WooCommerce product to full Product type
 function transformToProduct(wooProduct: WooProduct): Product {
+  // Use WordPress product image as the default main image.
+  const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
+
   // Process gallery images
   const galleryImages = wooProduct.galleryImages?.nodes.map(img => ({
     sourceUrl: transformImageUrl(img.sourceUrl),
     altText: img.altText || wooProduct.name,
   })) || [];
-
-  // Prefer featured image; fall back to first gallery image before placeholder.
-  const fallbackGalleryImage = wooProduct.galleryImages?.nodes?.[0];
-  const fallbackVariationImage = isVariableWooProduct(wooProduct)
-    ? wooProduct.variations?.nodes.find((variation) => Boolean(variation.image?.sourceUrl))
-        ?.image
-    : undefined;
-  const imageUrl = transformImageUrl(
-    wooProduct.image?.sourceUrl ||
-      fallbackGalleryImage?.sourceUrl ||
-      fallbackVariationImage?.sourceUrl
-  );
   
   const baseProduct = {
     id: wooProduct.id,
@@ -498,11 +433,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
     name: wooProduct.name,
     image: {
       sourceUrl: imageUrl,
-      altText:
-        wooProduct.image?.altText ||
-        fallbackGalleryImage?.altText ||
-        fallbackVariationImage?.altText ||
-        wooProduct.name,
+      altText: wooProduct.image?.altText || wooProduct.name,
     },
     galleryImages: galleryImages.length > 0 ? galleryImages : [{
       sourceUrl: imageUrl,
