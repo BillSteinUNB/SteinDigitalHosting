@@ -190,6 +190,12 @@ function nf_wholesale_sync_item($post_id) {
         return;
     }
 
+    // Safety: source and target keys must be different, otherwise each save
+    // would repeatedly multiply the same value.
+    if (strtolower($cost_key) === strtolower($wholesale_key)) {
+        return;
+    }
+
     $cost = nf_wholesale_sync_get_cost_value($post_id, $cost_key);
     if ($cost === null) {
         return;
@@ -253,4 +259,3 @@ function nf_wholesale_sync_cost_meta_changed($meta_id, $post_id, $meta_key, $met
 }
 add_action('updated_post_meta', 'nf_wholesale_sync_cost_meta_changed', 20, 4);
 add_action('added_post_meta', 'nf_wholesale_sync_cost_meta_changed', 20, 4);
-

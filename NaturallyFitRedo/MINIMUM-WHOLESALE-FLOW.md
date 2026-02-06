@@ -50,6 +50,10 @@ define('NF_WHOLESALE_COST_META_KEY', 'mycost'); // change if your cost field key
 define('NF_WHOLESALEX_PRICE_META_KEY', 'wholesalex_b2b_role_1770160918371_base_price');
 ```
 
+Important:
+- `NF_WHOLESALE_COST_META_KEY` must be a true cost/source field key.
+- Do **not** set `NF_WHOLESALE_COST_META_KEY` to the same value as `NF_WHOLESALEX_PRICE_META_KEY`.
+
 3. Save any product (or run a bulk quick edit) to trigger sync.
 
 What it does:
