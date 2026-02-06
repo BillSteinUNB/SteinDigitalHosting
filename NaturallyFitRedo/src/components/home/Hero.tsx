@@ -167,7 +167,7 @@ export default function Hero({
       <style jsx global>{`
         /* Hero Carousel Container - Floating with rounded corners */
         .hero-swiper {
-          width: 90%;
+          width: min(90%, 1800px);
           height: 54vh;
           min-height: 360px;
           max-height: 540px;
@@ -249,7 +249,7 @@ function HeroSlideContent({ slide }: HeroSlideContentProps) {
           fill
           className="object-cover"
           priority
-          sizes="100vw"
+          sizes="(min-width: 2000px) 1800px, 90vw"
           onError={() => {
             console.error('Hero image failed to load:', slide.image.src);
           }}
