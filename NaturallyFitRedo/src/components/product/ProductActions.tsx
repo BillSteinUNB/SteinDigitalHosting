@@ -69,8 +69,11 @@ export default function ProductActions({
   const { addItem, openMiniCart } = useCartStore();
 
   const isOutOfStock = stockStatus === "OUT_OF_STOCK";
-  const canAddToCart = !isOutOfStock && 
+  const hasValidVariation = !isVariableProduct || Boolean(variation);
+  const canAddToCart =
+    !isOutOfStock &&
     (!isVariableProduct || allVariationsSelected) &&
+    hasValidVariation &&
     (variation ? variation.stockStatus !== "OUT_OF_STOCK" : true);
 
   // Max quantity based on stock
@@ -209,6 +212,8 @@ export default function ProductActions({
             "OUT OF STOCK"
           ) : !allVariationsSelected ? (
             "SELECT OPTIONS"
+          ) : !hasValidVariation ? (
+            "UNAVAILABLE OPTION"
           ) : (
             <>
               <ShoppingCart size={18} strokeWidth={1.5} />

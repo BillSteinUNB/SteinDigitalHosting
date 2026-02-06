@@ -83,6 +83,10 @@ interface VariableProductNode extends WooProductNode {
           value: string;
         }>;
       };
+      image?: {
+        sourceUrl: string;
+        altText: string;
+      } | null;
     }>;
   };
   attributes: {
@@ -225,6 +229,10 @@ const FULL_PRODUCT_FIELDS = `
             name
             value
           }
+        }
+        image {
+          sourceUrl
+          altText
         }
       }
     }
@@ -486,6 +494,12 @@ function transformToProduct(wooProduct: WooProduct): Product {
           name: a.name,
           value: a.value,
         })),
+        image: v.image?.sourceUrl
+          ? {
+              sourceUrl: transformImageUrl(v.image.sourceUrl),
+              altText: v.image.altText || v.name,
+            }
+          : undefined,
       })) || [],
       attributes: variableProduct.attributes?.nodes.map(a => ({
         name: a.name,

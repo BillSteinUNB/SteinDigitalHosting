@@ -17,6 +17,28 @@ export interface ProductVariationsProps {
   className?: string;
 }
 
+function normalizeAttributeName(name: string): string {
+  return name.toLowerCase().replace(/^pa_/, "").replace(/[^a-z0-9]/g, "");
+}
+
+function getSelectedAttributeValue(
+  selectedAttributes: Record<string, string>,
+  attributeName: string
+): string | undefined {
+  if (selectedAttributes[attributeName]) {
+    return selectedAttributes[attributeName];
+  }
+
+  const normalizedTarget = normalizeAttributeName(attributeName);
+  for (const [key, value] of Object.entries(selectedAttributes)) {
+    if (normalizeAttributeName(key) === normalizedTarget) {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
 /**
  * ProductVariations Component
  *
@@ -46,7 +68,7 @@ export default function ProductVariations({
         // Find matching variation
         const matchingVariation = variations.find((variation) =>
           variation.attributes.every((attr) => {
-            const selectedValue = testSelection[attr.name];
+            const selectedValue = getSelectedAttributeValue(testSelection, attr.name);
             // If no value selected for this attribute, any value is valid
             if (!selectedValue) return true;
             return attr.value === selectedValue;
@@ -68,11 +90,15 @@ export default function ProductVariations({
   // Get the currently selected variation
   const selectedVariation = useMemo(() => {
     // Check if all attributes are selected
-    const allSelected = attributes.every((attr) => selectedAttributes[attr.name]);
+    const allSelected = attributes
+      .filter((attr) => attr.variation)
+      .every((attr) => Boolean(getSelectedAttributeValue(selectedAttributes, attr.name)));
     if (!allSelected) return null;
 
     return variations.find((variation) =>
-      variation.attributes.every((attr) => attr.value === selectedAttributes[attr.name])
+      variation.attributes.every(
+        (attr) => attr.value === getSelectedAttributeValue(selectedAttributes, attr.name)
+      )
     );
   }, [attributes, variations, selectedAttributes]);
 

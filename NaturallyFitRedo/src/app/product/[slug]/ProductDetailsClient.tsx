@@ -96,6 +96,28 @@ interface ProductDetailsClientProps {
   product: Product;
 }
 
+function normalizeAttributeName(name: string): string {
+  return name.toLowerCase().replace(/^pa_/, "").replace(/[^a-z0-9]/g, "");
+}
+
+function getSelectedAttributeValue(
+  selectedAttributes: Record<string, string>,
+  attributeName: string
+): string | undefined {
+  if (selectedAttributes[attributeName]) {
+    return selectedAttributes[attributeName];
+  }
+
+  const normalizedTarget = normalizeAttributeName(attributeName);
+  for (const [key, value] of Object.entries(selectedAttributes)) {
+    if (normalizeAttributeName(key) === normalizedTarget) {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
 export default function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const { data: session } = useSession();
   const isWholesale = Boolean(session?.user?.isWholesale);
@@ -125,14 +147,14 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     // Check if all variation attributes are selected
     const variationAttributes = attributes.filter((attr) => attr.variation);
     const allSelected = variationAttributes.every(
-      (attr) => selectedAttributes[attr.name]
+      (attr) => Boolean(getSelectedAttributeValue(selectedAttributes, attr.name))
     );
 
     if (!allSelected) return undefined;
 
     return variations.find((variation) =>
       variation.attributes.every(
-        (attr) => selectedAttributes[attr.name] === attr.value
+        (attr) => getSelectedAttributeValue(selectedAttributes, attr.name) === attr.value
       )
     );
   }, [isVariableProduct, attributes, variations, selectedAttributes]);

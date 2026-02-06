@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs, FreeMode, Zoom } from "swiper/modules";
@@ -56,8 +56,14 @@ export default function ProductGallery({
   const galleryImages = images.length > 0 ? images : [
     { sourceUrl: "https://placehold.co/600x600/1a1a2e/eee?text=No+Image", altText: productName }
   ];
+  const gallerySignature = galleryImages.map((img) => img.sourceUrl).join("|");
 
   const isOutOfStock = stockStatus === "OUT_OF_STOCK";
+
+  useEffect(() => {
+    setActiveIndex(0);
+    mainSwiperRef.current?.slideTo(0, 0);
+  }, [gallerySignature]);
 
   return (
     <div className={cn("flex flex-col gap-4 min-w-0", className)}>
@@ -88,6 +94,7 @@ export default function ProductGallery({
 
         {/* Main Swiper */}
         <Swiper
+          key={`main-${gallerySignature}`}
           modules={[Navigation, Thumbs, Zoom]}
           onSwiper={(swiper) => {
             mainSwiperRef.current = swiper;
@@ -99,7 +106,7 @@ export default function ProductGallery({
           className="w-full h-full"
         >
           {galleryImages.map((image, index) => (
-            <SwiperSlide key={image.id || index}>
+            <SwiperSlide key={image.id || `${image.sourceUrl}-${index}`}>
               <div
                 className="relative w-full h-full cursor-zoom-in"
                 onClick={() => setIsZoomModalOpen(true)}
@@ -168,6 +175,7 @@ export default function ProductGallery({
       {galleryImages.length > 1 && (
         <div className="relative">
           <Swiper
+            key={`thumbs-${gallerySignature}`}
             modules={[FreeMode, Navigation, Thumbs]}
             onSwiper={setThumbsSwiper}
             spaceBetween={8}
@@ -181,7 +189,7 @@ export default function ProductGallery({
             className="thumbnails-swiper"
           >
             {galleryImages.map((image, index) => (
-              <SwiperSlide key={image.id || `thumb-${index}`}>
+              <SwiperSlide key={image.id || `${image.sourceUrl}-thumb-${index}`}>
                 <button
                   type="button"
                   className={cn(
@@ -248,9 +256,9 @@ function ZoomModal({
   const modalSwiperRef = useRef<SwiperType | null>(null);
 
   // Update currentIndex when activeIndex changes from parent
-  useState(() => {
+  useEffect(() => {
     setCurrentIndex(activeIndex);
-  });
+  }, [activeIndex]);
 
   return (
     <Modal

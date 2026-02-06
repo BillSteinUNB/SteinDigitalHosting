@@ -6,6 +6,7 @@ import { Heart, Menu, Search } from "lucide-react";
 import { CountBadge } from "@/components/ui";
 import { contactInfo } from "@/lib/navigation";
 import { wpAsset } from "@/lib/config/wordpress";
+import { useCartStore, selectCartItemCount } from "@/stores/cart-store";
 import MiniCart from "./MiniCart";
 
 interface TopBarProps {
@@ -23,8 +24,7 @@ interface TopBarProps {
  * Style: Black background, white text
  */
 export default function TopBar({ onMobileMenuToggle }: TopBarProps) {
-  // TODO: Get from cart store
-  const cartCount = 0;
+  const cartCount = useCartStore(selectCartItemCount);
   const wishlistCount = 0;
 
   return (

@@ -80,21 +80,77 @@ function nfsch_get_wholesale_role_for_handoff() {
     return is_string($role) ? $role : '';
 }
 
-function nfsch_set_handoff_context($payload) {
-    if (!function_exists('WC') || null === WC()->session) {
-        return;
+function nfsch_role_looks_wholesale($role) {
+    if (!is_string($role) || $role === '') {
+        return false;
+    }
+    return stripos($role, 'wholesale') !== false;
+}
+
+function nfsch_payload_has_signed_unit_price($payload) {
+    if (!is_array($payload) || !isset($payload['items']) || !is_array($payload['items'])) {
+        return false;
     }
 
+    foreach ($payload['items'] as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $unit_price = nfsch_parse_positive_decimal($item['unitPrice'] ?? null);
+        if ($unit_price !== null) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function nfsch_detect_wholesale_from_payload_or_user($payload, &$role = '') {
     $is_wholesale = false;
-    $role = '';
 
     if (is_array($payload) && isset($payload['user']) && is_array($payload['user'])) {
         $is_wholesale = !empty($payload['user']['isWholesale']);
 
         if (isset($payload['user']['role']) && is_string($payload['user']['role'])) {
             $role = sanitize_text_field($payload['user']['role']);
+            if (!$is_wholesale && nfsch_role_looks_wholesale($role)) {
+                $is_wholesale = true;
+            }
         }
     }
+
+    if (!$is_wholesale && nfsch_payload_has_signed_unit_price($payload)) {
+        $is_wholesale = true;
+    }
+
+    if (!$is_wholesale && function_exists('wp_get_current_user')) {
+        $current_user = wp_get_current_user();
+        if ($current_user && !empty($current_user->roles) && is_array($current_user->roles)) {
+            foreach ($current_user->roles as $user_role) {
+                if (!is_string($user_role)) {
+                    continue;
+                }
+                if (nfsch_role_looks_wholesale($user_role)) {
+                    $is_wholesale = true;
+                    if ($role === '') {
+                        $role = sanitize_text_field($user_role);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    return $is_wholesale;
+}
+
+function nfsch_set_handoff_context($payload) {
+    if (!function_exists('WC') || null === WC()->session) {
+        return;
+    }
+
+    $role = '';
+    $is_wholesale = nfsch_detect_wholesale_from_payload_or_user($payload, $role);
 
     WC()->session->set('nfsch_handoff_started', time());
     WC()->session->set(nfsch_get_wholesale_session_key(), $is_wholesale ? 'yes' : 'no');
