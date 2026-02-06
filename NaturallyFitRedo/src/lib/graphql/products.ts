@@ -64,7 +64,7 @@ interface VariableProductNode extends WooProductNode {
   salePrice: string | null;
   stockStatus: string;
   stockQuantity: number | null;
-  variationImage?: {
+  variationImages?: {
     nodes: Array<{
       image?: {
         sourceUrl: string;
@@ -170,7 +170,7 @@ const PRODUCT_CARD_FIELDS = `
     regularPrice
     salePrice
     stockStatus
-    variationImage: variations(first: 1) {
+    variationImages: variations(first: 50) {
       nodes {
         image {
           sourceUrl
@@ -289,6 +289,12 @@ function transformImageUrl(url: string | null | undefined): string {
   if (!url) return DEFAULT_PLACEHOLDER;
   const trimmed = url.trim();
   const wpBase = getWordPressBaseUrl();
+
+  // Protocol-relative URLs from WordPress (e.g. //example.com/wp-content/...)
+  // must be normalized before generic "/" handling.
+  if (trimmed.startsWith("//")) {
+    return replaceWordPressBase(`https:${trimmed}`);
+  }
 
   if (trimmed.startsWith("/")) {
     return `${wpBase}${trimmed}`;
@@ -423,7 +429,11 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
   const fallbackGalleryImage = wooProduct.galleryImages?.nodes?.[0];
   const fallbackVariationImage =
     wooProduct.__typename === "VariableProduct"
-      ? wooProduct.variationImage?.nodes?.[0]?.image
+      ? wooProduct.variationImages?.nodes
+          ?.map((node) => node.image || undefined)
+          .find((image): image is { sourceUrl: string; altText: string } =>
+            Boolean(image?.sourceUrl)
+          )
       : undefined;
   const imageUrl = transformImageUrl(
     wooProduct.image?.sourceUrl ||
@@ -471,8 +481,14 @@ function transformToProduct(wooProduct: WooProduct): Product {
 
   // Prefer featured image; fall back to first gallery image before placeholder.
   const fallbackGalleryImage = wooProduct.galleryImages?.nodes?.[0];
+  const fallbackVariationImage = isVariableWooProduct(wooProduct)
+    ? wooProduct.variations?.nodes.find((variation) => Boolean(variation.image?.sourceUrl))
+        ?.image
+    : undefined;
   const imageUrl = transformImageUrl(
-    wooProduct.image?.sourceUrl || fallbackGalleryImage?.sourceUrl
+    wooProduct.image?.sourceUrl ||
+      fallbackGalleryImage?.sourceUrl ||
+      fallbackVariationImage?.sourceUrl
   );
   
   const baseProduct = {
@@ -485,6 +501,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
       altText:
         wooProduct.image?.altText ||
         fallbackGalleryImage?.altText ||
+        fallbackVariationImage?.altText ||
         wooProduct.name,
     },
     galleryImages: galleryImages.length > 0 ? galleryImages : [{
