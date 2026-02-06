@@ -161,8 +161,15 @@ export default function ShopPageContent() {
   );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const skipNextUrlWrite = useRef(false);
+  const lastHandledQueryRef = useRef(searchParams.toString());
 
   useEffect(() => {
+    const query = searchParams.toString();
+    if (query === lastHandledQueryRef.current) {
+      return;
+    }
+    lastHandledQueryRef.current = query;
+
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
     const minPrice = searchParams.get("minPrice");
@@ -209,9 +216,7 @@ export default function ShopPageContent() {
     if (didSyncFromUrl) {
       skipNextUrlWrite.current = true;
     }
-  // Sync local state from URL changes (e.g. direct nav to /shop or /shop?brand=...)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, filters, sortBy, currentPage, perPage, viewMode]);
 
   useEffect(() => {
     if (!filters.category || allowedCategories.length === 0) {
