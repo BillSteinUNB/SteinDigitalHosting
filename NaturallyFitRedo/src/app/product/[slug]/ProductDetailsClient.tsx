@@ -163,7 +163,9 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
   const allVariationsSelected = useMemo(() => {
     if (!isVariableProduct) return true;
     const variationAttributes = attributes.filter((attr) => attr.variation);
-    return variationAttributes.every((attr) => selectedAttributes[attr.name]);
+    return variationAttributes.every((attr) =>
+      Boolean(getSelectedAttributeValue(selectedAttributes, attr.name))
+    );
   }, [isVariableProduct, attributes, selectedAttributes]);
 
   // Handle attribute selection

@@ -129,6 +129,12 @@ const PRODUCT_CARD_FIELDS = `
     sourceUrl
     altText
   }
+  galleryImages {
+    nodes {
+      sourceUrl
+      altText
+    }
+  }
   productCategories {
     nodes {
       name
@@ -387,8 +393,11 @@ function isVariableWooProduct(wooProduct: WooProduct): wooProduct is VariablePro
 
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
-  // Use WordPress image if available, transform URL, otherwise use placeholder
-  const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
+  // Prefer featured image; fall back to first gallery image before placeholder.
+  const fallbackGalleryImage = wooProduct.galleryImages?.nodes?.[0];
+  const imageUrl = transformImageUrl(
+    wooProduct.image?.sourceUrl || fallbackGalleryImage?.sourceUrl
+  );
   const wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
   
   return {
@@ -398,7 +407,10 @@ function transformToCardData(wooProduct: WooProduct): ProductCardData {
     name: wooProduct.name,
     image: {
       sourceUrl: imageUrl,
-      altText: wooProduct.image?.altText || wooProduct.name,
+      altText:
+        wooProduct.image?.altText ||
+        fallbackGalleryImage?.altText ||
+        wooProduct.name,
     },
     price: wooProduct.price || '$0.00',
     regularPrice: wooProduct.regularPrice || '$0.00',
