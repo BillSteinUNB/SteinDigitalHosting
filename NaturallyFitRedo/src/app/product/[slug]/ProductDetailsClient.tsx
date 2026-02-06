@@ -176,7 +176,9 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     if (!isWholesale) return undefined;
     const override =
       selectedVariation?.wholesalePrice ||
-      (product.type === "SIMPLE" ? product.wholesalePrice : undefined);
+      (product.type === "SIMPLE"
+        ? product.wholesalePrice
+        : product.wholesalePriceRange?.min);
     const regular = selectedVariation?.regularPrice ?? product.regularPrice;
     const sale =
       selectedVariation?.salePrice ||

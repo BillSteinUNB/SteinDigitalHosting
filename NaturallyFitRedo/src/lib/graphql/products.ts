@@ -151,6 +151,14 @@ const PRODUCT_CARD_FIELDS = `
     regularPrice
     salePrice
     stockStatus
+    variations(first: 100) {
+      nodes {
+        metaData {
+          key
+          value
+        }
+      }
+    }
   }
 `;
 
@@ -370,7 +378,22 @@ function matchesCategoryScope(
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
   // Use WordPress image if available, transform URL, otherwise use placeholder
   const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
-  const wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
+  let wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
+
+  // Many variable products store wholesale values on variations only.
+  if (!wholesalePrice && wooProduct.__typename === "VariableProduct") {
+    const variationWholesaleValues = wooProduct.variations?.nodes
+      .map((variation) => {
+        const rawValue = extractWholesaleMetaValue(variation.metaData);
+        const parsed = rawValue ? parsePriceNumber(rawValue) : NaN;
+        return Number.isNaN(parsed) ? undefined : parsed;
+      })
+      .filter((value): value is number => typeof value === "number");
+
+    if (variationWholesaleValues && variationWholesaleValues.length > 0) {
+      wholesalePrice = formatPrice(Math.min(...variationWholesaleValues));
+    }
+  }
   
   return {
     id: wooProduct.id,
