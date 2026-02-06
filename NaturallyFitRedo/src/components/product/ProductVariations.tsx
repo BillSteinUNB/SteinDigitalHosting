@@ -133,9 +133,6 @@ interface SelectedVariationInfoProps {
 
 function SelectedVariationInfo({ variation }: SelectedVariationInfoProps) {
   const isOutOfStock = variation.stockStatus === "OUT_OF_STOCK";
-  const isLowStock = variation.stockStatus === "IN_STOCK" && 
-    variation.stockQuantity !== undefined && 
-    variation.stockQuantity <= 5;
 
   return (
     <div className="flex flex-wrap items-center gap-4 py-3 px-4 bg-gray-light border-l-4 border-red-primary">
@@ -163,10 +160,6 @@ function SelectedVariationInfo({ variation }: SelectedVariationInfoProps) {
         <span className="text-small text-gray-medium">Availability:</span>
         {isOutOfStock ? (
           <span className="text-small font-semibold text-error">Out of Stock</span>
-        ) : isLowStock ? (
-          <span className="text-small font-semibold text-warning">
-            Only {variation.stockQuantity} left!
-          </span>
         ) : (
           <span className="text-small font-semibold text-success">In Stock</span>
         )}

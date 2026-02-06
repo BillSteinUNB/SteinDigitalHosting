@@ -113,6 +113,7 @@ interface SingleProductResponse {
 
 // Query fragments
 const PRODUCT_CARD_FIELDS = `
+  __typename
   id
   databaseId
   name
@@ -151,18 +152,11 @@ const PRODUCT_CARD_FIELDS = `
     regularPrice
     salePrice
     stockStatus
-    variations(first: 100) {
-      nodes {
-        metaData {
-          key
-          value
-        }
-      }
-    }
   }
 `;
 
 const FULL_PRODUCT_FIELDS = `
+  __typename
   id
   databaseId
   name
@@ -374,26 +368,20 @@ function matchesCategoryScope(
   );
 }
 
+function isVariableWooProduct(wooProduct: WooProduct): wooProduct is VariableProductNode {
+  if (wooProduct.__typename === "VariableProduct") {
+    return true;
+  }
+
+  const candidate = wooProduct as unknown as Partial<VariableProductNode>;
+  return Boolean(candidate.variations?.nodes?.length || candidate.attributes?.nodes?.length);
+}
+
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
   // Use WordPress image if available, transform URL, otherwise use placeholder
   const imageUrl = transformImageUrl(wooProduct.image?.sourceUrl);
-  let wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
-
-  // Many variable products store wholesale values on variations only.
-  if (!wholesalePrice && wooProduct.__typename === "VariableProduct") {
-    const variationWholesaleValues = wooProduct.variations?.nodes
-      .map((variation) => {
-        const rawValue = extractWholesaleMetaValue(variation.metaData);
-        const parsed = rawValue ? parsePriceNumber(rawValue) : NaN;
-        return Number.isNaN(parsed) ? undefined : parsed;
-      })
-      .filter((value): value is number => typeof value === "number");
-
-    if (variationWholesaleValues && variationWholesaleValues.length > 0) {
-      wholesalePrice = formatPrice(Math.min(...variationWholesaleValues));
-    }
-  }
+  const wholesalePrice = parseWholesaleMetaPrice(wooProduct.metaData);
   
   return {
     id: wooProduct.id,
@@ -461,8 +449,8 @@ function transformToProduct(wooProduct: WooProduct): Product {
     onSale: wooProduct.onSale,
   };
 
-  if (wooProduct.__typename === 'VariableProduct') {
-    const variableProduct = wooProduct as VariableProductNode;
+  if (isVariableWooProduct(wooProduct)) {
+    const variableProduct = wooProduct;
     const variationWholesaleValues = variableProduct.variations?.nodes
       .map((variation) => {
         const rawValue = extractWholesaleMetaValue(variation.metaData);

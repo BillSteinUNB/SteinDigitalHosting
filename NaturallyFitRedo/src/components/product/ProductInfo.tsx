@@ -52,12 +52,10 @@ export default function ProductInfo({
   reviewCount,
   shortDescription,
   stockStatus,
-  stockQuantity,
   showWholesalePrice = false,
   className,
 }: ProductInfoProps) {
   const isOutOfStock = stockStatus === "OUT_OF_STOCK";
-  const isLowStock = stockStatus === "IN_STOCK" && stockQuantity !== undefined && stockQuantity <= 5;
   const isOnBackorder = stockStatus === "ON_BACKORDER";
 
   return (
@@ -156,10 +154,7 @@ export default function ProductInfo({
         {isOnBackorder && (
           <Badge variant="warning" size="md">Available on Backorder</Badge>
         )}
-        {isLowStock && (
-          <Badge variant="warning" size="md">Only {stockQuantity} left!</Badge>
-        )}
-        {stockStatus === "IN_STOCK" && !isLowStock && (
+        {stockStatus === "IN_STOCK" && (
           <Badge variant="success" size="md">In Stock</Badge>
         )}
       </div>

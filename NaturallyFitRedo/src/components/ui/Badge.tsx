@@ -196,7 +196,6 @@ export function StockBadge({
   return (
     <Badge variant={config.variant} size="sm" className={className}>
       {config.label}
-      {effectiveStatus === "LOW_STOCK" && quantity !== undefined && ` (${quantity} left)`}
     </Badge>
   );
 }
