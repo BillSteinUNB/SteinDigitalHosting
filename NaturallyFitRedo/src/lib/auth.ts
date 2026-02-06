@@ -146,7 +146,7 @@ interface AuthUser {
  * In production, this would call WooCommerce GraphQL API
  */
 function normalizeRole(roleName: string | undefined | null): UserRole {
-  const normalized = (roleName || "").toLowerCase().trim().replace(/\s+/g, "_");
+  const normalized = normalizeRoleName(roleName);
   switch (normalized) {
     case "administrator":
     case "shop_manager":
@@ -158,10 +158,18 @@ function normalizeRole(roleName: string | undefined | null): UserRole {
   }
 }
 
+function normalizeRoleName(roleName: string | undefined | null): string {
+  return (roleName || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[\s-]+/g, "_")
+    .replace(/[^a-z0-9_]/g, "");
+}
+
 function extractRoles(nodes?: GraphqlRoleNode[] | null): string[] {
   return (nodes || [])
     .map((node) => node.name || "")
-    .map((name) => name.toLowerCase().trim())
+    .map((name) => normalizeRoleName(name))
     .filter(Boolean);
 }
 
@@ -188,7 +196,9 @@ async function authenticateUser(
   const roleNames = extractRoles(viewerData.viewer.roles?.nodes);
   const primaryRole = roleNames[0];
   const role = normalizeRole(primaryRole);
-  const isWholesale = roleNames.includes(WHOLESALEX_ROLE.toLowerCase());
+  const normalizedWholesaleRole = normalizeRoleName(WHOLESALEX_ROLE);
+  const isWholesale =
+    roleNames.includes(normalizedWholesaleRole) || roleNames.includes("wholesale_customer");
 
   return {
     id: String(viewerData.viewer.databaseId),

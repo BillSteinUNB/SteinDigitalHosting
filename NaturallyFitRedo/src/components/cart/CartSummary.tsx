@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
 import { Button, Input } from "@/components/ui";
 import { useCartStore } from "@/stores/cart-store";
+import { handoffCartToWooCheckout } from "@/lib/checkout/handoff";
 
 // ============================================
 // TYPES
@@ -42,6 +43,8 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState(false);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [isRedirectingCheckout, setIsRedirectingCheckout] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   // Calculate final total with shipping
   const finalTotal = cart.subtotal - cart.discountTotal + cart.shippingTotal + cart.taxTotal;
@@ -84,6 +87,22 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
   // Handle shipping method change
   const handleShippingChange = (methodId: string) => {
     setShippingMethod(methodId);
+  };
+
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+    setIsRedirectingCheckout(true);
+
+    try {
+      await handoffCartToWooCheckout(cart.items);
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error
+          ? error.message
+          : "Unable to continue to checkout. Please try again."
+      );
+      setIsRedirectingCheckout(false);
+    }
   };
 
   return (
@@ -288,8 +307,11 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
       {/* Checkout Button */}
       <div className="space-y-3 mt-4">
         {cart.items.length > 0 ? (
-          <Link
-            href="/checkout"
+          <Button
+            type="button"
+            onClick={handleCheckout}
+            disabled={isRedirectingCheckout}
+            isLoading={isRedirectingCheckout}
             className={cn(
               "inline-flex items-center justify-center gap-2 w-full",
               "font-heading font-bold uppercase tracking-button",
@@ -299,8 +321,8 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
               "px-8 py-4 text-body min-h-[52px]"
             )}
           >
-            Proceed to Checkout
-          </Link>
+            {isRedirectingCheckout ? "Redirecting to Secure Checkout..." : "Proceed to Checkout"}
+          </Button>
         ) : (
           <Button
             variant="primary"
@@ -318,6 +340,10 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
         >
           Continue Shopping
         </Link>
+
+        {checkoutError && (
+          <p className="text-small text-error text-center">{checkoutError}</p>
+        )}
       </div>
 
       {/* Payment Methods Note */}

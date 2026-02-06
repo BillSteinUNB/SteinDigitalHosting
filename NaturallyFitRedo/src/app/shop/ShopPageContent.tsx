@@ -19,7 +19,11 @@ import {
   Pagination,
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
-import { getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
+import {
+  getCategories,
+  getCategoryScopeSlugs,
+  type CategoryWithCount,
+} from "@/lib/graphql/categories";
 import type { BrandWithDetails } from "@/lib/mock/brands";
 import { getWooBrands } from "@/lib/woocommerce/brands";
 import { filterAllowedCategories, isAllowedCategorySlug } from "@/lib/shop-categories";
@@ -133,14 +137,12 @@ export default function ShopPageContent() {
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
     const onSale = searchParams.get("on_sale");
-    const inStock = searchParams.get("in_stock");
 
     if (category) initialFilters.category = category;
     if (brand) initialFilters.brand = brand;
     if (minPrice) initialFilters.minPrice = parseFloat(minPrice);
     if (maxPrice) initialFilters.maxPrice = parseFloat(maxPrice);
     if (onSale === "true") initialFilters.onSale = true;
-    if (inStock === "true") initialFilters.inStock = true;
 
     return initialFilters;
   });
@@ -160,6 +162,44 @@ export default function ShopPageContent() {
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   useEffect(() => {
+    const category = searchParams.get("category");
+    const brand = searchParams.get("brand");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const onSale = searchParams.get("on_sale");
+    const sort = (searchParams.get("sort") as ProductSortOption) || "default";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const perPageParam = parseInt(searchParams.get("perPage") || "12", 10);
+    const view = (searchParams.get("view") as "grid" | "list") || "grid";
+
+    const nextFilters: ProductFilters = {};
+    if (category) nextFilters.category = category;
+    if (brand) nextFilters.brand = brand;
+    if (minPrice) nextFilters.minPrice = parseFloat(minPrice);
+    if (maxPrice) nextFilters.maxPrice = parseFloat(maxPrice);
+    if (onSale === "true") nextFilters.onSale = true;
+
+    const currentFilterKey = JSON.stringify(filters);
+    const nextFilterKey = JSON.stringify(nextFilters);
+
+    if (currentFilterKey !== nextFilterKey) {
+      setFilters(nextFilters);
+    }
+    if (sortBy !== sort) {
+      setSortBy(sort);
+    }
+    if (currentPage !== page) {
+      setCurrentPage(page);
+    }
+    if (perPage !== perPageParam) {
+      setPerPage(perPageParam);
+    }
+    if (viewMode !== view) {
+      setViewMode(view);
+    }
+  }, [searchParams, filters, sortBy, currentPage, perPage, viewMode]);
+
+  useEffect(() => {
     if (!filters.category || allowedCategories.length === 0) {
       return;
     }
@@ -172,11 +212,28 @@ export default function ShopPageContent() {
     }
   }, [allowedCategories, filters.category]);
 
+  const categoryScopeSlugs = useMemo(() => {
+    if (!filters.category) return [];
+    return getCategoryScopeSlugs(allowedCategories, filters.category);
+  }, [allowedCategories, filters.category]);
+
   // Fetch products from GraphQL using React Query
   const { data, isLoading, error } = useQuery({
-    queryKey: ["shop-products", filters, sortBy, currentPage, perPage],
+    queryKey: [
+      "shop-products",
+      filters,
+      categoryScopeSlugs,
+      sortBy,
+      currentPage,
+      perPage,
+    ],
     queryFn: () =>
-      getPaginatedProductsGraphQL(filters, sortBy, currentPage, perPage),
+      getPaginatedProductsGraphQL(
+        { ...filters, categorySlugs: categoryScopeSlugs },
+        sortBy,
+        currentPage,
+        perPage
+      ),
   });
 
   const products = data?.products || [];
@@ -199,7 +256,6 @@ export default function ShopPageContent() {
     if (filters.maxPrice !== undefined)
       params.set("maxPrice", filters.maxPrice.toString());
     if (filters.onSale) params.set("on_sale", "true");
-    if (filters.inStock) params.set("in_stock", "true");
     if (sortBy !== "default") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage.toString());
     if (perPage !== 12) params.set("perPage", perPage.toString());
@@ -269,8 +325,7 @@ export default function ShopPageContent() {
     filters.brand ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
-    filters.onSale ||
-    filters.inStock;
+    filters.onSale;
 
   return (
     <main className="min-h-screen bg-white">

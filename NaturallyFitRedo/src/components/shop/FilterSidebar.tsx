@@ -346,22 +346,16 @@ function PriceRangeFilter({
 
 interface AdditionalFiltersProps {
   onSale?: boolean;
-  inStock?: boolean;
   onChange: (filters: Partial<ProductFilters>) => void;
 }
 
-function AdditionalFilters({ onSale, inStock, onChange }: AdditionalFiltersProps) {
+function AdditionalFilters({ onSale, onChange }: AdditionalFiltersProps) {
   return (
     <div className="space-y-1">
       <FilterCheckbox
         label="On Sale"
         checked={onSale || false}
         onChange={(checked) => onChange({ onSale: checked || undefined })}
-      />
-      <FilterCheckbox
-        label="In Stock Only"
-        checked={inStock || false}
-        onChange={(checked) => onChange({ inStock: checked || undefined })}
       />
     </div>
   );
@@ -424,8 +418,7 @@ export default function FilterSidebar({
     filters.brand ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
-    filters.onSale ||
-    filters.inStock;
+    filters.onSale;
 
   return (
     <aside className={cn("w-full", className)}>
@@ -475,7 +468,6 @@ export default function FilterSidebar({
       <FilterSection title="Other">
         <AdditionalFilters
           onSale={filters.onSale}
-          inStock={filters.inStock}
           onChange={onFilterChange}
         />
       </FilterSection>
@@ -541,8 +533,7 @@ export function MobileFilterDrawer({
     filters.brand ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
-    filters.onSale ||
-    filters.inStock;
+    filters.onSale;
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} side="left" title="FILTERS">
@@ -592,7 +583,6 @@ export function MobileFilterDrawer({
           <FilterSection title="Other">
             <AdditionalFilters
               onSale={filters.onSale}
-              inStock={filters.inStock}
               onChange={onFilterChange}
             />
           </FilterSection>

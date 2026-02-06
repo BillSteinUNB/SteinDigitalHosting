@@ -324,6 +324,27 @@ function hasHiddenTag(wooProduct: WooProduct): boolean {
   });
 }
 
+function isOutOfStock(wooProduct: WooProduct): boolean {
+  return convertStockStatus(wooProduct.stockStatus || "OUT_OF_STOCK") === "OUT_OF_STOCK";
+}
+
+function isVisibleStorefrontProduct(wooProduct: WooProduct): boolean {
+  return !hasHiddenTag(wooProduct) && !isOutOfStock(wooProduct);
+}
+
+function matchesCategoryScope(
+  wooProduct: WooProduct,
+  categoryScope: Set<string> | null
+): boolean {
+  if (!categoryScope || categoryScope.size === 0) {
+    return true;
+  }
+
+  return wooProduct.productCategories.nodes.some((category) =>
+    categoryScope.has(category.slug)
+  );
+}
+
 // Convert WooCommerce product to ProductCardData
 function transformToCardData(wooProduct: WooProduct): ProductCardData {
   // Use WordPress image if available, transform URL, otherwise use placeholder
@@ -483,7 +504,7 @@ export async function getProducts(
 
   return {
     products: data.products.nodes
-      .filter((product) => !hasHiddenTag(product))
+      .filter(isVisibleStorefrontProduct)
       .map(transformToCardData),
     hasNextPage: data.products.pageInfo.hasNextPage,
     endCursor: data.products.pageInfo.endCursor,
@@ -506,7 +527,7 @@ export async function getProductBySlugGraphQL(slug: string): Promise<Product | n
     return null;
   }
 
-  if (hasHiddenTag(data.product)) {
+  if (!isVisibleStorefrontProduct(data.product)) {
     return null;
   }
 
@@ -527,7 +548,7 @@ export async function getFeaturedProducts(limit: number = 8): Promise<ProductCar
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
   return data.products.nodes
-    .filter((product) => !hasHiddenTag(product))
+    .filter(isVisibleStorefrontProduct)
     .map(transformToCardData);
 }
 
@@ -545,7 +566,7 @@ export async function getSaleProducts(limit: number = 8): Promise<ProductCardDat
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
   return data.products.nodes
-    .filter((product) => !hasHiddenTag(product))
+    .filter(isVisibleStorefrontProduct)
     .map(transformToCardData);
 }
 
@@ -564,7 +585,7 @@ export async function getBestSellers(limit: number = 8): Promise<ProductCardData
 
   const data = await fetchGraphQL<ProductsResponse>(query, { first: limit });
   return data.products.nodes
-    .filter((product) => !hasHiddenTag(product))
+    .filter(isVisibleStorefrontProduct)
     .map(transformToCardData);
 }
 
@@ -579,6 +600,11 @@ export async function getPaginatedProductsGraphQL(
   perPage: number = 12
 ): Promise<PaginatedProducts> {
   let brandSlugs: string[] | null = null;
+  const categorySlugs = Array.from(
+    new Set(filters.categorySlugs?.filter(Boolean) || [])
+  );
+  const categoryScope =
+    categorySlugs.length > 0 ? new Set(categorySlugs) : null;
 
   if (filters.brand) {
     const brand = await getWooBrandBySlug(filters.brand);
@@ -595,7 +621,9 @@ export async function getPaginatedProductsGraphQL(
   // Build where clause based on filters
   const whereConditions: string[] = [];
   
-  if (filters.category) {
+  if (categorySlugs.length === 1) {
+    whereConditions.push(`category: "${categorySlugs[0]}"`);
+  } else if (filters.category) {
     whereConditions.push(`category: "${filters.category}"`);
   }
   
@@ -641,7 +669,11 @@ export async function getPaginatedProductsGraphQL(
   // WooGraphQL doesn't support "skip" - we need to fetch more products to cover the page
   // For small catalogs, fetch all; for larger ones, we'll need cursor-based pagination
   const requestedFirst = page * perPage; // Fetch enough to cover up to current page
-  const first = brandSlugs ? Math.min(requestedFirst, brandSlugs.length) : requestedFirst;
+  const scopedMultiplier = categorySlugs.length > 1 ? 4 : 1;
+  const scopedRequestedFirst = requestedFirst * scopedMultiplier;
+  const resolvedFirst = brandSlugs
+    ? Math.min(scopedRequestedFirst, brandSlugs.length)
+    : scopedRequestedFirst;
 
   const resolvedWhereClause = brandSlugs
     ? whereClause.replace(
@@ -666,10 +698,11 @@ export async function getPaginatedProductsGraphQL(
     }
   `;
 
-  const data = await fetchGraphQL<ProductsResponse>(query, { first });
+  const data = await fetchGraphQL<ProductsResponse>(query, { first: resolvedFirst });
   
   const allProducts = data.products.nodes
-    .filter((product) => !hasHiddenTag(product))
+    .filter(isVisibleStorefrontProduct)
+    .filter((product) => matchesCategoryScope(product, categoryScope))
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
     .map(transformToCardData);
   

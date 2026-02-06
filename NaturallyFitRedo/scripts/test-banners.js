@@ -1,6 +1,6 @@
 // Test script to check WordPress banner API response
 
-const WP_URL = 'https://slategray-squirrel-389391.hostingersite.com';
+const WP_URL = 'https://wp.naturallyfit.ca';
 
 async function testBanners() {
   console.log('Testing WordPress Banner API...\n');

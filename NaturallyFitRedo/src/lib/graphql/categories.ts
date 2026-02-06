@@ -171,3 +171,38 @@ export async function getFeaturedCategories(limit: number = 6): Promise<Category
   const data = await fetchGraphQL<CategoriesResponse>(query, { first: limit });
   return data.productCategories.nodes.map(transformCategory);
 }
+
+export function getCategoryScopeSlugs(
+  categories: CategoryWithCount[],
+  rootSlug: string
+): string[] {
+  if (!rootSlug) return [];
+
+  const byParent = new Map<string, CategoryWithCount[]>();
+
+  for (const category of categories) {
+    const parentSlug = category.parent?.slug;
+    if (!parentSlug) continue;
+
+    const siblings = byParent.get(parentSlug) || [];
+    siblings.push(category);
+    byParent.set(parentSlug, siblings);
+  }
+
+  const scope = new Set<string>([rootSlug]);
+  const queue = [rootSlug];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) continue;
+
+    const children = byParent.get(current) || [];
+    for (const child of children) {
+      if (scope.has(child.slug)) continue;
+      scope.add(child.slug);
+      queue.push(child.slug);
+    }
+  }
+
+  return Array.from(scope);
+}

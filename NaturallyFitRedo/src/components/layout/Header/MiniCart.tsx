@@ -4,7 +4,7 @@
 // MINI CART COMPONENT
 // ============================================
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, X, Trash2 } from "lucide-react";
@@ -12,6 +12,7 @@ import { CountBadge } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore, selectCartItems, selectCartItemCount, selectCartSubtotal, selectIsCartOpen } from "@/stores/cart-store";
+import { handoffCartToWooCheckout } from "@/lib/checkout/handoff";
 
 // ============================================
 // TYPES
@@ -42,6 +43,7 @@ interface MiniCartProps {
 export default function MiniCart({ cartCount: cartCountProp, iconClassName = "", darkMode = false, showBadgeAlways = false }: MiniCartProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isRedirectingCheckout, setIsRedirectingCheckout] = useState(false);
 
   // Cart store state
   const items = useCartStore(selectCartItems);
@@ -85,6 +87,21 @@ export default function MiniCart({ cartCount: cartCountProp, iconClassName = "",
   // Handle item removal
   const handleRemoveItem = (key: string) => {
     removeItem(key);
+  };
+
+  const handleCheckout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isRedirectingCheckout) return;
+
+    setIsRedirectingCheckout(true);
+    closeMiniCart();
+
+    try {
+      await handoffCartToWooCheckout(items);
+    } catch (error) {
+      console.error("Checkout handoff failed:", error);
+      setIsRedirectingCheckout(false);
+    }
   };
 
   return (
@@ -223,13 +240,14 @@ export default function MiniCart({ cartCount: cartCountProp, iconClassName = "",
 
                 {/* Actions */}
                 <div className="flex flex-col gap-2">
-                  <Link
-                    href="/checkout"
-                    onClick={closeMiniCart}
+                  <button
+                    type="button"
+                    onClick={handleCheckout}
                     className="btn btn-primary w-full text-center"
+                    disabled={isRedirectingCheckout}
                   >
-                    Checkout
-                  </Link>
+                    {isRedirectingCheckout ? "Redirecting..." : "Checkout"}
+                  </button>
                   <Link
                     href="/cart"
                     onClick={closeMiniCart}

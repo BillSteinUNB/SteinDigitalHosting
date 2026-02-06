@@ -20,7 +20,7 @@ If you’re using **WholesaleX** for wholesale ordering/login, set:
 - `NEXT_PUBLIC_WHOLESALE_LOGIN_URL`
 - `NEXT_PUBLIC_WHOLESALE_ORDER_URL`
 
-**See [`WHOLESALE-ARCHITECTURE.md`](./WHOLESALE-ARCHITECTURE.md) for detailed setup instructions** covering both WordPress pages (simpler) and headless Next.js (more control) approaches.
+**See [`MINIMUM-WHOLESALE-FLOW.md`](./MINIMUM-WHOLESALE-FLOW.md) for the fastest stable WooCommerce + WholesaleX + ClickShip setup.**
 
 First, run the development server:
 

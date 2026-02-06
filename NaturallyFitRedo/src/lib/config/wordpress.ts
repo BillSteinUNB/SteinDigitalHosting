@@ -1,4 +1,4 @@
-export const DEFAULT_WORDPRESS_URL = 'https://slategray-squirrel-389391.hostingersite.com';
+export const DEFAULT_WORDPRESS_URL = 'https://wp.naturallyfit.ca';
 
 const LEGACY_WORDPRESS_URLS = [
   'https://nftest.dreamhosters.com',

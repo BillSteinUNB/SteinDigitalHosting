@@ -130,13 +130,11 @@ export default function BrandPage() {
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
     const onSale = searchParams.get("on_sale");
-    const inStock = searchParams.get("in_stock");
 
     if (category) initialFilters.category = category;
     if (minPrice) initialFilters.minPrice = parseFloat(minPrice);
     if (maxPrice) initialFilters.maxPrice = parseFloat(maxPrice);
     if (onSale === "true") initialFilters.onSale = true;
-    if (inStock === "true") initialFilters.inStock = true;
 
     return initialFilters;
   });
@@ -202,7 +200,6 @@ export default function BrandPage() {
     if (filters.maxPrice !== undefined)
       params.set("maxPrice", filters.maxPrice.toString());
     if (filters.onSale) params.set("on_sale", "true");
-    if (filters.inStock) params.set("in_stock", "true");
     if (sortBy !== "default") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage.toString());
     if (perPage !== 12) params.set("perPage", perPage.toString());
@@ -274,8 +271,7 @@ export default function BrandPage() {
     filters.category ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
-    filters.onSale ||
-    filters.inStock;
+    filters.onSale;
 
   // 404 for unknown brand
   if (!brand) {

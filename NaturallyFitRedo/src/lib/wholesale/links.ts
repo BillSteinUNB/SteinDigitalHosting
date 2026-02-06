@@ -2,6 +2,9 @@ function normalizeHref(href: string): string {
   return href.trim();
 }
 
+const defaultWholesaleLoginUrl = "/wholesale/login";
+const defaultWholesaleOrderUrl = "/shop";
+
 /**
  * Wholesale portal links.
  *
@@ -10,11 +13,9 @@ function normalizeHref(href: string): string {
  */
 export const wholesaleLinks = {
   /** Where wholesale customers should login */
-  login: normalizeHref(
-    process.env.NEXT_PUBLIC_WHOLESALE_LOGIN_URL || "/wholesale/login"
-  ),
+  login: normalizeHref(defaultWholesaleLoginUrl),
   /** Where wholesale customers should order / shop (bulk order form or wholesale shop) */
-  order: normalizeHref(process.env.NEXT_PUBLIC_WHOLESALE_ORDER_URL || "/wholesale/shop"),
+  order: normalizeHref(process.env.NEXT_PUBLIC_WHOLESALE_ORDER_URL || defaultWholesaleOrderUrl),
   /** Where to apply for wholesale account */
   register: normalizeHref("/wholesale/register"),
 };

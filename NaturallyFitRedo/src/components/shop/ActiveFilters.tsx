@@ -113,14 +113,6 @@ export default function ActiveFilters({
     });
   }
 
-  // In stock filter
-  if (filters.inStock) {
-    tags.push({
-      key: "inStock",
-      label: "In Stock",
-    });
-  }
-
   // Search filter
   if (filters.search) {
     tags.push({

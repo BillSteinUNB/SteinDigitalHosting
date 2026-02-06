@@ -128,6 +128,7 @@ export interface ProductCardData {
 // Product filters
 export interface ProductFilters {
   category?: string;
+  categorySlugs?: string[];
   brand?: string;
   minPrice?: number;
   maxPrice?: number;

@@ -52,6 +52,9 @@ export const WHOLESALE_DISCOUNT_PERCENT_PLATINUM = Number(
     0
 );
 
+// Temporary hardcoded rule: wholesale price is cost + 20%.
+export const WHOLESALE_COST_PLUS_PERCENT = 20;
+
 // ============================================
 // USER ROLE CHECKING
 // ============================================
@@ -157,11 +160,10 @@ export function getEffectiveWholesalePrice(params: {
     typeof params.discountPercent === "number"
       ? params.discountPercent
       : getWholesaleDiscountPercent(params.userRole);
-
   let candidate = regular;
 
   if (typeof override === "number") {
-    candidate = override;
+    candidate = override * (1 + WHOLESALE_COST_PLUS_PERCENT / 100);
   } else if (discountPercent > 0) {
     candidate = regular * (1 - discountPercent / 100);
   }

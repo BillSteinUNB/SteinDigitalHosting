@@ -1,5 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/wholesale/login",
+        destination: "/login?callbackUrl=%2Fshop",
+        permanent: false,
+      },
+      {
+        source: "/wholesale/shop",
+        destination: "/shop",
+        permanent: false,
+      },
+      {
+        source: "/account/wholesale",
+        destination: "/wholesale/login",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     unoptimized: true, // Disable image optimization to load images directly
     remotePatterns: [
@@ -10,7 +29,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'slategray-squirrel-389391.hostingersite.com',
+        hostname: 'wp.naturallyfit.ca',
         pathname: '/wp-content/uploads/**',
       },
       {

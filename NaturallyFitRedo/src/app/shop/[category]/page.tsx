@@ -19,7 +19,12 @@ import {
   Pagination,
 } from "@/components/shop";
 import { getPaginatedProductsGraphQL } from "@/lib/graphql/products";
-import { getCategoryBySlug, getCategories, type CategoryWithCount } from "@/lib/graphql/categories";
+import {
+  getCategoryBySlug,
+  getCategories,
+  getCategoryScopeSlugs,
+  type CategoryWithCount,
+} from "@/lib/graphql/categories";
 import type { BrandWithDetails } from "@/lib/mock/brands";
 import { getWooBrands } from "@/lib/woocommerce/brands";
 import { filterAllowedCategories, isAllowedCategorySlug } from "@/lib/shop-categories";
@@ -164,13 +169,11 @@ export default function CategoryPage() {
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
     const onSale = searchParams.get("on_sale");
-    const inStock = searchParams.get("in_stock");
 
     if (brand) initialFilters.brand = brand;
     if (minPrice) initialFilters.minPrice = parseFloat(minPrice);
     if (maxPrice) initialFilters.maxPrice = parseFloat(maxPrice);
     if (onSale === "true") initialFilters.onSale = true;
-    if (inStock === "true") initialFilters.inStock = true;
 
     return initialFilters;
   });
@@ -188,12 +191,27 @@ export default function CategoryPage() {
     (searchParams.get("view") as "grid" | "list") || "grid"
   );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const categoryScopeSlugs = useMemo(() => {
+    return getCategoryScopeSlugs(allowedCategories, categorySlug);
+  }, [allowedCategories, categorySlug]);
 
   // Fetch products from GraphQL using React Query
   const { data, isLoading, error } = useQuery({
-    queryKey: ["category-products", filters, sortBy, currentPage, perPage],
+    queryKey: [
+      "category-products",
+      filters,
+      categoryScopeSlugs,
+      sortBy,
+      currentPage,
+      perPage,
+    ],
     queryFn: () =>
-      getPaginatedProductsGraphQL(filters, sortBy, currentPage, perPage),
+      getPaginatedProductsGraphQL(
+        { ...filters, categorySlugs: categoryScopeSlugs },
+        sortBy,
+        currentPage,
+        perPage
+      ),
   });
 
   const products = data?.products || [];
@@ -215,7 +233,6 @@ export default function CategoryPage() {
     if (filters.maxPrice !== undefined)
       params.set("maxPrice", filters.maxPrice.toString());
     if (filters.onSale) params.set("on_sale", "true");
-    if (filters.inStock) params.set("in_stock", "true");
     if (sortBy !== "default") params.set("sort", sortBy);
     if (currentPage > 1) params.set("page", currentPage.toString());
     if (perPage !== 12) params.set("perPage", perPage.toString());
@@ -290,8 +307,7 @@ export default function CategoryPage() {
     filters.brand ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
-    filters.onSale ||
-    filters.inStock;
+    filters.onSale;
 
   // Loading state for category
   if (isLoadingCategory) {
