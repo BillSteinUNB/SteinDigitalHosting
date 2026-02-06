@@ -710,15 +710,6 @@ export async function getPaginatedProductsGraphQL(
       break;
   }
 
-  // WooGraphQL doesn't support "skip" - we need to fetch more products to cover the page
-  // For small catalogs, fetch all; for larger ones, we'll need cursor-based pagination
-  const requestedFirst = page * perPage; // Fetch enough to cover up to current page
-  const scopedMultiplier = categorySlugs.length > 1 ? 4 : 1;
-  const scopedRequestedFirst = requestedFirst * scopedMultiplier;
-  const resolvedFirst = brandSlugs
-    ? Math.min(scopedRequestedFirst, brandSlugs.length)
-    : scopedRequestedFirst;
-
   const resolvedWhereClause = brandSlugs
     ? whereClause.replace(
         "__brandSlugs__",
@@ -727,8 +718,8 @@ export async function getPaginatedProductsGraphQL(
     : whereClause;
 
   const query = `
-    query GetPaginatedProducts($first: Int!) {
-      products(first: $first${resolvedWhereClause}${orderbyClause}) {
+    query GetPaginatedProducts($first: Int!, $after: String) {
+      products(first: $first, after: $after${resolvedWhereClause}${orderbyClause}) {
         nodes {
           ${PRODUCT_CARD_FIELDS}
         }
@@ -742,9 +733,32 @@ export async function getPaginatedProductsGraphQL(
     }
   `;
 
-  const data = await fetchGraphQL<ProductsResponse>(query, { first: resolvedFirst });
-  
-  const allProducts = data.products.nodes
+  // Fetch all matching products via cursor pagination so client-side stock/category
+  // filtering doesn't undercount results on the shop page.
+  const batchSize = brandSlugs
+    ? Math.min(100, Math.max(perPage, brandSlugs.length))
+    : 100;
+  const maxFetchedNodes = 5000;
+  let after: string | undefined;
+  let hasNextPage = true;
+  const fetchedNodes: WooProduct[] = [];
+
+  while (hasNextPage && fetchedNodes.length < maxFetchedNodes) {
+    const data = await fetchGraphQL<ProductsResponse>(query, {
+      first: batchSize,
+      after,
+    });
+
+    fetchedNodes.push(...data.products.nodes);
+    hasNextPage = data.products.pageInfo.hasNextPage;
+    after = data.products.pageInfo.endCursor || undefined;
+  }
+
+  const dedupedNodes = Array.from(
+    new Map(fetchedNodes.map((product) => [product.id, product])).values()
+  );
+
+  const allProducts = dedupedNodes
     .filter(isVisibleStorefrontProduct)
     .filter((product) => matchesCategoryScope(product, categoryScope))
     .filter((product) => matchesAllowedCategories(product.productCategories.nodes))
