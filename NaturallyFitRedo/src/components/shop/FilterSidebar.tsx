@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -278,6 +278,12 @@ function PriceRangeFilter({
 }: PriceRangeFilterProps) {
   const [localMin, setLocalMin] = useState(minPrice?.toString() || "");
   const [localMax, setLocalMax] = useState(maxPrice?.toString() || "");
+
+  // Sync local inputs when filter state changes outside this component.
+  useEffect(() => {
+    setLocalMin(minPrice?.toString() || "");
+    setLocalMax(maxPrice?.toString() || "");
+  }, [minPrice, maxPrice]);
 
   const handleApply = () => {
     const min = localMin ? parseFloat(localMin) : undefined;

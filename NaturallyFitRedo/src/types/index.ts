@@ -48,3 +48,10 @@ export type {
   WholesaleApplicationData,
   AuthState,
 } from "./user";
+
+// Order types
+export type {
+  AccountOrderItem,
+  AccountOrder,
+  AccountOrdersResponse,
+} from "./order";

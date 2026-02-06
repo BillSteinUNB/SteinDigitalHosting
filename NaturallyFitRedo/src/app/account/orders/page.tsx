@@ -5,22 +5,7 @@ import Link from "next/link";
 import { Package, Search, AlertCircle } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { Input, EmptyState, Spinner, Button } from "@/components/ui";
-
-interface AccountOrderItem {
-  name: string;
-  quantity: number;
-  total: number;
-}
-
-interface AccountOrder {
-  id: string;
-  orderNumber: string;
-  date: string;
-  status: string;
-  total: number;
-  items: AccountOrderItem[];
-  itemCount: number;
-}
+import type { AccountOrder, AccountOrdersResponse } from "@/types/order";
 
 function OrderStatusBadge({ status }: { status: string }) {
   const statusConfig: Record<string, { label: string; className: string }> = {
@@ -68,7 +53,7 @@ export default function OrdersPage() {
           throw new Error("Failed to load orders.");
         }
 
-        const data = (await response.json()) as { orders?: AccountOrder[] };
+        const data = (await response.json()) as Partial<AccountOrdersResponse>;
         if (!isMounted) return;
 
         setOrders(Array.isArray(data.orders) ? data.orders : []);

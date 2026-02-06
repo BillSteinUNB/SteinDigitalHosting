@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getWordPressBaseUrl } from "@/lib/config/wordpress";
 import { Button, Input } from "@/components/ui";
 
 // ============================================
@@ -56,6 +57,7 @@ export function LoginForm({ className, onSuccess }: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/account";
+  const forgotPasswordUrl = `${getWordPressBaseUrl()}/wp-login.php?action=lostpassword`;
 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -197,12 +199,12 @@ export function LoginForm({ className, onSuccess }: LoginFormProps) {
           <span className="text-small">Remember me</span>
         </label>
 
-        <Link
-          href="/forgot-password"
+        <a
+          href={forgotPasswordUrl}
           className="text-small text-red-primary hover:underline"
         >
           Forgot password?
-        </Link>
+        </a>
       </div>
 
       {/* Submit Button */}

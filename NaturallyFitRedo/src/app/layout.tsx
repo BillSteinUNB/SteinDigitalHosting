@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { AuthProvider } from "@/components/auth";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
+import CheckoutHandoffSync from "@/components/checkout/CheckoutHandoffSync";
 
 // === FONT CONFIGURATION ===
 // Plus Jakarta Sans: Primary font for header + body to match live site
@@ -82,6 +83,7 @@ export default function RootLayout({
       <body className="font-body antialiased min-h-screen flex flex-col">
         <ReactQueryProvider>
           <AuthProvider>
+            <CheckoutHandoffSync />
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />

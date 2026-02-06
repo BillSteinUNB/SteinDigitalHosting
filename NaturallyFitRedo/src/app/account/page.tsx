@@ -6,22 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Package, MapPin, ChevronRight, CheckCircle, AlertCircle } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { Spinner } from "@/components/ui";
-
-interface AccountOrderItem {
-  name: string;
-  quantity: number;
-  total: number;
-}
-
-interface AccountOrder {
-  id: string;
-  orderNumber: string;
-  date: string;
-  status: string;
-  total: number;
-  items: AccountOrderItem[];
-  itemCount: number;
-}
+import type { AccountOrder, AccountOrdersResponse } from "@/types/order";
 
 interface AccountAddress {
   firstName: string;
@@ -131,7 +116,7 @@ export default function AccountDashboardPage() {
           throw new Error("Failed to load account data.");
         }
 
-        const ordersData = (await ordersRes.json()) as { orders?: AccountOrder[] };
+        const ordersData = (await ordersRes.json()) as Partial<AccountOrdersResponse>;
         const addressesData = (await addressesRes.json()) as AccountAddressesResponse;
 
         if (!isMounted) return;

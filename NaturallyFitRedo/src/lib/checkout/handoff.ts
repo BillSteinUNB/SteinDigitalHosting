@@ -1,4 +1,5 @@
 import type { CartItem } from "@/types/cart";
+import { markWooCheckoutHandoffPending } from "@/lib/checkout/handoff-state";
 
 interface HandoffResponse {
   ok: boolean;
@@ -51,5 +52,6 @@ export async function handoffCartToWooCheckout(items: CartItem[]): Promise<void>
   form.appendChild(createHiddenInput("signature", data.signature));
 
   document.body.appendChild(form);
+  markWooCheckoutHandoffPending();
   form.submit();
 }

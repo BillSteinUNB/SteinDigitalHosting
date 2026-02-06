@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 interface WooCustomer {
   id: number;
+  email?: string;
   billing?: WooAddress;
   shipping?: WooAddress;
 }
@@ -63,6 +64,54 @@ function mapAddress(address: WooAddress | undefined): AccountAddress | null {
   return hasAnyValue ? mapped : null;
 }
 
+function normalizeEmail(email: string | null | undefined): string {
+  return (email || "").trim().toLowerCase();
+}
+
+async function findCustomerByEmail(rawEmail: string): Promise<WooCustomer | null> {
+  const email = rawEmail.trim();
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail) return null;
+
+  const exactMatch = await wooFetch<WooCustomer[]>("/customers", {
+    query: {
+      email,
+      per_page: 1,
+    },
+  });
+
+  if (exactMatch[0]) {
+    return exactMatch[0];
+  }
+
+  if (normalizedEmail !== email) {
+    const normalizedMatch = await wooFetch<WooCustomer[]>("/customers", {
+      query: {
+        email: normalizedEmail,
+        per_page: 1,
+      },
+    });
+
+    if (normalizedMatch[0]) {
+      return normalizedMatch[0];
+    }
+  }
+
+  const candidates = await wooFetch<WooCustomer[]>("/customers", {
+    query: {
+      search: normalizedEmail,
+      per_page: 20,
+    },
+  });
+
+  return (
+    candidates.find(
+      (candidate) => normalizeEmail(candidate.email) === normalizedEmail
+    ) ||
+    null
+  );
+}
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -71,17 +120,24 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const customers = await wooFetch<WooCustomer[]>("/customers", {
-      query: {
-        email: session.user.email,
-        per_page: 1,
-      },
-    });
+    const sessionEmail = session.user.email.trim();
+    const normalizedSessionEmail = normalizeEmail(sessionEmail);
+    if (!normalizedSessionEmail) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    const customerSummary = customers[0];
+    console.log("[Addresses API] Session email:", normalizedSessionEmail);
+
+    const customerSummary = await findCustomerByEmail(sessionEmail);
     if (!customerSummary) {
+      console.log(
+        "[Addresses API] No customer found for email:",
+        normalizedSessionEmail
+      );
       return NextResponse.json({ shipping: null, billing: null });
     }
+
+    console.log("[Addresses API] Customer ID:", customerSummary.id);
 
     const customer = await wooFetch<WooCustomer>(
       `/customers/${customerSummary.id}`
@@ -92,7 +148,7 @@ export async function GET() {
       billing: mapAddress(customer.billing),
     });
   } catch (error) {
-    console.error("Failed to load account addresses:", error);
+    console.error("[Addresses API] Failed to load account addresses:", error);
     return NextResponse.json(
       { error: "Unable to load addresses right now." },
       { status: 500 }

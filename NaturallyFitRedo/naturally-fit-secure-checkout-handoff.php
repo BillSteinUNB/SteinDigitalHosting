@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Naturally Fit Secure Checkout Handoff
  * Description: Receives signed Next.js cart payloads and redirects to Woo checkout with optional signed price locks.
- * Version: 0.2.1
+ * Version: 0.3.0
  */
 
 if (!defined('ABSPATH')) {
@@ -11,6 +11,157 @@ if (!defined('ABSPATH')) {
 
 add_action('admin_post_nopriv_nf_secure_checkout_handoff', 'nfsch_handle_handoff');
 add_action('admin_post_nf_secure_checkout_handoff', 'nfsch_handle_handoff');
+add_action('template_redirect', 'nfsch_maybe_redirect_after_order_received', 20);
+add_filter('woocommerce_package_rates', 'nfsch_add_wholesale_shipping_rate', 20, 2);
+add_filter('woocommerce_shipping_chosen_method', 'nfsch_force_wholesale_shipping_rate', 20, 3);
+add_action('woocommerce_checkout_create_order', 'nfsch_mark_wholesale_order_meta', 20, 2);
+
+function nfsch_get_wholesale_rate_id() {
+    return 'nfsch_wholesale_shipping';
+}
+
+function nfsch_get_wholesale_session_key() {
+    return 'nfsch_handoff_is_wholesale';
+}
+
+function nfsch_get_wholesale_role_session_key() {
+    return 'nfsch_handoff_wholesale_role';
+}
+
+function nfsch_clear_handoff_context() {
+    if (!function_exists('WC') || null === WC()->session) {
+        return;
+    }
+
+    WC()->session->__unset('nfsch_handoff_started');
+    WC()->session->__unset(nfsch_get_wholesale_session_key());
+    WC()->session->__unset(nfsch_get_wholesale_role_session_key());
+}
+
+function nfsch_is_handoff_window_active() {
+    if (!function_exists('WC') || null === WC()->session) {
+        return false;
+    }
+
+    $handoff_started = WC()->session->get('nfsch_handoff_started');
+    if (!is_numeric($handoff_started)) {
+        nfsch_clear_handoff_context();
+        return false;
+    }
+
+    $handoff_started_ts = (int) $handoff_started;
+    $handoff_age = time() - $handoff_started_ts;
+    if ($handoff_started_ts <= 0 || $handoff_age < 0 || $handoff_age > DAY_IN_SECONDS) {
+        nfsch_clear_handoff_context();
+        return false;
+    }
+
+    return true;
+}
+
+function nfsch_is_wholesale_handoff_session() {
+    if (!nfsch_is_handoff_window_active()) {
+        return false;
+    }
+
+    if (!function_exists('WC') || null === WC()->session) {
+        return false;
+    }
+
+    return WC()->session->get(nfsch_get_wholesale_session_key()) === 'yes';
+}
+
+function nfsch_get_wholesale_role_for_handoff() {
+    if (!function_exists('WC') || null === WC()->session) {
+        return '';
+    }
+
+    $role = WC()->session->get(nfsch_get_wholesale_role_session_key());
+    return is_string($role) ? $role : '';
+}
+
+function nfsch_set_handoff_context($payload) {
+    if (!function_exists('WC') || null === WC()->session) {
+        return;
+    }
+
+    $is_wholesale = false;
+    $role = '';
+
+    if (is_array($payload) && isset($payload['user']) && is_array($payload['user'])) {
+        $is_wholesale = !empty($payload['user']['isWholesale']);
+
+        if (isset($payload['user']['role']) && is_string($payload['user']['role'])) {
+            $role = sanitize_text_field($payload['user']['role']);
+        }
+    }
+
+    WC()->session->set('nfsch_handoff_started', time());
+    WC()->session->set(nfsch_get_wholesale_session_key(), $is_wholesale ? 'yes' : 'no');
+    WC()->session->set(nfsch_get_wholesale_role_session_key(), $role);
+}
+
+function nfsch_add_wholesale_shipping_rate($rates, $package = array()) {
+    if (!nfsch_is_wholesale_handoff_session()) {
+        return $rates;
+    }
+
+    if (!is_array($rates) || !class_exists('WC_Shipping_Rate')) {
+        return $rates;
+    }
+
+    $rate_id = nfsch_get_wholesale_rate_id();
+    $wholesale_rate = new WC_Shipping_Rate(
+        $rate_id,
+        __('Wholesale Shipping (Billed Later)', 'naturally-fit'),
+        0,
+        array(),
+        'nfsch_wholesale'
+    );
+    if (method_exists($wholesale_rate, 'set_taxes')) {
+        $wholesale_rate->set_taxes(array());
+    }
+
+    $filtered_rates = array();
+    foreach ($rates as $existing_rate_id => $existing_rate) {
+        if ((string) $existing_rate_id === $rate_id) {
+            continue;
+        }
+        $filtered_rates[$existing_rate_id] = $existing_rate;
+    }
+
+    return array($rate_id => $wholesale_rate) + $filtered_rates;
+}
+
+function nfsch_force_wholesale_shipping_rate($chosen_method, $available_methods, $package_key = null) {
+    if (!nfsch_is_wholesale_handoff_session()) {
+        return $chosen_method;
+    }
+
+    $rate_id = nfsch_get_wholesale_rate_id();
+    if (is_array($available_methods) && isset($available_methods[$rate_id])) {
+        return $rate_id;
+    }
+
+    return $chosen_method;
+}
+
+function nfsch_mark_wholesale_order_meta($order, $data = array()) {
+    if (!nfsch_is_wholesale_handoff_session()) {
+        return;
+    }
+
+    if (!is_object($order) || !method_exists($order, 'update_meta_data')) {
+        return;
+    }
+
+    $order->update_meta_data('_is_wholesale_order', 'yes');
+
+    $role = nfsch_get_wholesale_role_for_handoff();
+    if ($role !== '') {
+        $order->update_meta_data('_wholesale_customer_role', $role);
+    }
+}
 
 function nfsch_get_secret() {
     if (defined('NF_WOO_HANDOFF_SECRET') && NF_WOO_HANDOFF_SECRET) {
@@ -28,6 +179,75 @@ function nfsch_get_secret() {
     }
 
     return '';
+}
+
+function nfsch_get_storefront_url() {
+    if (defined('NF_STOREFRONT_URL') && NF_STOREFRONT_URL) {
+        return untrailingslashit(NF_STOREFRONT_URL);
+    }
+
+    $env_url = getenv('NF_STOREFRONT_URL');
+    if (is_string($env_url) && $env_url !== '') {
+        return untrailingslashit($env_url);
+    }
+
+    $option_url = get_option('nf_storefront_url', '');
+    if (is_string($option_url) && $option_url !== '') {
+        return untrailingslashit($option_url);
+    }
+
+    return '';
+}
+
+function nfsch_build_storefront_return_url() {
+    $storefront_url = nfsch_get_storefront_url();
+    if ($storefront_url === '') {
+        return '';
+    }
+
+    $query_args = array(
+        'nf_checkout' => 'success',
+    );
+
+    $order_id = absint(get_query_var('order-received'));
+    if ($order_id > 0) {
+        $query_args['nf_order_id'] = $order_id;
+    }
+
+    return add_query_arg($query_args, $storefront_url . '/cart');
+}
+
+function nfsch_maybe_redirect_after_order_received() {
+    if (!function_exists('is_order_received_page') || !is_order_received_page()) {
+        return;
+    }
+
+    if (!function_exists('WC') || null === WC()->session) {
+        return;
+    }
+
+    $handoff_started = WC()->session->get('nfsch_handoff_started');
+    if (!is_numeric($handoff_started)) {
+        nfsch_clear_handoff_context();
+        return;
+    }
+
+    $handoff_started_ts = (int) $handoff_started;
+    $handoff_age = time() - $handoff_started_ts;
+    if ($handoff_started_ts <= 0 || $handoff_age < 0 || $handoff_age > DAY_IN_SECONDS) {
+        nfsch_clear_handoff_context();
+        return;
+    }
+
+    nfsch_clear_handoff_context();
+
+    $redirect_url = nfsch_build_storefront_return_url();
+    if ($redirect_url === '') {
+        return;
+    }
+
+    wp_redirect($redirect_url);
+    exit;
 }
 
 function nfsch_base64url_decode($input) {
@@ -200,6 +420,7 @@ function nfsch_handle_handoff() {
     }
 
     WC()->cart->calculate_totals();
+    nfsch_set_handoff_context($payload);
     wp_safe_redirect(wc_get_checkout_url());
     exit;
 }
