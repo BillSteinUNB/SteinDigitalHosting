@@ -66,7 +66,7 @@ function resolveHandoffEndpoint(): string {
   }
 
   const wpBase = resolveWordPressBaseUrl();
-  return `${wpBase}/wp-admin/admin-post.php?action=nf_cart_handoff`;
+  return `${wpBase}/wp-admin/admin-post.php?action=nf_secure_checkout_handoff`;
 }
 
 function normalizeItems(body: HandoffRequestBody): HandoffRequestItem[] {
