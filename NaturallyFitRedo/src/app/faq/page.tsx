@@ -213,14 +213,17 @@ const faqCategories: FAQCategoryProps[] = [
         answer: (
           <>
             <p className="mb-3">
-              <strong>FREE shipping</strong> on all orders over $75 within Canada!
+              <strong>FREE shipping</strong> on all orders over $99 within Canada!
             </p>
-            <p className="mb-3">For orders under $75:</p>
+            <p className="mb-3">For orders under $99:</p>
             <ul className="list-disc list-inside space-y-1">
               <li>Standard Shipping: $7.99 (5-7 business days)</li>
               <li>Express Shipping: $12.99 (2-3 business days)</li>
               <li>Priority Shipping: $19.99 (1-2 business days)</li>
             </ul>
+            <p className="mt-3 text-small text-gray-medium">
+              *Wholesale orders may be charged shipping after order review.
+            </p>
           </>
         ),
       },

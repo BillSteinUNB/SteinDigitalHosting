@@ -89,7 +89,7 @@ export default function ShippingPage() {
             <InfoCard
               icon={<Truck size={24} strokeWidth={1.5} />}
               title="Free Shipping"
-              description="On all orders over $75 within Canada"
+              description="On all orders over $99 within Canada"
             />
             <InfoCard
               icon={<Clock size={24} strokeWidth={1.5} />}
@@ -124,10 +124,10 @@ export default function ShippingPage() {
               </h3>
               <div className="bg-gray-light p-6 mb-6">
                 <p className="text-lg font-heading uppercase text-red-primary mb-4">
-                  Free Shipping on Orders Over $75!
+                  Free Shipping on Orders Over $99!
                 </p>
                 <p className="text-gray-dark mb-4">
-                  For orders under $75, the following rates apply:
+                  For orders under $99, the following rates apply:
                 </p>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
@@ -161,6 +161,9 @@ export default function ShippingPage() {
                     </tbody>
                   </table>
                 </div>
+                <p className="text-small text-gray-medium mt-4">
+                  *Wholesale orders may be charged shipping after order review.
+                </p>
               </div>
 
               {/* Delivery Times */}

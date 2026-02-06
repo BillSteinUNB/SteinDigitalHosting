@@ -43,7 +43,7 @@ const defaultReviews: Review[] = [
     id: "review-3",
     name: "Sarah Johnson",
     rating: 5,
-    text: "Love the variety of products available. The website is easy to navigate and checkout is a breeze. Free shipping on orders over $75 is a great bonus!",
+    text: "Love the variety of products available. The website is easy to navigate and checkout is a breeze. Free shipping on orders over $99 is a great bonus!",
   },
   {
     id: "review-4",

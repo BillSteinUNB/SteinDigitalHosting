@@ -165,9 +165,9 @@ export function CheckoutShipping() {
   const sameAsShipping = watch("sameAsShipping");
   const selectedShippingMethod = watch("shippingMethod");
 
-  // Free shipping threshold
-  const freeShippingThreshold = 75;
-  const qualifiesForFreeShipping = cart.subtotal >= freeShippingThreshold;
+  // Free shipping policy: orders over $99
+  const freeShippingMinimum = 100;
+  const qualifiesForFreeShipping = cart.subtotal >= freeShippingMinimum;
 
   const onSubmit = (data: ShippingFormData) => {
     updateShippingInfo({
@@ -275,7 +275,7 @@ export function CheckoutShipping() {
                   )}
                   {isDisabled && (
                     <p className="text-small text-error mt-1">
-                      Add {formatPrice(freeShippingThreshold - cart.subtotal)} more to qualify
+                      Add {formatPrice(Math.max(freeShippingMinimum - cart.subtotal, 0))} more to qualify
                     </p>
                   )}
                 </div>
@@ -286,6 +286,9 @@ export function CheckoutShipping() {
             );
           })}
         </div>
+        <p className="mt-3 text-tiny text-gray-medium">
+          *Wholesale orders may be charged shipping after order review.
+        </p>
       </div>
 
       {/* Delivery Notes */}

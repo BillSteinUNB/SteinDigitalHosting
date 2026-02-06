@@ -1,13 +1,27 @@
-"use client";
-
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import ShopPageContent from "./ShopPageContent";
 
 // ============================================
 // SHOP PAGE - With Suspense Boundary
 // ============================================
 
-export default function ShopPage() {
+interface ShopPageProps {
+  searchParams?: {
+    [key: string]: string | string[] | undefined;
+  };
+}
+
+export default function ShopPage({ searchParams }: ShopPageProps) {
+  const onSaleParam = searchParams?.on_sale;
+  const isSaleItems =
+    onSaleParam === "true" ||
+    (Array.isArray(onSaleParam) && onSaleParam.includes("true"));
+
+  if (isSaleItems) {
+    redirect("/under-construction");
+  }
+
   return (
     <Suspense fallback={<ShopPageSkeleton />}>
       <ShopPageContent />

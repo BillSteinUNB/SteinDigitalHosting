@@ -348,7 +348,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
                 <ul className="space-y-2 text-small text-gray-dark">
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-red-primary flex-shrink-0" />
-                    <span>Free shipping on orders over $75</span>
+                    <span>Free shipping on orders over $99</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-red-primary flex-shrink-0" />

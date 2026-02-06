@@ -98,7 +98,7 @@ const emptyCart: Cart = {
   shippingMethods: [
     { id: "flat_rate", label: "Flat Rate Shipping", cost: 9.99, description: "5-7 business days" },
     { id: "express", label: "Express Shipping", cost: 19.99, description: "2-3 business days" },
-    { id: "free_shipping", label: "Free Shipping", cost: 0, description: "Orders over $75 (5-7 business days)" },
+    { id: "free_shipping", label: "Free Shipping", cost: 0, description: "Orders over $99 (5-7 business days)" },
   ],
 };
 

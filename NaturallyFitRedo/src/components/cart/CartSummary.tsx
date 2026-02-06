@@ -49,10 +49,10 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
   // Calculate final total with shipping
   const finalTotal = cart.subtotal - cart.discountTotal + cart.shippingTotal + cart.taxTotal;
 
-  // Check if free shipping is available (orders over $75)
-  const freeShippingThreshold = 75;
-  const amountUntilFreeShipping = freeShippingThreshold - cart.subtotal;
-  const qualifiesForFreeShipping = cart.subtotal >= freeShippingThreshold;
+  // Free shipping policy: orders over $99
+  const freeShippingMinimum = 100;
+  const amountUntilFreeShipping = Math.max(freeShippingMinimum - cart.subtotal, 0);
+  const qualifiesForFreeShipping = cart.subtotal >= freeShippingMinimum;
 
   // Handle coupon application
   const handleApplyCoupon = async () => {
@@ -131,7 +131,7 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
           <div className="w-full bg-gray-border h-2 overflow-hidden">
             <div
               className="bg-red-primary h-full transition-all duration-300"
-              style={{ width: `${Math.min((cart.subtotal / freeShippingThreshold) * 100, 100)}%` }}
+              style={{ width: `${Math.min((cart.subtotal / freeShippingMinimum) * 100, 100)}%` }}
             />
           </div>
         </div>
@@ -260,6 +260,9 @@ export function CartSummary({ className, sticky = true }: CartSummaryProps) {
               );
             })}
           </div>
+          <p className="mt-3 text-tiny text-gray-medium">
+            *Wholesale orders may be charged shipping after order review.
+          </p>
         </div>
       )}
 
