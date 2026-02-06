@@ -7,6 +7,7 @@ interface HandoffRequestItem {
   productId: number;
   variationId?: number;
   quantity: number;
+  unitPrice?: number;
 }
 
 interface HandoffRequestBody {
@@ -28,12 +29,14 @@ interface HandoffPayload {
     productId: number;
     variationId?: number;
     quantity: number;
+    unitPrice?: number;
   }>;
 }
 
 const HANDOFF_TTL_SECONDS = 300;
 const MAX_ITEMS = 100;
 const MAX_QTY_PER_ITEM = 999;
+const MAX_UNIT_PRICE = 100000;
 
 function toBase64Url(value: string): string {
   return Buffer.from(value, "utf8")
@@ -84,6 +87,8 @@ function normalizeItems(body: HandoffRequestBody): HandoffRequestItem[] {
     const quantity = Number(item.quantity);
     const variationId =
       item.variationId !== undefined ? Number(item.variationId) : undefined;
+    const unitPrice =
+      item.unitPrice !== undefined ? Number(item.unitPrice) : undefined;
 
     if (!Number.isInteger(productId) || productId <= 0) {
       throw new Error(`Invalid product ID at item ${index + 1}.`);
@@ -100,10 +105,18 @@ function normalizeItems(body: HandoffRequestBody): HandoffRequestItem[] {
       throw new Error(`Invalid variation ID at item ${index + 1}.`);
     }
 
+    if (
+      unitPrice !== undefined &&
+      (!Number.isFinite(unitPrice) || unitPrice <= 0 || unitPrice > MAX_UNIT_PRICE)
+    ) {
+      throw new Error(`Invalid unit price at item ${index + 1}.`);
+    }
+
     return {
       productId,
       variationId,
       quantity,
+      unitPrice,
     };
   });
 }
@@ -131,6 +144,7 @@ export async function POST(request: NextRequest) {
 
     const items = normalizeItems(body);
     const session = await getServerSession(authOptions);
+    const isWholesaleSession = Boolean(session?.user?.isWholesale);
     const now = Math.floor(Date.now() / 1000);
 
     const payload: HandoffPayload = {
@@ -141,10 +155,16 @@ export async function POST(request: NextRequest) {
       source: "naturallyfit-nextjs",
       user: {
         email: session?.user?.email || null,
-        isWholesale: Boolean(session?.user?.isWholesale),
+        isWholesale: isWholesaleSession,
         role: session?.user?.role || null,
       },
-      items,
+      items: items.map((item) => ({
+        productId: item.productId,
+        variationId: item.variationId,
+        quantity: item.quantity,
+        // Lock Woo checkout pricing to frontend wholesale unit prices only for authenticated wholesale sessions.
+        unitPrice: isWholesaleSession ? item.unitPrice : undefined,
+      })),
     };
 
     const payloadJson = JSON.stringify(payload);

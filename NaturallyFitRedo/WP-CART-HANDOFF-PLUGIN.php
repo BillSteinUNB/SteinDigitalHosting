@@ -67,6 +67,45 @@ function nf_parse_positive_int($value) {
     return $number;
 }
 
+function nf_parse_positive_decimal($value) {
+    if (!is_numeric($value)) {
+        return null;
+    }
+
+    $number = (float) $value;
+    if ($number <= 0) {
+        return null;
+    }
+
+    return $number;
+}
+
+function nf_apply_handoff_price_overrides($cart) {
+    if (!is_object($cart) || !method_exists($cart, 'get_cart')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+        if (
+            !is_array($cart_item) ||
+            !isset($cart_item['nf_handoff_unit_price']) ||
+            !isset($cart_item['data']) ||
+            !is_object($cart_item['data']) ||
+            !method_exists($cart_item['data'], 'set_price')
+        ) {
+            continue;
+        }
+
+        $price = nf_parse_positive_decimal($cart_item['nf_handoff_unit_price']);
+        if ($price === null) {
+            continue;
+        }
+
+        $cart_item['data']->set_price($price);
+    }
+}
+add_action('woocommerce_before_calculate_totals', 'nf_apply_handoff_price_overrides', 20, 1);
+
 function nf_handle_cart_handoff() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         nf_cart_handoff_fail('Invalid checkout handoff method.');
@@ -132,15 +171,23 @@ function nf_handle_cart_handoff() {
         $product_id = nf_parse_positive_int($item['productId'] ?? null);
         $quantity = nf_parse_positive_int($item['quantity'] ?? null);
         $variation_id = nf_parse_positive_int($item['variationId'] ?? null);
+        $unit_price = nf_parse_positive_decimal($item['unitPrice'] ?? null);
 
         if (!$product_id || !$quantity) {
             continue;
         }
 
+        $cart_item_data = array();
+        if ($unit_price !== null) {
+            $cart_item_data['nf_handoff_unit_price'] = wc_format_decimal($unit_price, 2);
+        }
+
         $added = WC()->cart->add_to_cart(
             $product_id,
             $quantity,
-            $variation_id ? $variation_id : 0
+            $variation_id ? $variation_id : 0,
+            array(),
+            $cart_item_data
         );
 
         if (!$added) {

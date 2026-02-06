@@ -25,6 +25,7 @@ export async function handoffCartToWooCheckout(items: CartItem[]): Promise<void>
     productId: item.productId,
     variationId: item.variationId,
     quantity: item.quantity,
+    unitPrice: item.price,
   }));
 
   const response = await fetch("/api/checkout/handoff", {
