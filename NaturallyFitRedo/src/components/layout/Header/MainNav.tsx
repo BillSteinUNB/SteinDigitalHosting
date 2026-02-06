@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, User, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mainNavItems } from "@/lib/navigation";
+import { getWooBrands } from "@/lib/woocommerce/brands";
 import MegaMenu from "./MegaMenu";
 import useMegaMenuCategories from "./useMegaMenuCategories";
 
@@ -20,16 +22,71 @@ import useMegaMenuCategories from "./useMegaMenuCategories";
  */
 export default function MainNav() {
   const { data: session, status } = useSession();
+  const { data: wooBrands } = useQuery({
+    queryKey: ["woo-brands"],
+    queryFn: getWooBrands,
+  });
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuCategories = useMegaMenuCategories();
 
+  const brandDropdownItems = (() => {
+    if (!wooBrands || wooBrands.length === 0) {
+      return [{ label: "View All Brands", href: "/shop" }];
+    }
+
+    const topBrands = [...wooBrands]
+      .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+      .slice(0, 6)
+      .map((brand) => ({
+        label: brand.name,
+        href: `/shop?brand=${brand.slug}`,
+      }));
+
+    return [...topBrands, { label: "View All Brands", href: "/shop" }];
+  })();
+
+  const wholesaleDropdownItems = (() => {
+    const wholesaleItem = mainNavItems.find((item) => item.label === "Wholesale");
+    const baseChildren = wholesaleItem?.children || [];
+
+    return baseChildren.map((child) => {
+      if (child.label !== "Wholesale Login") {
+        return child;
+      }
+
+      if (session?.user?.isWholesale) {
+        return { label: "My Account", href: "/account" };
+      }
+
+      return child;
+    });
+  })();
+
   const handleMouseEnter = (label: string) => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     setActiveDropdown(label);
   };
 
   const handleMouseLeave = () => {
-    setActiveDropdown(null);
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+    }
+    closeTimerRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+      closeTimerRef.current = null;
+    }, 180);
+  };
+
+  const cancelCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
   };
 
   const handleSignOut = async () => {
@@ -47,7 +104,15 @@ export default function MainNav() {
           <ul className="flex items-center gap-6 flex-1 justify-center">
             {mainNavItems.map((item) => {
               const isShop = item.label === "Shop";
-              const hasDropdown = isShop || (item.children && item.children.length > 0);
+              const isBrands = item.label === "Brands";
+              const isWholesale = item.label === "Wholesale";
+              const dropdownItems = isBrands
+                ? brandDropdownItems
+                : isWholesale
+                  ? wholesaleDropdownItems
+                  : item.children;
+              const hasDropdown =
+                isShop || isBrands || (item.children && item.children.length > 0);
               const isActive = activeDropdown === item.label;
 
               return (
@@ -85,11 +150,13 @@ export default function MainNav() {
                     <MegaMenu
                       categories={menuCategories}
                       onClose={() => setActiveDropdown(null)}
+                      onMouseEnter={cancelCloseTimer}
+                      onMouseLeave={handleMouseLeave}
                     />
                   )}
 
                   {/* Standard Dropdown */}
-                  {!isShop && item.children && isActive && (
+                  {!isShop && dropdownItems && isActive && (
                     <div
                       className={cn(
                         "absolute left-0 top-full",
@@ -100,7 +167,7 @@ export default function MainNav() {
                       )}
                     >
                       <ul className="py-2">
-                        {item.children.map((child) => (
+                        {dropdownItems.map((child) => (
                           <li key={child.href}>
                             <Link
                               href={child.href}

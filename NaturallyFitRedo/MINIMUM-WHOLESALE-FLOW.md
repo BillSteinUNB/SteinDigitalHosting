@@ -39,6 +39,24 @@ define('NF_WOO_HANDOFF_SECRET', 'same-value-as-WOO_HANDOFF_SECRET-in-vercel');
 
 The frontend now posts signed cart payloads to that endpoint, and WordPress redirects to Woo checkout.
 
+## 2B) Install Automatic Wholesale Cost Sync Hook
+
+1. Copy `WP-WHOLESALE-COST-HOOK-PLUGIN.php` into a new plugin folder in WordPress, then activate it.
+2. In `wp-config.php`, set these constants:
+
+```php
+define('NF_WHOLESALE_MARKUP_PERCENT', 20);
+define('NF_WHOLESALE_COST_META_KEY', 'mycost'); // change if your cost field key differs
+define('NF_WHOLESALEX_PRICE_META_KEY', 'wholesalex_b2b_role_1770160918371_base_price');
+```
+
+3. Save any product (or run a bulk quick edit) to trigger sync.
+
+What it does:
+- On product save and variation save, sets wholesale price meta = `MyCost * 1.20`.
+- Also updates when the cost meta key changes.
+- Falls back to parent product cost for variations if variation cost is empty.
+
 ## 2) WordPress / WooCommerce Setup
 
 1. Ensure products are published and visible to wholesale users.
@@ -77,3 +95,29 @@ The frontend now posts signed cart payloads to that endpoint, and WordPress redi
 4. ClickShip rates load at checkout.
 5. Stripe payment succeeds.
 6. Order appears in Woo admin with expected shipping method and totals.
+
+## 6) Backfill Wholesale Price Meta From MyCost (+20%)
+
+If products show wholesale UI but the same retail value, wholesale meta may not be populated on all products.
+
+Run an audit first:
+
+```bash
+node scripts/sync-wholesale-cost-plus.js --dry-run
+```
+
+Then write values:
+
+```bash
+node scripts/sync-wholesale-cost-plus.js --apply --markup=20
+```
+
+Required env vars:
+- `WOOCOMMERCE_REST_URL`
+- `WOOCOMMERCE_CONSUMER_KEY`
+- `WOOCOMMERCE_CONSUMER_SECRET`
+
+Optional flags:
+- `--cost-key=<meta_key>` to force your `MyCost` field key
+- `--wholesale-key=wholesalex_b2b_role_<id>_base_price` to force WholesaleX key
+- `--only-missing` to only fill missing wholesale values

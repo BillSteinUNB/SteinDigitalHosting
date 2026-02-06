@@ -277,11 +277,32 @@ function extractMetaValue(
 function parseWholesaleMetaPrice(
   metaData: Array<{ key: string; value: unknown }> | undefined
 ): string | undefined {
-  const rawValue = extractMetaValue(metaData, WHOLESALEX_PRICE_META);
+  const rawValue = extractWholesaleMetaValue(metaData);
   if (!rawValue) return undefined;
   const parsed = parsePriceNumber(rawValue);
   if (Number.isNaN(parsed)) return undefined;
   return formatPrice(parsed);
+}
+
+function extractWholesaleMetaValue(
+  metaData: Array<{ key: string; value: unknown }> | undefined
+): string | undefined {
+  const configuredValue = extractMetaValue(metaData, WHOLESALEX_PRICE_META);
+  if (configuredValue) return configuredValue;
+  if (!metaData?.length) return undefined;
+
+  // Fallback for WholesaleX dynamic role key format:
+  // wholesalex_b2b_role_<roleId>_base_price
+  const fallback = metaData.find((item) =>
+    /^wholesalex_b2b_role_\d+_base_price$/i.test(item.key || "")
+  );
+  if (!fallback) return undefined;
+  const raw = fallback.value;
+  if (raw === null || raw === undefined) return undefined;
+  if (typeof raw === "string" || typeof raw === "number") {
+    return String(raw);
+  }
+  return undefined;
 }
 
 function parsePriceNumber(value: unknown): number {
@@ -421,7 +442,7 @@ function transformToProduct(wooProduct: WooProduct): Product {
     const variableProduct = wooProduct as VariableProductNode;
     const variationWholesaleValues = variableProduct.variations?.nodes
       .map((variation) => {
-        const rawValue = extractMetaValue(variation.metaData, WHOLESALEX_PRICE_META);
+        const rawValue = extractWholesaleMetaValue(variation.metaData);
         const parsed = rawValue ? parsePriceNumber(rawValue) : NaN;
         return Number.isNaN(parsed) ? undefined : parsed;
       })

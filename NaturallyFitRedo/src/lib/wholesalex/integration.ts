@@ -160,6 +160,9 @@ export function getEffectiveWholesalePrice(params: {
     typeof params.discountPercent === "number"
       ? params.discountPercent
       : getWholesaleDiscountPercent(params.userRole);
+  const hasWholesaleRule = typeof override === "number" || discountPercent > 0;
+  if (!hasWholesaleRule) return null;
+
   let candidate = regular;
 
   if (typeof override === "number") {

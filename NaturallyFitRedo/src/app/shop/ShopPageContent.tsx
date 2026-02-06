@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
@@ -160,6 +160,7 @@ export default function ShopPageContent() {
     (searchParams.get("view") as "grid" | "list") || "grid"
   );
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const skipNextUrlWrite = useRef(false);
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -182,22 +183,35 @@ export default function ShopPageContent() {
     const currentFilterKey = JSON.stringify(filters);
     const nextFilterKey = JSON.stringify(nextFilters);
 
+    let didSyncFromUrl = false;
+
     if (currentFilterKey !== nextFilterKey) {
       setFilters(nextFilters);
+      didSyncFromUrl = true;
     }
     if (sortBy !== sort) {
       setSortBy(sort);
+      didSyncFromUrl = true;
     }
     if (currentPage !== page) {
       setCurrentPage(page);
+      didSyncFromUrl = true;
     }
     if (perPage !== perPageParam) {
       setPerPage(perPageParam);
+      didSyncFromUrl = true;
     }
     if (viewMode !== view) {
       setViewMode(view);
+      didSyncFromUrl = true;
     }
-  }, [searchParams, filters, sortBy, currentPage, perPage, viewMode]);
+
+    if (didSyncFromUrl) {
+      skipNextUrlWrite.current = true;
+    }
+  // Sync local state from URL changes (e.g. direct nav to /shop or /shop?brand=...)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     if (!filters.category || allowedCategories.length === 0) {
@@ -247,6 +261,11 @@ export default function ShopPageContent() {
 
   // Update URL when state changes
   const updateURL = useCallback(() => {
+    if (skipNextUrlWrite.current) {
+      skipNextUrlWrite.current = false;
+      return;
+    }
+
     const params = new URLSearchParams();
 
     if (filters.category) params.set("category", filters.category);
@@ -261,11 +280,15 @@ export default function ShopPageContent() {
     if (perPage !== 12) params.set("perPage", perPage.toString());
     if (viewMode !== "grid") params.set("view", viewMode);
 
-    const newURL = params.toString()
-      ? `${pathname}?${params.toString()}`
-      : pathname;
+    const nextQuery = params.toString();
+    const currentQuery = searchParams.toString();
+    if (nextQuery === currentQuery) {
+      return;
+    }
+
+    const newURL = nextQuery ? `${pathname}?${nextQuery}` : pathname;
     router.replace(newURL, { scroll: false });
-  }, [filters, sortBy, currentPage, perPage, viewMode, pathname, router]);
+  }, [filters, sortBy, currentPage, perPage, viewMode, pathname, router, searchParams]);
 
   // Update URL when state changes
   useEffect(() => {

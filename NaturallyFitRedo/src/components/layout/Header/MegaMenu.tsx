@@ -22,6 +22,8 @@ const WP_MENU_IMAGES = {
 interface MegaMenuProps {
   categories: MegaMenuCategory[][];
   onClose: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 /**
@@ -31,7 +33,12 @@ interface MegaMenuProps {
  * Rows of category columns showing categories and subcategories.
  * Includes promotional images from WordPress.
  */
-export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
+export default function MegaMenu({
+  categories,
+  onClose,
+  onMouseEnter,
+  onMouseLeave,
+}: MegaMenuProps) {
   const getColumnsClass = (count: number) => {
     if (count >= 5) return "grid-cols-5";
     if (count === 4) return "grid-cols-4";
@@ -49,6 +56,8 @@ export default function MegaMenu({ categories, onClose }: MegaMenuProps) {
         "animate-slide-down",
         "z-dropdown"
       )}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="p-8">
         {/* Two rows of categories */}

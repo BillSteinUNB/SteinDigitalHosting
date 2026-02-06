@@ -50,6 +50,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const menuCategories = useMegaMenuCategories();
+  const wholesaleNavItem = mainNavItems.find((item) => item.label === "Wholesale");
+  const wholesaleDropdownItems = (wholesaleNavItem?.children || []).map((child) => {
+    if (child.label !== "Wholesale Login") {
+      return child;
+    }
+
+    if (session?.user?.isWholesale) {
+      return { label: "My Account", href: "/account" };
+    }
+
+    return child;
+  });
 
   // Handle client-side mounting for portal
   useEffect(() => {
@@ -181,7 +193,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     onClose={onClose}
                     highlight={item.highlight}
                   >
-                    {item.children.map((child) => (
+                    {(item.label === "Wholesale"
+                      ? wholesaleDropdownItems
+                      : item.children
+                    ).map((child) => (
                       <li key={child.href}>
                         <Link
                           href={child.href}
