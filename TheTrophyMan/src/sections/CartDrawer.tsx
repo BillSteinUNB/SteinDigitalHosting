@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
@@ -7,11 +8,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import CheckoutDialog from './CheckoutDialog';
 
 const CartDrawer = () => {
   const { items, removeFromCart, updateQuantity, totalItems, totalPrice, isCartOpen, setIsCartOpen } = useCart();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   return (
+    <>
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="w-full sm:max-w-lg bg-black border-l border-white/10 overflow-y-auto">
         <SheetHeader className="border-b border-white/10 pb-4">
@@ -22,7 +26,7 @@ const CartDrawer = () => {
         </SheetHeader>
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex flex-col items-center justify-center py-16 px-5 text-center">
             <ShoppingBag className="w-16 h-16 text-white/20 mb-4" />
             <p className="text-white/50 text-lg mb-2">Your cart is empty</p>
             <p className="text-white/30 text-sm mb-6">Add some items to get started</p>
@@ -36,7 +40,7 @@ const CartDrawer = () => {
         ) : (
           <div className="flex flex-col h-full">
             {/* Cart Items */}
-            <div className="flex-1 py-4 space-y-4">
+            <div className="flex-1 py-4 px-5 space-y-4">
               {items.map((item) => (
                 <div
                   key={item.product.id}
@@ -92,7 +96,7 @@ const CartDrawer = () => {
             </div>
 
             {/* Cart Footer */}
-            <div className="border-t border-white/10 pt-4 pb-6 space-y-4">
+            <div className="border-t border-white/10 pt-4 pb-6 px-5 space-y-4">
               {/* Subtotal */}
               <div className="flex justify-between items-center text-white">
                 <span className="text-white/60">Subtotal</span>
@@ -109,7 +113,8 @@ const CartDrawer = () => {
                 <Button
                   className="w-full bg-gold text-black hover:bg-gold-light rounded-none py-6 font-semibold"
                   onClick={() => {
-                    alert('Checkout functionality would connect to payment processor');
+                    setIsCheckoutOpen(true);
+                    setIsCartOpen(false);
                   }}
                 >
                   Proceed to Checkout
@@ -135,6 +140,9 @@ const CartDrawer = () => {
         )}
       </SheetContent>
     </Sheet>
+
+    <CheckoutDialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen} />
+    </>
   );
 };
 
